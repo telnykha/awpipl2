@@ -12,7 +12,7 @@
 #include "_awpipl.h"
 #pragma warning(disable: 4996)
 
-// функция вычисления начальных моментов распределения
+// the function of calculating the initial moments of the distribution
 static void _awpMoment(awpHistogramm* hst, awpStat* r, AWPBYTE nOrder)
 {
 
@@ -52,7 +52,7 @@ static void _awpMoment(awpHistogramm* hst, awpStat* r, AWPBYTE nOrder)
 	if (ng!= 0)	r->dGreen /= ng;
 	if (nb!= 0)	r->dBlue /= nb;
 }
-// копирование гистограмы в четыре массива (по числу каналов)
+// copy the histogram into four arrays (by the number of channels)
 static void _awpGetHstChannels(awpHistogramm* hst, AWPDOUBLE* rc, 
 							   AWPDOUBLE* gc, AWPDOUBLE* bc, AWPDOUBLE* ic)
 {
@@ -65,9 +65,7 @@ static void _awpGetHstChannels(awpHistogramm* hst, AWPDOUBLE* rc,
 		ic[i] = hst->Intensity[i];
 	}
 }
-//накопление гистограммы изображения
-
-
+// accumulation of image histogram
 AWPRESULT awpGetHistogramm(const awpImage* Image, awpHistogramm* Histogramm)
 {
 	AWPINT i		= 0;
@@ -115,7 +113,7 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
     AWPBYTE        h,s, v;
     AWPRESULT res = AWP_OK;
     awpImage* pDblHst = NULL;
-    // проверка аргументов
+	// checking arguments
     if (pImage == NULL || p2DHist == NULL)
         return AWP_BADARG;
     if (pImage->dwType != AWP_BYTE)
@@ -128,8 +126,8 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
     if (p2DHist->bChannels != 1)
         return AWP_BADARG;
 
-    //для построения двумерной гистограммы используем 1й и 2й каналы изображения
-    //pImage и записываем гистограмму во временное изображение типа AWPDOUBLE
+	// to build a two-dimensional histogram we use the 1st and 2nd channels of the image
+	// pImage and write the histogram into a temporary image like AWPDOUBLE
     res = awpCreateImage(&pDblHst, 256, 256, 1, AWP_DOUBLE);
     if (res != AWP_OK)
         return res;
@@ -148,7 +146,7 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
             }
         }
     }
-    // конвертируем временное изображение типа AWPDOUBLE в AWPBYTE
+	// convert a temporary image of type AWPDOUBLE to AWPBYTE
     if ( needToConvert == TRUE )
     {
         if ((res = awpConvert(pDblHst, AWP_CONVERT_TO_BYTE_WITH_NORM)) != AWP_OK)
@@ -170,15 +168,15 @@ AWPRESULT awpGetMax(const awpHistogramm* Histogramm, awpStat* Result)
         return AWP_BADMEMORY;
 	if (Result == NULL)
         return AWP_BADMEMORY;
-	// уставновим значение в 0
+	
 	memset(Result, 0, sizeof(awpStat));
 
-	// инициализация 
+
 	Result->dRed	= Histogramm->ColorData.RedChannel[0];
 	Result->dGreen	= Histogramm->ColorData.GreenChannel[0];
 	Result->dBlue	= Histogramm->ColorData.BlueChannel[0];
 	Result->dBright	= Histogramm->Intensity[0];
-	//вычисление максимума
+
 	for (i = 1; i < 256; i++)
 	{
 		if (Result->dRed < Histogramm->ColorData.RedChannel[i])
@@ -204,15 +202,15 @@ AWPRESULT awpGetMin(const awpHistogramm* Histogramm, awpStat* Result)
 	if (Result == NULL)
         return AWP_BADMEMORY;
 
-	// уставновим значение в 0
+
 	memset(Result, 0, sizeof(awpStat));
 
-	// инициализация
+
 	Result->dRed	= Histogramm->ColorData.RedChannel[0];
 	Result->dGreen	= Histogramm->ColorData.GreenChannel[0];
 	Result->dBlue	= Histogramm->ColorData.BlueChannel[0];
 	Result->dBright	= Histogramm->Intensity[0];
-	//вычисление максимума
+
 	for (i = 1; i < 256; i++)
 	{
 		if (Result->dRed > Histogramm->ColorData.RedChannel[i])
@@ -270,7 +268,7 @@ AWPRESULT awpGetDispersion(const awpHistogramm* Histogramm, awpStat* Result)
 }
 
 
-// сравнение двух чисел с удвоенной точностью
+// compare two numbers with double precision
 static AWPINT AWP_CDECL _awpDCompare(const void* a1, const void* a2)
 {
 	AWPDOUBLE* e1 = (AWPDOUBLE*)a1;
@@ -319,7 +317,7 @@ AWPRESULT awpGetMedian(const awpHistogramm* Histogramm, awpStat* Result)
 
 AWPRESULT awpGetEntropy(const awpHistogramm* Histogramm, awpStat* Result)
 {
-	awpStat en; //энтропия
+	awpStat en; 
 	AWPFLOAT n	= 0;
 	AWPFLOAT nr	= 0;
 	AWPFLOAT ng  = 0;
@@ -364,7 +362,7 @@ AWPRESULT awpGetEntropy(const awpHistogramm* Histogramm, awpStat* Result)
 
 	return AWP_OK;
 }
-// нахождение скошенности
+// finding the slope
 AWPRESULT awpGetSkewness(const awpHistogramm* Histogramm, awpStat* Result)
 {
 	awpStat m1;
@@ -376,13 +374,13 @@ AWPRESULT awpGetSkewness(const awpHistogramm* Histogramm, awpStat* Result)
         return AWP_BADMEMORY;
 	if (Result == NULL)
         return AWP_BADMEMORY;
-	//обнулим переменные
+
 	memset(Result, 0, sizeof(awpStat));
 	memset(&m1, 0, sizeof(awpStat));
 	memset(&m2, 0, sizeof(awpStat));
 	memset(&m3, 0, sizeof(awpStat));
 	memset(&dsp, 0, sizeof(awpStat));
-	// вычислим начальные моменты и дисперсию	
+
 	_awpMoment((awpHistogramm*)Histogramm, &m1, 1);
 	_awpMoment((awpHistogramm*)Histogramm, &m2, 2);
 	_awpMoment((awpHistogramm*)Histogramm, &m3, 3);
@@ -406,7 +404,7 @@ AWPRESULT awpGetSkewness(const awpHistogramm* Histogramm, awpStat* Result)
 
 	return AWP_OK;
 }
-// нахождение эксцесса
+
 AWPRESULT awpGetExcess(const awpHistogramm* Histogramm, awpStat* Result)
 {
 	awpStat m1;
@@ -419,14 +417,14 @@ AWPRESULT awpGetExcess(const awpHistogramm* Histogramm, awpStat* Result)
         return AWP_BADMEMORY;
 	if (Result == NULL)
         return AWP_BADMEMORY;
-	//обнулим переменные
+
 	memset(Result, 0, sizeof(awpStat));
 	memset(&m1, 0, sizeof(awpStat));
 	memset(&m2, 0, sizeof(awpStat));
 	memset(&m3, 0, sizeof(awpStat));
 	memset(&m4, 0, sizeof(awpStat));
 	memset(&dsp, 0, sizeof(awpStat));
-	// вычислим начальные моменты и дисперсию	
+
 	_awpMoment((awpHistogramm*)Histogramm, &m1, 1);
 	_awpMoment((awpHistogramm*)Histogramm, &m2, 2);
 	_awpMoment((awpHistogramm*)Histogramm, &m3, 3);
@@ -509,14 +507,14 @@ AWPRESULT awpHistNormalization(awpHistogramm* Histogramm)
 }
 
 /*Histogramm equalize function*/
-/*Функция эквилизации гистограммы. Приводит гистограмму изображения
-pImage, к виду максимально приближенному к равномерному.*/
+/*The function of the histogram equilibration.Brings an image histogram
+pImage, to the form as close as possible to the uniform. */
 AWPRESULT awpHistogrammEqualize(awpImage* pImage)
 {
 
-        /*локальные пременные*/
-        AWPRESULT               res;         /*результат выполнения операции*/
-        awpHistogramm           Hst;         /*гистограмма изображения*/
+	    /*local variables */
+	    AWPRESULT               res; /*the result of the operation */
+	    awpHistogramm           Hst; /*image histogram */
         awpHistogramm           PFunc;
         AWPINT                     count,i,j;
 	AWPBYTE* p			= (AWPBYTE*)pImage->pPixels;
@@ -546,27 +544,27 @@ AWPRESULT awpHistogrammNormalize(awpImage* pSource, AWPDOUBLE k1, AWPDOUBLE k2)
   AWPBYTE* ImIn;
   AWPBYTE* ImOut;
   awpImage* Im2;
-  AWPINT Hd0[256],M[256];//исходная гистограмма и функция пересчета старых интенсивностей в новые
+  AWPINT Hd0[256],M[256];// the original histogram and the function of recalculating old intensities into new ones
   AWPINT Lx=pSource->sSizeX, Ly=pSource->sSizeY,n,m=0,s=0;
-  long i; //"длинный" счетчик на случай большой картинки
-//  AWPDOUBLE K0=1.0, K1=1.0, Ks=Lx*Ly/255.0, sa=0.1;
+  long i; // "long" counter in case of big picture
+
   AWPDOUBLE K0=k1, K1=k2, Ks=Lx*Ly/255.0, sa=0.1;
-  AWPDOUBLE GoalIntegralHistogramm[256]; // интегральная гистограмма
+  AWPDOUBLE GoalIntegralHistogramm[256]; // integrated histogram
   if(pSource->bChannels!=1) awpConvert(pSource, AWP_CONVERT_3TO1_BYTE);
   awpCopyImage(pSource, &Im2);
 
   ImIn = (AWPBYTE*)pSource->pPixels;
   ImOut = (AWPBYTE*)Im2->pPixels;
-  for(n=0; n<256; n++) {Hd0[n]=0; M[n]=0;}// обнуление массивов
-  for(i=0;i<Lx*Ly;i++)   Hd0[ImIn[i]]++; // вычисление исходной гистограммы по входной картинке
+  for(n=0; n<256; n++) {Hd0[n]=0; M[n]=0;}// zeroing arrays
+  for(i=0;i<Lx*Ly;i++)   Hd0[ImIn[i]]++; // calculation of the source histogram from the input image
   for(m=0;m<256;m++) GoalIntegralHistogramm[m]=Ks*(m+K0/255.0*(m*m-255*m)-K1/255.0/255.0*(2*m*m*m-3*255*m*m+255*255*m));
   n=0;m=0;s=0;
   a:if(s<Lx*Ly&&n<255&&m<255){
   if(s<sa) {do {s+=Hd0[n]; M[n]=m; n++; } while(s<sa);}
   if(s>=sa) {do {m++;sa=GoalIntegralHistogramm[m]+0.1;} while(s>=sa);}
   goto a; }
-  if(n<255) do{M[n]=255;n++;} while(n<255); // дорисовка до конца при необходимости
-  if(m<255) do{M[n]=m; m++;} while(m<255);   // дорисовка
+  if(n<255) do{M[n]=255;n++;} while(n<255); // Done to the end, if necessary
+  if(m<255) do{M[n]=m; m++;} while(m<255);   
   for(i=0;i<Lx*Ly;i++) ImOut[i]=M[ImIn[i]];
   for(i=0;i<Lx*Ly;i++) ImIn[i]=ImOut[i];
   awpReleaseImage(&Im2);
@@ -599,10 +597,10 @@ AWPRESULT awpLoadHistogramm(const char* lpszFileName, awpHistogramm* hist,AWPBOO
 
 
 /*
-	Вычисляет сумму значений пикселей изображения pSrc 
-	и сохраняет ее в pDst. 
-	pDst должно быть изображением типа AWP_DOUBLE
-	иметь один канал данных, высоту 1 пикс и ширину равную числу каналов pScr
+Calculates the sum of the pixel values of the pSrc image
+and stores it in pDst.
+pDst must be an image of type AWP_DOUBLE
+have one data channel, a height of 1 pixel and a width equal to the number of channels pScr
 */
 AWPRESULT awpGetSumPix(awpImage* pSrc, awpImage* pDst)
 {

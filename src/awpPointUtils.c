@@ -1,7 +1,7 @@
 #include "_awpipl.h"
 #include "math.h"
 /*
-    Вычисление евклидова расстояния между двумя точками 
+    Calculation of the Euclidean distance between two points
 */
 AWPRESULT awpDistancePoints(awpPoint p1, awpPoint p2, AWPDOUBLE* distance)
 {

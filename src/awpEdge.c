@@ -400,7 +400,7 @@ CLEANUP:
 
 
 /*
-	awpEdgeSobel1 - \E2\FB\EF\EE\EB\ED\FF\E5\F2 \EF\F0\E5\EE\E1\F0\E0\E7\EE\E2\E0\ED\E8\E5 \D1\EE\E1\E5\EB\FF. 
+	awpEdgeSobel1 - 
 */
 AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir, AWPINT Direction)
 {

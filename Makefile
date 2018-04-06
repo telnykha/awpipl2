@@ -21,7 +21,7 @@ INC= -Iinclude/_include/ -Iinclude
 LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCameraUnit.c\
 	awpchannels.c awpColor.c _awpColor.c awpcontour.c awpcontrast.c\
         awpconvert.c awpcopypaste.c awpDetectorUnit.c awpDistance.c awpdraw.c\
-        awpEdge.c awpfft.c awpframeprocess.c awpgeometry.c _awpHSL.c _awpHSV.c\
+        awpEdge.c awpfft.c awpframeprocess.c awpgeometry.c\
 	awpIntegralFeaturesUnit.c awpInterpolation.c awpio.c _awpio.c\
 	awpLBPUnit.c awpNorm.c awpopencv.c awpPointUtils.c awpScannersUnit.c\
 	awpstroke.c awpthreshold.c awpmaskconvolution.c
@@ -34,7 +34,7 @@ LIBOBJECTS=    awpcommon.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o\
 	awpchannels.o awpColor.o _awpColor.o awpcontour.o awpcontrast.o\
 	awpconvert.o awpcopypaste.o awpDetectorUnit.o awpDistance.o\
 	awpdraw.o awpEdge.o awpfft.o awpframeprocess.o awpgeometry.o\
-	_awpHSL.o _awpHSV.o awpIntegralFeaturesUnit.o awpInterpolation.o\
+	awpIntegralFeaturesUnit.o awpInterpolation.o\
 	awpio.o _awpio.o awpLBPUnit.o awpNorm.o awpopencv.o awpPointUtils.o\
 	awpstroke.o awpthreshold.o awpmaskconvolution.o awpScannersUnit.o
 

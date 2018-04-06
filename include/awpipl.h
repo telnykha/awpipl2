@@ -1,4 +1,4 @@
-/*
+п»ї/*
 //
 //  RCS:
 //      $Source:   awpipl.h,v $
@@ -1933,9 +1933,9 @@ AWPRESULT awpDistance(awpImage* src1, awpImage* src2, AWPBYTE options, AWPDOUBLE
 	/**
 	*	\brief takes grid distance between two one channel images
     *	\calculates the distance between two images divided by
-    *	\N fragments. Each fragment of the image is represented by a row of pixels in
-    *	\variables src1 and src2
-    *	\weight is the weight of each fragment. If weight == NULL, it is not considered
+В В В В *	\N fragments. Each fragment of the image is represented by a row of pixels in
+В В В В *	\variables src1 and src2
+В В В В *	\weight is the weight of each fragment. If weight == NULL, it is not considered
 	*	\param src1 pointer to the source image  1
 	*	\param src2 pointer to the source image  2
 	*	\param options option type of ditance operation. Should be one of the following:\n
@@ -2099,143 +2099,103 @@ AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade,
 AWPRESULT awp2BitLBP(awpImage* pImage, awpRect* pRect, AWPBYTE* pCode);
 AWPRESULT awp4BitLBP(awpImage* pImage, awpRect* pRect, AWPBYTE* pCode);
 
-/*
-     the awpIntegralGrid function takes an integral image pImage
-     output - result image pDst of type AWP_DOUBLE
-     which contains the values of the intensities in the grid cells,
-     which are specified by the size of the resulting image and input
-     rectangle pRect
-*/
-AWPRESULT awpIntegralGrid(const awpImage* pImage, const awpRect* pRect, awpImage* pDst);
-                                                                                                                                                                                                        
-
-
-
 /** \addtogroup awplbbgroup Loacal Binary Pattens
 *   @{
 */
-/*
-преобразование без масштабирования
-*/
-/*
-Функция: awpLPBSPoints
-Назначение: получает набор координат точек для измерения.
-Аргументы:
-
--p    - точка на изображении, отностительно которой должен быть вычислен код.
--shiftX - смещение точки по горизонтали
--shiftY - смещение точки по вертикали.
--scale  - коэф. растяжения окрестности. (>=1)
-
--out - указатель на массив результирующих координат
-
+/**
+*    \brief receives a set of coordinates of points for measurement.
+*    \param [in] -p - a point in the image, which must be calculated code.
+*    \param [in] -shiftX - horizontal offset of the point
+*    \param [in] -shiftY - point offset vertically.
+*    \param [in] -scale - the coefficient. stretching the neighborhood. (> = 1)
+*    \param [out] -out - pointer to an array of resulting coordinates
+*	\return AWP_OK if success or else AWP_ERROR
 */
 AWPRESULT awpLPBSPoints(awpPoint p, AWPWORD shiftX, AWPWORD shiftY, AWPFLOAT scale, AWPBOOL interpolation, awp2DPoint* out);
-/*
-Функция: awpLPBPoints
-Назначение: получает набор координат точек для измерения.
-Аргументы:
-
--p    - точка на изображении, отностительно которой должен быть вычислен код.
--options - параметр, указывающий какую вариацию алгоритма использовать
-возможные значения:
-
-выдает координаты пикселей с радиусом 1
-AWP_LBP_U1R1
-AWP_LBP_U2R1
-выдает координаты пикселей с радиусом 2
-AWP_LBP_U1R2
-AWP_LBP_U2R2
-
--out - указатель на массив результирующих координат
-
+/**
+*    \brief receives a set of coordinates of points for measurement.
+*    \param [in] -p - a point in the image, which must be calculated code.
+*    \param [in] -options - parameter indicating which variation of the algorithm to use \n
+*   possible values:\n
+*	gives the coordinates of pixels with a radius of 1 \n
+*	AWP_LBP_U1R1\n
+*	AWP_LBP_U2R1\n
+*	produces coordinates of pixels with radius 2\n
+*	AWP_LBP_U1R2\n
+*	AWP_LBP_U2R2\n
+*    \param [out]-out - pointer to an array of resulting coordinates
+*	\return AWP_OK if success or else AWP_ERROR
 */
 AWPRESULT awpLPBPoints(awpPoint p, AWPBYTE options, AWPBOOL interpolation, awp2DPoint* out);
 
 
-/*
-Функция: awpLBPCode
-Назначение: получает LBP код для смщенной точки изображения.
-Аргументы:
--src  - исходное изображение. Тип изображения - AWP_BYTE. Число каналов 1 или 3.
-в случае 3х каналов (RGB) рассматривается канал №1  (R)
--p    - точка на изображении, для которой должен быть вычислен код.
--shiftX - смещение точки по горизонтали
--shiftY - смещение точки по вертикали.
--scale  - коэф. растяжения окрестности. (>=1)
-
--options - прараметр указывающий какую вариацию алгоритма использовать для
-получения кода. Должен быть одной из AWP_LBP_XXX констант.
-AWP_LBP_U1R1 - неуниформное преобразование радиуса 1.
-AWP_LBP_U2R1 - униформное преобразование радиуса 1.
-неуниформные коды - *pcode = 0
-AWP_LBP_U1R2 - неуниформное преобразование радиуса 2.
-AWP_LBP_U2R2 - униформное преобразование радиуса 2.
-неуниформные коды *pcode = 0
-
--pcode - указатель на переменную, которая содержит код
-
-если результат функции != AWP_OK *pcode - не определено.
-
+/**
+*    \brief receives LBP code for the smeared point of the image.
+*    \param [in] -src is the original image. The image type is AWP_BYTE. Number of channels 1 or 3.\n
+*	  In the case of 3 channels (RGB) channel # 1 (R)
+*    \param [in] -p is the point on the image for which the code is to be calculated.
+*    \param [in] -shiftX - horizontal offset of the point
+*    \param [in] -shiftY - point offset vertically.
+*    \param [in] -scale - the coefficient. stretching the neighborhood. (> = 1)
+*    \param [in] -options - a parameter indicating which variation of the algorithm to use for\n
+*	 get the code. Must be one of the AWP_LBP_XXX constants.\n
+*	 AWP_LBP_U1R1 - nonuniform transformation of radius 1.\n
+*	 AWP_LBP_U2R1 - uniform transformation of radius 1.\n
+*	 ununiform codes - * pcode = 0\n
+*	 AWP_LBP_U1R2 - nonuniform transformation of radius 2.\n
+*	 AWP_LBP_U2R2 - uniform transformation of radius 2.\n
+*	 nonuniform codes * pcode = 0\n
+*    \param [out]-pcode is a pointer to a variable that contains the code
+*	\return AWP_OK if success or else AWP_ERROR \n
+*	if the result of the function! = AWP_OK * pcode is undefined.
 */
 AWPRESULT awpLBPCode(awpImage* src, awpPoint p, AWPWORD shiftX, AWPWORD shiftY, AWPFLOAT scale, AWPBYTE options, AWPBOOL interpolation, AWPBYTE* pcode);
 
-/*
-Функция: awpLBPDescriptor
-Назначение: получает LBP дескриптор участка изображения в виде гистограммы
-Аргументы:
--src  - исходное изображение. Тип изображения - AWP_BYTE. Число каналов - 1.
--dst  - LBP дескриптор изображения либо его участка
--roi  - область изображения, для которой должен быть вычислен дескриптор.
-NULL означает, что дескриптор вычисляется для всего изображения.
--options - прараметр указывающий какую вариацию алгоритма использовать для
-получения дескриптора. Должен быть одной из AWP_LBP_XXX констант.
-AWP_LBP_U1R1 - неуниформное преобразование радиуса 1. Размер дескриптора - 256
-AWP_LBP_U2R1 - униформное преобразование радиуса 1. Размер дескриптора - 59
-неуниформные коды в нулевом элементе дескриптора
-AWP_LBP_U1R2 - неуниформное преобразование радиуса 2. Размер дескриптора - 256
-AWP_LBP_U2R2 - униформное преобразование радиуса 2. Размер дескриптора - 59
-неуниформные коды в нулевом элементе дескриптора
--norm  - флаг нормирования полученного дескриптора. TRUE означает
-нормировку sum(dst) = 1
+/**
+*    \brief receives the LBP descriptor of the image section in the form of a histogram
+*    \param [in] --src is the original image. The image type is AWP_BYTE. Number of channels - 1.
+*    \param [out] --dst - LBP image descriptor of its image
+*    \param [in] --roi - the area of вЂ‹вЂ‹the image for which the descriptor should be calculated.\n
+*	 NULL means that the handle is evaluated for the entire image.
+*    \param [in] --options - a parameter indicating which variation of the algorithm to use for\n
+*	 receive the descriptor. Must be one of the AWP_LBP_XXX constants.\n
+*	 AWP_LBP_U1R1 - nonuniform transformation of radius 1. Descriptor size - 256\n
+*	 AWP_LBP_U2R1 is a uniform transformation of radius 1. The size of the descriptor is 59\n
+*	 ununiform codes in the zero element of the descriptor\n
+*	 AWP_LBP_U1R2 - nonuniform transformation of radius 2. Descriptor size - 256\n
+*	 AWP_LBP_U2R2 is a uniform transformation of radius 2. The size of the descriptor is 59\n
+*	 ununiform codes in the zero element of the descriptor\n
+*    \param [in]-norm - flag of the normalization of the received descriptor. TRUE means\n
+*	 normalization sum (dst) = 1
+*	\return AWP_OK if success or else AWP_ERROR \n
 */
 AWPRESULT awpLBPDescriptor(awpImage* src, awpImage* dst, awpRect* roi, AWPBYTE options, AWPBOOL interpolation, AWPBOOL norm);
-/*
-Функция: awpLBPGridDescriptor
-Назначение: получает LBP дескриптор участка изображения в виде набора
-гистограмм. Участок изображения разбивается на n*m неперекрывающихся
-прямоугольников.
-Аргументы:
--src  - исходное изображение.
--dst  - набор LBP дескрипторов изображения либо его участка. Высота изображения
-m*n, ширина определяется параметром options
--roi  - область изображения, для которой должен быть вычислен набор
-дескрипторов. NULL означает, что дескрипторы вычисляется для всего изображения.
--n    - число дескрипторов по горизонтали
--m    - число дескрипторов по вертикали
--options - прараметр указывающий какую вариацию алгоритма использовать для
-получения дескриптора. Должен быть одной из AWP_LBP_XXX констант.
-AWP_LBP_U1R1 - неуниформное преобразование радиуса 1. Размер дескриптора - 256
-AWP_LBP_U2R1 - униформное преобразование радиуса 1. Размер дескриптора - 59
-неуниформные коды в нулевом элементе дескриптора
-AWP_LBP_U1R2 - неуниформное преобразование радиуса 2. Размер дескриптора - 256
-AWP_LBP_U2R2 - униформное преобразование радиуса 2. Размер дескриптора - 59
-неуниформные коды в нулевом элементе дескриптора
--norm  - флаг нормирования полученного дескриптора. TRUE означает
-нормировку sum(dst(i)) = 1, где i - номер дескриптора из n*m
+/**
+*    \brief receives the LBP descriptor of the image area as a set\n
+*	 histograms. The image region is divided into n * m non-overlapping\n
+*	 rectangles.
+*    \param [in]-src is the original image.
+*    \param [out]-dst - set of LBP image descriptors or its section. Image Height\n
+*	 m * n, the width is determined by the options parameter
+*    \param [in]-roi - the area of вЂ‹вЂ‹the image for which the set is to be calculated\n
+*	 descriptors. NULL means that the descriptors are computed for the entire image.
+*    \param [in]-n - number of descriptors horizontally
+*    \param [in]-m - number of descriptors vertically
+*    \param [in] --options - a parameter indicating which variation of the algorithm to use for\n
+*	 receive the descriptor. Must be one of the AWP_LBP_XXX constants.\n
+*	 AWP_LBP_U1R1 - nonuniform transformation of radius 1. Descriptor size - 256\n
+*	 AWP_LBP_U2R1 is a uniform transformation of radius 1. The size of the descriptor is 59\n
+*	 ununiform codes in the zero element of the descriptor\n
+*	 AWP_LBP_U1R2 - nonuniform transformation of radius 2. Descriptor size - 256\n
+*	 AWP_LBP_U2R2 is a uniform transformation of radius 2. The size of the descriptor is 59\n
+*	 ununiform codes in the zero element of the descriptor\n
+*    \param [in]-norm - flag of the normalization of the received descriptor. TRUE means\n
+*	 normalization sum (dst (i)) = 1, where i is the number of the descriptor from n * m
+*	\return AWP_OK if success or else AWP_ERROR \n
 */
 AWPRESULT awpLBPGridDescriptor(awpImage* src, awpImage* dst, awpRect* roi, AWPBYTE n, AWPBYTE m, AWPBYTE options, AWPBOOL interpolation, AWPBOOL norm);
 
 /** @} */ /*  end of awplbbgroup */
-
-
-
-    /** @defgroup linesegmentgroup computational geometry functions
-    *   @{
-    */
-
-     /** @} */ /* end of linesegmentgroup */
-
 
 #ifdef __cplusplus
 };

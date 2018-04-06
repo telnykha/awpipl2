@@ -4,8 +4,7 @@
     $Source: /home/cvs/awp/imageproc/awpipl-v2/src/awpdraw.c,v $
     $Revision: 1.9 $
     $Date: 2005/05/04 10:24:35 $
-		
-    Authors: Eugene Eremin <medlab@appl.sci-nnov.ru>
+	
 */
 
 #ifdef HAVE_CONFIG_H
@@ -58,7 +57,7 @@ CLEANUP:
     return res;
 }
 /*awpDrawThickPointByte
-закрашивает окрестность точки p на изобажении, содержащем данные типа AWPBYTE*/
+paints the neighborhood of point p on an isobath containing AWPBYTE type data*/
 static AWPRESULT _awpDrawThickPointByte(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
 	AWPBYTE* b = (AWPBYTE*)pImage->pPixels;
@@ -73,8 +72,8 @@ static AWPRESULT _awpDrawThickPointByte(awpImage* pImage, awpPoint p, AWPBYTE bC
 	}
 	return AWP_OK;
 }
-/*awpDrawThickPointShort
-закрашивает окрестность точки p на изобажении, содержащем данные типа AWPSHORT*/
+/*awpDrawThickPointByte
+paints the neighborhood of point p on an isobath containing AWPSHORT type data*/
 static AWPRESULT _awpDrawThickPointShort(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
 	AWPSHORT* b = (AWPSHORT*)pImage->pPixels;
@@ -89,8 +88,8 @@ static AWPRESULT _awpDrawThickPointShort(awpImage* pImage, awpPoint p, AWPBYTE b
 	}
 	return AWP_OK;
 }
-/*awpDrawThickPointFloat
-закрашивает окрестность точки p на изобажении, содержащем данные типа AWPSHORT*/
+/*awpDrawThickPointByte
+paints the neighborhood of point p on an isobath containing AWPFLOAT type data*/
 static AWPRESULT _awpDrawThickPointFloat(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
 	AWPFLOAT* b = (AWPFLOAT*)pImage->pPixels;
@@ -105,8 +104,8 @@ static AWPRESULT _awpDrawThickPointFloat(awpImage* pImage, awpPoint p, AWPBYTE b
 	}
 	return AWP_OK;
 }
-/*awpDrawThickPointDouble
-закрашивает окрестность точки p на изобажении, содержащем данные типа AWPSHORT*/
+/*awpDrawThickPointByte
+paints the neighborhood of point p on an isobath containing AWPDOUBLE type data*/
 static AWPRESULT _awpDrawThickPointDouble(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
 	AWPDOUBLE* b = (AWPDOUBLE*)pImage->pPixels;
@@ -122,7 +121,7 @@ static AWPRESULT _awpDrawThickPointDouble(awpImage* pImage, awpPoint p, AWPBYTE 
 	return AWP_OK;
 }
 // awpDrawThickPoint
-// закрашивает окрестность точки p радиусом r 
+// paints a neighborhood of a point p of radius r
 AWPRESULT _awpDrawThickPoint(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
     AWPRESULT res = AWP_OK;
@@ -131,18 +130,18 @@ AWPRESULT _awpDrawThickPoint(awpImage* pImage, awpPoint p, AWPBYTE bChan, AWPDOU
 	AWPINT maxy = p.Y + radius;
 	AWPINT miny = p.Y - radius;
 	
-	// проверка входных данных
+
 	_CHECK_RESULT_(( res = awpCheckImage(pImage)))
-	/*координата точки p с учетом радиуса точки не может выходить 
-	за пределы изображения*/
+	/*the coordinate of the point p with allowance for the radius of the point can not leave
+beyond the image*/
 	if (maxx >= pImage->sSizeX || minx < 0 || maxy >= pImage->sSizeY || miny < 0)
 		_ERROR_EXIT_RES_(AWP_BADARG)
-	/* номер канала, на котором должна быть отрисована точка не может быть 
-	   больше числа каналов входного изображения */
+	/* The channel number on which the point should be drawn can not be
+more than the number of channels of the input image */
 	if (bChan > pImage->bChannels)
 		_ERROR_EXIT_RES_(AWP_BADARG)
-	/*todo: значение якорсти рисуемой точки dValue не может выходить за допустимый диапазон, определяемый 
-	выбранным типом изображения*/
+	/*todo: The value of the anchor of the drawn point dValue can not exceed the allowable range defined by
+selected image type*/
 	switch (pImage->dwType)
 	{
 	case AWP_BYTE:

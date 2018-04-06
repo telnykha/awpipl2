@@ -15,7 +15,7 @@
 #endif
 #include "_awpipl.h"
 
-/*копирование одного изображения в другое
+/*copying one image to another
 */
 AWPRESULT awpCopyImage(const awpImage* pSrcImage, awpImage** ppDstImage)
 {
@@ -39,7 +39,7 @@ AWPRESULT awpCopyImage(const awpImage* pSrcImage, awpImage** ppDstImage)
 CLEANUP:
     return res;
 }
-/*быстрое копирование изображения в подготовленную память pDstImage
+/*Quick copying an image into prepared memory pDstImage
 */
 AWPRESULT awpFastCopyImage(const awpImage* pSrcImage, awpImage* pDstImage)
 {
@@ -62,7 +62,7 @@ AWPRESULT awpFastCopyImage(const awpImage* pSrcImage, awpImage* pDstImage)
 CLEANUP:
     return res;
 }
-/*коприрование прямоугольной оласти одного изображения в другое 
+/*Copying a rectangular image of one image to another
 */
 AWPRESULT awpCopyRect (const awpImage* pSrcImage, awpImage** ppDstImage, const awpRect* pRect)
 {
@@ -1060,19 +1060,19 @@ CLEANUP:
     return res;
 }
 /*
-	коприрование участка изображения pSrcImage в изображение pDstImage.
-	размеры и положение учатка задается параметром pRect
+Copying of the pSrcImage image portion into the pDstImage image.
+the size and position of the teacher is specified by the parameter pRect
 */
 AWPRESULT awpCopyRectSize(const awpImage* pSrcImage, awpImage* pDstImage, const awpRect* pRect)
 {
 
-	// локальные переменные 
-	float x0,y0; // левый верхний угол откуда копируется изображение 
-	float w1,h1; // размеры прямоугольника для копирования
-	float w,h;   // размеры изображения, в которое копируются пиксели исходного изображения 
-	float alfa, beta; // коэф. масштабирования 
-	int   x,y;  // координаты точки на результирующем изображении
-	int   x1,y1; // координаты точки на исходном изображении 
+	// local variables
+	float x0,y0; // left top corner from where the image is copied 
+	float w1,h1; // the size of the rectangle to copy
+	float w,h;   // The dimensions of the image into which the pixels of the original image are copied
+	float alfa, beta; // coefficient. scaling
+	int   x,y;  // the coordinates of the point in the resulting image
+	int   x1,y1; // coordinates of the point on the original image
     AWPINT iImageType;
     AWPINT PixelSize;
 
@@ -1085,7 +1085,7 @@ AWPRESULT awpCopyRectSize(const awpImage* pSrcImage, awpImage* pDstImage, const 
 	if (pSrcImage == NULL || pDstImage == NULL || pRect == NULL)
 		_ERROR_EXIT_RES_ (AWP_BADARG)
 
-	// проверка аргументов
+
 	_CHECK_RESULT_((res = awpCheckImage(pSrcImage)))
     _CHECK_RESULT_((res = awpCheckImage(pDstImage)))
 	_CHECK_RESULT_((res = awpCheckRect(pRect)))
@@ -1119,7 +1119,7 @@ AWPRESULT awpCopyRectSize(const awpImage* pSrcImage, awpImage* pDstImage, const 
         }
     }
 
-	// инициализация
+
 	dst0 = (AWPBYTE*)(pDstImage)->pPixels;
     src0 = (AWPBYTE*)pSrcImage->pPixels;
 	dst = NULL;
@@ -1134,7 +1134,7 @@ AWPRESULT awpCopyRectSize(const awpImage* pSrcImage, awpImage* pDstImage, const 
 	alfa = w1 / w;
 	beta = h1 / h;
 	
-	// копирование 
+
 	for (y = 0; y < pDstImage->sSizeY; y++)
 	{
 		y1 = (int)floor(beta*y + y0 +0.5);

@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "_awpipl.h"
 //---------------------------------------------------------------------------
 AWPRESULT awpCameraHorizontalView(awpCamera* pCamera, double* Value)

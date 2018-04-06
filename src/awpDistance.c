@@ -11,7 +11,6 @@
 */
 
 #include "_awpipl.h"
-#include <math.h>
 
 #define __AWP_L1__(u) \
 {\

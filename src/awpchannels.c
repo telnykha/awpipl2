@@ -118,7 +118,7 @@ CLEANUP:
 		
 
 /*
-	Вставляет канал номер bOptions в изображение pImage
+	Inserts the channel number bOptions into the image pImage
 
 */
 AWPRESULT awpPutChannel(awpImage* pImage, const awpImage* pChannel, const AWPBYTE bIndex)

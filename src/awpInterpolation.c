@@ -1,9 +1,8 @@
-//---------------------------------------------------------------------------
-#include "_awpipl.h"
-//#include <math.h>
 
-// макрос, выполняющий интерполяцию в направлении оси х вне зависимости от
-// типа изображения.
+#include "_awpipl.h"
+
+//A macro that performs interpolation in the x - direction, regardless of
+//type of image.
 
 #define _AWP_X_INTERPOLATION_(type)\
 {   AWPBYTE i = 0;\
@@ -24,8 +23,8 @@
     }}\
 
 
-// макрос, выполняющий интерполяцию в направлении оси y вне зависимости от
-// типа изображения.
+//A macro that performs interpolation in the y - direction, regardless of
+//type of image.
 
 #define _AWP_Y_INTERPOLATION_(type)\
 {   AWPBYTE i = 0;\
@@ -45,7 +44,7 @@
           d[i] =  f1*bp1[i] + f2*bp2[i];\
     }}\
 
-//без интерполяции
+// without interpolation
 #define _AWP_WITHOUT_INTERPOLATION_(type)\
 {   AWPBYTE i = 0;\
 	AWPDOUBLE *d;\
@@ -56,8 +55,8 @@
     {\
           d[i] =  b[(AWPINT)((p.X + p.Y*src->sSizeX)*src->bChannels)];\
     }}\
-// выполянет интерполяцию по оси х между двумя точками p1 и p2 в точке p
-// результат записывается в переменную res в зависимости от типа изображения.
+// interpolate the x-axis interpolation between two points p1 and p2 at the point p
+// the result is written to the res variable, depending on the type of image.
 
 static  void _awpXInterpoalation(awpImage* src, awp2DPoint p1, awp2DPoint p2, awp2DPoint p, awpImage* res)
 {
@@ -122,8 +121,8 @@ static  void _awpWithoutInterpoalation(awpImage* src, awp2DPoint p, awpImage* re
     }
 }
 
-// выполянет интерполяцию по оси y между двумя точками p1 и p2 в точке p
-// результат записывается в переменную res в зависимости от типа изображения.
+// interpolate y interpolation between two points p1 and p2 at point p
+// the result is written to the res variable, depending on the type of image.
 
 static  void _awpYInterpoalation(awpImage* img1, awp2DPoint p1, awpImage* img2, awp2DPoint p2, awp2DPoint p, awpImage* res)
 {
@@ -146,23 +145,23 @@ static  void _awpYInterpoalation(awpImage* img1, awp2DPoint p1, awpImage* img2, 
 //---------------------------------------------------------------------------
 AWPRESULT awpBilinearInterpolation (awpImage* src, awp2DPoint* p, awpImage* dst)
 {
-    //внутренние переменные
+	// internal variables
     awp2DPoint pp[6];
     awpImage* I4 = NULL;
     awpImage* I5 = NULL;
 
-    // проверяем допустимость аргументов.
+	// check the validity of the arguments.
     if (src == NULL || p == NULL || dst == NULL)
         return AWP_BADARG;
-    // значение интесивности в интерполируемой точке p всегда имеет тип
-    // AWPDOUBLE, поэтому аргумент dst должен иметь тип AWPDOUBLE
+	// the intensity value in the interpolated point p is always of the type
+	// AWPDOUBLE, so the argument dst must be of type AWPDOUBLE
     if (dst->dwType != AWP_DOUBLE)
         return AWP_BADARG;
-    // число каналов исходного  изображения должно быть равно ширине
-    // изображения - результата.
+	// the number of channels of the original image should be equal to the width
+	// image - result.
     if (src->bChannels != dst->sSizeX)
         return AWP_BADARG;
-    // число каналов результирующего изображения должно быть равно 1
+	// the number of channels of the resulting image must be 1
     if (dst->bChannels != 1)
         return AWP_BADARG;
     // точка должна лежать внутри изображения целиком.
@@ -171,7 +170,7 @@ AWPRESULT awpBilinearInterpolation (awpImage* src, awp2DPoint* p, awpImage* dst)
 
     memset(pp, 0, sizeof(pp));
 
-    //находим координаты окружающих точек, включая вспомогательные
+	// find the coordinates of the surrounding points, including auxiliary
     pp[0].X = floor(p->X);
     pp[0].Y = floor(p->Y);
 
@@ -190,19 +189,6 @@ AWPRESULT awpBilinearInterpolation (awpImage* src, awp2DPoint* p, awpImage* dst)
     pp[5].X = p->X;
     pp[5].Y = ceil(p->Y);
 
-    //// создадим буферы для хранения промежуточных результатов
-    //awpCreateImage(&I4, src->bChannels, 1, 1, AWP_DOUBLE);
-    //awpCreateImage(&I5, src->bChannels, 1, 1, AWP_DOUBLE);
-
-    //// выполняем линейную интерполяцию для точек pp[5] pp[4]
-    //_awpXInterpoalation(src, pp[1], pp[0], pp[4], I4);
-    //_awpXInterpoalation(src, pp[3], pp[2], pp[5], I5);
-    //// выполяем линейную интерполяцию для точки p
-    //_awpYInterpoalation(I5, pp[5], I4, pp[4], *p, dst);
-
-    //awpReleaseImage(&I4);
-    //awpReleaseImage(&I5);
-
 	if( floor(p->X) == ceil(p->X) && floor(p->Y) == ceil(p->Y) )
 	{
 		_awpWithoutInterpoalation(src, *p, dst);
@@ -215,13 +201,13 @@ AWPRESULT awpBilinearInterpolation (awpImage* src, awp2DPoint* p, awpImage* dst)
 		_awpXInterpoalation(src, pp[3], pp[2], *p, dst);
 	else
 	{
-		// создадим буферы для хранения промежуточных результатов
+		// create buffers to store intermediate results
 		awpCreateImage(&I4, src->bChannels, 1, 1, AWP_DOUBLE);
 		awpCreateImage(&I5, src->bChannels, 1, 1, AWP_DOUBLE);
-		// выполняем линейную интерполяцию для точек pp[5] pp[4]
+		// perform linear interpolation for points pp [5] pp [4]
 		_awpXInterpoalation(src, pp[1], pp[0], pp[4], I4);
 		_awpXInterpoalation(src, pp[3], pp[2], pp[5], I5);
-		// выполяем линейную интерполяцию для точки p
+		// execute linear interpolation for the point p
 		_awpYInterpoalation(I5, pp[5], I4, pp[4], *p, dst);
 		awpReleaseImage(&I4);
 		awpReleaseImage(&I5);
@@ -229,4 +215,3 @@ AWPRESULT awpBilinearInterpolation (awpImage* src, awp2DPoint* p, awpImage* dst)
     return AWP_OK;
 }
 
-//#pragma package(smart_init)

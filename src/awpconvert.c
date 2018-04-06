@@ -6,7 +6,7 @@
 #include <limits.h>
 
 /*
-	преобразование исходного изображения pSrc в изображение pDst
+	converting the original pSrc image to the pDst image
 	
 */
 AWPRESULT awpConvert2(awpImage* pSrc, awpImage* pDst, long lOptions)
@@ -18,9 +18,9 @@ CLEANUP:
 }
 
 /*
-	преобразование исходного изображения в изображение другого типа.
-	в случае совпадения типов выполняется копирование изображения. 
-	Функция создает преобразованное изображение с использованием awpCreateImage
+converting the original image into another type of image.
+if the types match, the image is copied.
+The function creates a converted image using awpCreateImage
 */
 AWPRESULT awpConvert1(awpImage* pImage, awpImage** ppImage, long lOptions)
 {
@@ -579,18 +579,18 @@ AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPre
     _CHECK_RESULT_((res = awpCheckImage(Image)))
     _CHECK_RESULT_((res = awpCheckImage(pPreset)))
 
-    /*изображение Image должно иметь 3 байта на точку
-    для получения изображения ppProb используются первые
-    два канала Image*/
+    /*Image must have 3 bytes per point
+     To get the ppProb image, use the
+     two channels Image*/
     if (Image->dwType != AWP_BYTE && Image->bChannels != 3)
     {
         res = AWP_BADARG;
         _ERR_EXIT_
     }
 
-    /*изображение pPreset должно иметь тип AWP_DOUBLE, содержать
-    один канал данных и быть нормированным на единицу, размеры
-    изображения pPreset должны быть 256 х 256*/
+    /*pPreset should be of type AWP_DOUBLE, contain
+     one data channel and be normalized to one, the dimensions
+     pPreset images should be 256 x 256*/
     if (pPreset->dwType != AWP_DOUBLE || pPreset->bChannels != 1
     && pPreset->sSizeX != 256 || pPreset->sSizeY != 256)
     {
@@ -598,7 +598,7 @@ AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPre
         _ERR_EXIT_
     }
 
-    /*получим указатели на пиксели изображения pPreset*/
+    /*we get pointers to pixels of the image pPreset*/
     dblPresetPix = (AWPDOUBLE*)pPreset->pPixels;
     max_preset = dblPresetPix[0];
     min_preset = dblPresetPix[0];
@@ -611,17 +611,17 @@ AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPre
     }
     if (max_preset - min_preset == 0)
     {
-        /*Гистограмма должна быть ненулевой*/
+        /*The histogram must be non-zero*/
         res = AWP_BADARG;
         _ERR_EXIT_
 
     }
-    /*создадим изображение для BackProjection*/
+    /*create an image for BackProjection*/
     _CHECK_RESULT_((res = awpCreateImage(ppProb, Image->sSizeX, Image->sSizeY, 1, AWP_BYTE)))
 
     cPix = (awpColor*)Image->pPixels;
     bPix = (AWPBYTE*)(*ppProb)->pPixels;
-    /*Получим обратную проекцию*/
+
     for (i = 0; i < Image->sSizeX*Image->sSizeY;i++)
     {
        h = cPix[i].bRed;

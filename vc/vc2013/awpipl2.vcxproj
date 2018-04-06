@@ -229,6 +229,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\awpCameraUnit.c" />
     <ClCompile Include="..\..\src\awpColor.c" />
+    <ClCompile Include="..\..\src\awpDetectorUnit.c" />
     <ClCompile Include="..\..\src\awpDistance.c" />
     <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c" />
     <ClCompile Include="..\..\src\awpInterpolation.c" />
@@ -301,11 +302,6 @@
     <ClInclude Include="..\..\include\awperror.h" />
     <ClInclude Include="..\..\include\_include\awpio.h" />
     <ClInclude Include="..\..\include\awpipl.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\jpeg-6b\vc\vc2010\JPEGLIB.vcxproj">
-      <Project>{d22f6666-746d-4436-8ead-481c2c37af55}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

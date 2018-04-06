@@ -564,14 +564,12 @@ static void ownFindNearXlY1(awpStrokeObj* s0, AWPINT index, ownNearSt*  s_near)
     AWPINT	  Min, Min1;
     s_near->IsFound = FALSE;
 
-    s_near->x = -1;		// \CC\C5\D7\C1\D1 \CB\CF\CF\D2\C4\C9\CE\C1\D4\C1 | \C4\CC\D1 \D7\C1\D2\C9\C1\CE\D4\C1, \CB\CF\C7\C4\C1     +----+
-    s_near->index = -1;	// \C9\CE\C4\C5\CB\D3			|							+----------+
-    // \D4.\C5. \DB\D4\D2\C9\C8, \CE\C1\C9\C2\CF\CC\C5\C5 \C2\CC\C9\DA\CB\C9\CA \D0\CF \CC\C5\D7\CF\CA \CB\CF\CF\D2\C4\C9\CE\C1\D4\C5
-    s_near->x1=-1;		// \D0\D2\C1\D7\C1\D1 \CB\CF\CF\D2\C4\C9\CE\C1\D4\C1	| \C4\CC\D1 \D7\C1\D2\C9\C1\CE\D4\C1, \CB\CF\C7\C4\C1	         +---+
-    s_near->index1=-1;	// \C9\CE\C4\C5\CB\D3				|						+-----------+
-    // \D4.\C5. \DB\D4\D2\C9\C8, \CE\C1\C9\C2\CF\CC\C5\C5 \C2\CC\C9\DA\CB\C9\CA \D0\CF \D0\D2\C1\D7\CF\CA \CB\CF\CF\D2\C4\C9\CE\C1\D4\C5
-    Min = 100000; 		// \CE\C1\DE\C1\CC\D8\CE\D9\CA \D0\CF\D2\CF\C7 \D2\C1\D3\D3\D4\CF\D1\CE\C9\D1 \D0\CF\C9\D3\CB\C1 \D0\CF \CC\C5\D7\CF\CA \CB\CF\CF\D2\C4\C9\CE\C1\D4\C5
-    Min1 = 100000; 		// ... \D0\CF \D0\D2\C1\D7\CF\CA \CB\CF\CF\D2\C4\C9\CE\C1\D4\C5
+    s_near->x = -1;		
+    s_near->index = -1;	
+    s_near->x1=-1;		
+    s_near->index1=-1;
+    Min = 100000; 	
+    Min1 = 100000; 	
 
     if (index == 0) return;
     i= index - 1;
@@ -584,7 +582,6 @@ static void ownFindNearXlY1(awpStrokeObj* s0, AWPINT index, ownNearSt*  s_near)
         {
             s_near->IsFound = TRUE;
             Min  = abs(s0->strokes[index].xl - s0->strokes[i].xl);
-            // \C2\CC\C9\D6\C1\CA\DB\C9\CA \CC\C5\D7\D9\CA
             s_near->x  = s0->strokes[i].xl;
             s_near->index = i;
         }
@@ -628,15 +625,12 @@ AWPRESULT awpGetObjCountour(const awpStrokeObj* s, awpContour* c)
 
     qsort((void*)s->strokes, s->Num, sizeof(awpStroke), compare_str);
 
-    /*\F0\D2\C5\CF\C2\D2\C1\DA\D5\C5\CD \CD\C1\D3\D3\C9\D7 \DB\D4\D2\C9\C8\CF\D7 \D7 \CD\C1\D3\D3\C9\D7 \DB\D4\D2\C9\C8\CF\D7 \D3 \C1\D4\D2\C9\C2\D5\D4\C1\CD\C9*/
     s_attr = (ownStrokeAttr*)malloc(s->Num*sizeof(ownStrokeAttr));
     for (i = 0; i < (AWPINT)s->Num; i++)
     {
         s_attr[i].y = s->strokes[i].y;
-        /*\D2\C1\D3\D3\CD\C1\D4\D2\C9\D7\C1\C5\CD \D0\D2\C1\D7\D9\CA \CB\CF\CE\C5\C3 \DB\D4\D2\C9\C8\C1*/
         ownFindNearXrY0((awpStrokeObj*)s, i, &nXrY0);
         ownFindNearXrY1((awpStrokeObj*)s, i, &nXrY1);
-        /*\D2\C5\DB\C5\CE\C9\C5*/
         s_attr[i].xr = s->strokes[i].xr;
         if (nXrY0.IsFound == FALSE && nXrY1.IsFound == FALSE)
         {
@@ -690,10 +684,8 @@ AWPRESULT awpGetObjCountour(const awpStrokeObj* s, awpContour* c)
                 }
             }
         }
-        /*\D2\C1\D3\D3\CD\C1\D4\D2\C9\D7\C1\C5\CD \CC\C5\D7\D9\CA \CB\CF\CE\C5\C3 \DB\D4\D2\C9\C8\C1*/
         ownFindNearXlY0((awpStrokeObj*)s, i, &nXlY0);
         ownFindNearXlY1((awpStrokeObj*)s, i, &nXlY1);
-        /*\D2\C5\DB\C5\CE\C9\C5*/
         s_attr[i].xl = s->strokes[i].xl;
         if (nXlY0.IsFound == FALSE && nXlY1.IsFound == FALSE)
         {
@@ -719,8 +711,7 @@ AWPRESULT awpGetObjCountour(const awpStrokeObj* s, awpContour* c)
             }
         }
         else
-        {	// \CE\C1\CA\C4\C5\CE \C5\C4\C9\CE\D3\D4\D7\C5\CE\CE\D9\CA \D0\C5\D2\C5\CB\D2\D9\D7\C1\C0\DD\C9\CA \DB\D4\D2\C9\C8
-
+        {	
             if (nXlY1.index == nXlY1.index1)
             {
                 if (nXlY1.x <= nXlY0.x)
@@ -751,7 +742,6 @@ AWPRESULT awpGetObjCountour(const awpStrokeObj* s, awpContour* c)
 
     }
 
-    /*\D0\D2\C5\CF\C2\D2\C1\DA\D5\C5\CD \CD\C1\D3\D3\C9\D7 \C1\D4\D4\D2\C9\C2\D5\D4\CF\D7 \D7 \CB\CF\CE\D4\D5\D2*/
     c->Points = (awpPoint*)malloc(2*s->Num*sizeof(awpPoint));
     k = 0; UP = TRUE; i= 0; //F = TRUE;
     Next = s_attr[0];

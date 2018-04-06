@@ -1,10 +1,5 @@
-//---------------------------------------------------------------------------
-
-
-#pragma hdrstop
-
 #include "_awpipl.h"
-#include <math.h>
+
 static  AWPDOUBLE CalcSum(AWPDOUBLE* pix, AWPINT x, AWPINT y, AWPINT w, AWPINT h, AWPINT ww )
 {
     AWPDOUBLE* p = pix + x - 1 + (y - 1)*ww;

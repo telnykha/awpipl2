@@ -15,7 +15,7 @@ static AWPINT mymin(AWPINT a, AWPINT b){
 	if (a < b) return a;
 	return b;
 }
-// функция принадлежности точки области  // не используется
+// the function of belonging to the point of the domain // is not used
 static AWPBOOL IsPixelBelongArea(AWPINT NumPoints, awpPoint* P, AWPINT x, AWPINT y){
 	AWPINT Count, i, j, m, x0;
 	AWPBOOL F;
@@ -134,13 +134,13 @@ CLEANUP:
 AWPRESULT awpGetContourRect(const awpContour* pContour, awpRect* rect)
 {
     AWPRESULT res = AWP_OK;
-    // инициализируем переменные
+    
     AWPWORD min_x = 0;
     AWPWORD max_x = 0;
     AWPWORD min_y = 0;
     AWPWORD max_y = 0;
     AWPDWORD i = 0;
-    //проверим аргументы
+
     if (pContour == NULL)
         _ERROR_EXIT_RES_(AWP_BADARG);
     if (pContour->NumPoints <= 0)
@@ -151,7 +151,7 @@ AWPRESULT awpGetContourRect(const awpContour* pContour, awpRect* rect)
     min_y = pContour->Points[0].Y;
     max_x = min_x;
     max_y = min_y;
-    // выполним поиск
+
     for (i = 1; i < pContour->NumPoints; i++)
     {
         if (min_x > pContour->Points[i].X)
@@ -163,7 +163,7 @@ AWPRESULT awpGetContourRect(const awpContour* pContour, awpRect* rect)
         if (max_y < pContour->Points[i].Y)
             max_y = pContour->Points[i].Y;
     }
-    // сохраним результат
+
     rect->left = min_x;
     rect->top  = min_y;
     rect->right = max_x;
@@ -185,7 +185,7 @@ AWPRESULT awpIsPointInContour(const awpContour* pContour, const awpPoint* p, AWP
         _ERROR_EXIT_RES_(AWP_BADARG);
     if (result == NULL)
         _ERROR_EXIT_RES_(AWP_BADARG);
-    /*важное замечание. Начальная и конечная точки контура должны совпадать*/
+	/*important note.The start and end points of the path must match */
     *result = IsPixelBelongArea(pContour->NumPoints, pContour->Points, p->X, p->Y);
 CLEANUP:
     return res;
@@ -391,7 +391,7 @@ AWPRESULT awpIsPointIn2DContour(const awp2DContour* pContour, const awp2DPoint* 
 		_ERROR_EXIT_RES_(AWP_BADARG);
 	if (result == NULL)
 		_ERROR_EXIT_RES_(AWP_BADARG);
-	/*важное замечание. Начальная и конечная точки контура должны совпадать*/
+	/*important note.The start and end points of the path must match */
 	*result = IsPixelBelongAread(pContour->NumPoints, pContour->Points, p->X, p->Y);
 CLEANUP:
 	return res;

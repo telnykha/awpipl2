@@ -213,7 +213,14 @@ AWPRESULT awpConvertV2(awpImage* Image, long lOptions);
 AWPRESULT __awpMaskConvolution(awpImage* pSrcImage,awpImage* pMask);
 AWPRESULT awpMaskConvolutionDbl(awpImage* pSrcImage,awpImage* pMask, awpImage** pDstImage);
 void _awpRGBtoHSV(AWPBYTE rr,AWPBYTE gg,AWPBYTE bb,AWPFLOAT *h, AWPFLOAT *s, AWPFLOAT *l);
-
+/*
+the awpIntegralGrid function takes an integral image pImage
+     output - result image pDst of type AWP_DOUBLE
+	      which contains the values of the intensities in the grid cells,
+		       which are specified by the size of the resulting image and input
+			        rectangle pRect
+					*/
+AWPRESULT awpIntegralGrid(const awpImage* pImage, const awpRect* pRect, awpImage* pDst);
 #ifdef __cplusplus
 }
 #endif
