@@ -1911,7 +1911,7 @@ typedef double            AWPDOUBLE;
 /** @}*/ /* end of drawinggroup  */
 
 
-/** @defgroup distancegroup distances between image functions
+/** @defgroup distancegroup Distances between image functions
 *   @{
 */
 	/**
@@ -1949,7 +1949,7 @@ AWPRESULT awpDistance(awpImage* src1, awpImage* src2, AWPBYTE options, AWPDOUBLE
 AWPRESULT awpGridDistance(awpImage* src1, awpImage* src2, awpImage* weight, AWPBYTE options, AWPDOUBLE* res);
 /** @} */ /* end of distancegroup  */
 
-/** @defgroup cameragroup single camera geometry functions
+/** @defgroup cameragroup Single camera geometry functions
 *   @{
 */
 /**
@@ -2079,7 +2079,7 @@ AWPRESULT awpImageToScenePoint(awpCamera* pCamera, awpImage* pImage, AWPDOUBLE H
 /** @} */ /* end of cameragroup  */
 
 
-/** @defgroup detectorgroup object detection related functions
+/** @defgroup detectorgroup Object detection related functions
 *   @{
 */
 AWPRESULT awpScanImage(awpImage* pImage, awpRect* pRoi, awpScanner* pScanner, AWPINT* num, awpDetectItem** ppItems);
