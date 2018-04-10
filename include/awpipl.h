@@ -1,16 +1,12 @@
-﻿/*
+﻿/*M
 //
-//  RCS:
-//      $Source:   awpipl.h,v $
-//      $Revision: 1.56 $
-//      $Date:
-//                           
-//    Purpose: AWPIPL header file 
-//    Contents: awpipl main header file                                                
-//    Author : Alex A.Telnykh 
+//    awpipl2 image processing and image analysis library
+//    Purpose: AWPIPL header file
+//    Author : Alex A.Telnykh
 //    CoAutors: Eugeny Eremin, Andrey Kovalchuck, Youry Yakhno, Olga Shemagina
-//    Copyright (c) 2004-2017 ALT-soft.net 
-*/ 
+//    Copyright (c) 2004-2018 ALT-soft.net
+//
+//M*/
 
 
 	/** @defgroup datastructures Graphic data structures 
@@ -262,48 +258,6 @@ typedef double            AWPDOUBLE;
         /** blue channel */
         AWPBYTE bBlue;
     } awpRGBColor;
-
-	/**
-	\struct ColorHSTDef
-	\brief Histogramm from color image
-	*/
-	typedef struct ColorHSTDef
-	{
-		/** red channel */
-		AWPDOUBLE RedChannel[256];
-		/** green channel */
-		AWPDOUBLE GreenChannel[256];
-		/** blue channel */
-		AWPDOUBLE BlueChannel[256];
-	}ColorHST;
-
-	/**
-	\struct awpStatDataDef Statictics result
-	\brief Contain result statistics processing pictures
-	*/
-	typedef struct awpStatDataDef
-	{
-		/** red channel */
-		AWPDOUBLE dRed;
-		/** green channel */
-		AWPDOUBLE dGreen;
-		/** blue channel */
-		AWPDOUBLE dBlue;
-		/** bright channel */
-		AWPDOUBLE dBright;
-	}awpStat;
-    
-	/**
-	\struct awpHistogrammDef Historgramm
-	\brief Contain histogramm image
-	*/
-	typedef struct awpHistogrammDef
-	{
-		AWPDOUBLE    Intensity[256];
-                AWPINT       NumChannels;
-                ColorHST  ColorData;
-	} awpHistogramm;
-
 
     /**
     \struct awpPoint awpipl.h
@@ -1467,13 +1421,8 @@ typedef double            AWPDOUBLE;
 	*/
 
     /*Histogram functions */
-	/**
-	*	\brief Calculate color histogram
-	*	\param Image pointer to the source image
-	*	\param Histogramm pointer to the resulting histogram
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetHistogramm(const awpImage* Image, awpHistogramm* Histogramm);
+	
+	AWPRESULT awpGetHst(awpImage* pImage, awpImage** pHst, AWPINT options);
 
     /*2D Histogramm functions */
 	/**
@@ -1489,47 +1438,6 @@ typedef double            AWPDOUBLE;
     AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, AWPBYTE up, AWPINT needToConvert);
 
 
-	/**
-	*	\brief Calculate maximum value of histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result maximum value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetMax(const awpHistogramm* Histogramm, awpStat* Result);
-
-	/**
-	*	\brief Calculate minimum value of histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result minimum value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetMin(const awpHistogramm* Histogramm, awpStat* Result);
-
-	/**
-	*	\brief Calculate average value of the histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result average value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetAverage(const awpHistogramm* Histogramm, awpStat* Result);
-
-	/**
-	*	\brief Calculate dispersion value of the histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result dispersion value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetDispersion(const awpHistogramm* Histogramm, awpStat* Result);
-
-	/**
-	*	\brief Calculate median value of the histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result median value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetMedian(const awpHistogramm* Histogramm, awpStat* Result);
-
-
 
     /*Histogramm equalize function*/
 	/**
@@ -1538,9 +1446,6 @@ typedef double            AWPDOUBLE;
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
     AWPRESULT awpHistogrammEqualize(awpImage* PImage);
-
-	/* TODO: add description */
-	AWPRESULT awpBackProjection(awpImage* Image, awpImage** ppProb, awpHistogramm* Histogramm);
 	AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v);
     /** @}	end  histogroup */
 

@@ -1,17 +1,263 @@
-/*
+/*M
 //
-//  RCS:
-//      $Source: /home/cvs/awp/imageproc/awpipl-v2/src/awpBaseAnalysis.c,v $
-//      $Revision: 1.6 $
-//      $Date: 1999
+//      awpipl2 image processing and image analysis library 
+//		File: awpBaseAnalysis.c
+//		Purpose: histogramm image analysis implementation 
 //
-//    Purpose: AWPIPL source file
-//    Contents: source code for histogram analysis
-//    Authors : Alexander Telnykh
-*/
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
 #include "_awpipl.h"
 #pragma warning(disable: 4996)
 
+/*
+we assume that AWP_BYTE images has a min_value = 0 and max_value = 255. 
+step between bins defined as 256 / hst->sSizeX
+hst->sSizeX cannot be more than 256
+*/
+static AWPRESULT  _awpGetHstByte(awpImage* pImage, awpImage** ppHst)
+{
+	AWPRESULT  res = AWP_OK;
+	awpImage*  pHst = *ppHst;
+	AWPDOUBLE  hst_step = 256. / (AWPDOUBLE)pHst->sSizeX;
+
+	AWPDOUBLE* pix  = _AWP_BPIX_(pHst, AWPDOUBLE);
+	AWPBYTE*   spix = _AWP_BPIX_(pImage, AWPBYTE);
+
+	AWPWORD    i = 0;
+	AWPBYTE    c = 0;
+	AWPWORD    idx = 0;
+	AWPWORD    x = 0;
+	AWPWORD    y = 0;
+
+	/*setup histogramm value axis*/
+	for (i = 0; i < pHst->sSizeX; i++)
+	{
+		for (c = 0; c < pHst->bChannels; c++)
+		{
+			pix[i*pHst->bChannels + c] = floor(i*hst_step + 0.5);
+		}
+	}
+	/*calc histogramm*/
+	for (y = 0; y < pImage->sSizeY; y++)
+	{
+		for (x = 0; x < pImage->sSizeX; x++)
+		{
+			for (c = 0; c < pImage->bChannels; c++)
+			{
+				idx = (AWPBYTE)floor(spix[y*pImage->bChannels*pImage->sSizeX + x*pImage->bChannels + c] + 0.5);
+				pix[pHst->sSizeX*pHst->bChannels + idx*pHst->bChannels + c]++;
+			}
+		}
+	}
+
+CLEANUP:
+	return res;
+}
+#define _CALC_IDX_(v)\
+	idx = (AWPBYTE)floor(v[y*pImage->bChannels*pImage->sSizeX + x*pImage->bChannels + c] + 0.5 - image_min[c]);
+
+
+/*
+for other datatypes we use histogramm between min value on the channel data 
+and max value. num bins defined as histogramm width
+*/
+static AWPRESULT _awpGetHst(awpImage* pImage, awpImage** ppHst)
+{
+	AWPRESULT  res = AWP_OK;
+	awpImage*  pHst = *ppHst;
+	AWPDOUBLE*       image_min = NULL;
+	AWPDOUBLE*       image_max = NULL;
+	AWPDOUBLE*		 hst_step = NULL;
+	AWPWORD    i = 0;
+	AWPBYTE    c = 0;
+	AWPWORD    idx = 0;
+	AWPWORD    x = 0;
+	AWPWORD    y = 0;
+	AWPDOUBLE* pix = _AWP_BPIX_(pHst, AWPDOUBLE);
+	AWPSHORT*  spix = NULL;
+	AWPFLOAT*  fpix = NULL;
+	AWPDOUBLE* dpix = NULL;
+
+	/*range of signal variation*/
+	if (res = awpMinMax(pImage, &image_min, &image_max))
+	{
+		if (res != AWP_OK)
+			_ERR_EXIT_
+	}
+
+	/*setup width step for each channel*/
+	hst_step = (AWPDOUBLE*)malloc(pImage->bChannels*sizeof(AWPDOUBLE));
+	if (hst_step == NULL)
+		_ERROR_EXIT_RES_(AWP_NOTENOUGH_MEM)
+
+		for (i = 0; i < pImage->bChannels; i++)
+			hst_step[i] = (image_max[i] - image_min[i]) / pHst->sSizeX;
+
+	/*setup histogramm value axis*/
+	for (i = 0; i < pHst->sSizeX; i++)
+	{
+		for (c = 0; c < pHst->bChannels; c++)
+		{
+			pix[i*pHst->bChannels + c] = floor(i*hst_step[c] + 0.5);
+		}
+	}
+	/*calc histogramm*/
+	switch (pImage->dwType)
+	{
+	case AWP_SHORT:
+		spix = _AWP_BPIX_(pImage, AWPSHORT)
+			break;
+	case AWP_FLOAT:
+		fpix = _AWP_BPIX_(pImage, AWPFLOAT)
+			break;
+	case AWP_DOUBLE:
+		dpix = _AWP_BPIX_(pImage, AWPDOUBLE)
+			break;
+	}
+	for (y = 0; y < pImage->sSizeY; y++)
+	{
+		for (x = 0; x < pImage->sSizeX; x++)
+		{
+			for (c = 0; c < pImage->bChannels; c++)
+			{
+				switch (pImage->dwType)
+				{
+				case AWP_SHORT:
+					_CALC_IDX_(spix)
+						break;
+				case AWP_FLOAT:
+					_CALC_IDX_(fpix)
+						break;
+				case AWP_DOUBLE:
+					_CALC_IDX_(dpix)
+						break;
+				}
+				pix[pHst->sSizeX*pHst->bChannels + idx*pHst->bChannels + c]++;
+			}
+		}
+	}
+
+CLEANUP:
+	if (image_min != NULL)
+		free(image_min);
+	if (image_max != NULL)
+		free(image_max);
+	if (hst_step != NULL)
+		free(hst_step);
+	return res;
+}
+/*
+obtain image histogramm function
+image histogramm is stored in the awpImage with height = 2
+and has num channels as in the source image pImage
+first row of the histogramm image represents value of brightess
+second row - number of pixels of this brightess
+for AWP_BYTE images num bins in the histogramm should be less than 
+256 and more then 1. 
+for other image types num bins should be more 1. 
+*/
+AWPRESULT awpGetHst(awpImage* pImage, awpImage** ppHst, AWPINT options)
+{
+	AWPRESULT res  = AWP_OK;
+	awpImage* pHst = NULL;
+	if (awpCheckImage(pImage) != AWP_OK || ppHst == NULL)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+
+	if (*ppHst == NULL)
+	{
+		/*create image for histogramm. default image has 256 pin histogramm*/
+		if (awpCreateImage(ppHst, 256, 2, pImage->bChannels, AWP_DOUBLE) != AWP_OK)
+			_ERROR_EXIT_RES_(AWP_BADMEMORY)
+	}
+	else
+	{
+		/*check histogramm image*/
+		pHst = *ppHst; 
+		if (awpCheckImage(pHst) != AWP_OK)
+			_ERROR_EXIT_RES_(AWP_BADARG)
+
+		if (pHst->bChannels != pImage->bChannels || pHst->sSizeY != 2 || 
+			pHst->dwType != AWP_DOUBLE || pHst->sSizeX < 2)
+			_ERROR_EXIT_RES_(AWP_BADARG)
+	}
+
+	if (pImage->dwType == AWP_BYTE)
+	{
+		/*make histogramm for the 8-bit image*/
+		res = _awpGetHstByte(pImage, ppHst);
+	}
+	else
+	{
+		/*make histogramm for the  images of other datatypes*/
+		res = _awpGetHst(pImage, ppHst);
+	}
+
+CLEANUP:
+	return res;
+}
+
+#define _AWP_BASE_ANALYSIS_CHECK_HST_(v)\
+if (res = awpCheckImage(v) != AWP_OK)\
+	_ERR_EXIT_;\
+if (v->sSizeY != 2 || v->dwType != AWP_DOUBLE)\
+	_ERROR_EXIT_RES_(AWP_BADARG)\
+
+#define _AWP_BASE_ANALYSIS_CHECK_RESULT_(v)\
+if (res = awpCheckImage(v) != AWP_OK)\
+	_ERR_EXIT_;\
+if (v->sSizeX != 1 || v->sSizeY != 1)\
+	_ERROR_EXIT_RES_(AWP_BADARG)\
+if (v->dwType != AWP_DOUBLE)\
+	_ERROR_EXIT_RES_(AWP_BADARG)\
+
+/*
+find the k-th moment of the distribution pHst ans store them to the pRes 
+*/
+static AWPRESULT __awpHstMomemt(awpImage* pHst, awpImage* pMoment, AWPDOUBLE k)
+{
+	AWPRESULT res = AWP_OK;
+	AWPWORD	x = 0;
+	AWPBYTE c = 0;
+	AWPDOUBLE* hst		= NULL;
+	AWPDOUBLE* Moment	= NULL;
+
+	if (pHst == NULL || pMoment == NULL || k < 1 || k>3)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+
+	_AWP_BASE_ANALYSIS_CHECK_HST_(pHst);
+	_AWP_BASE_ANALYSIS_CHECK_RESULT_(pMoment);
+
+	for (x = 0; x < pHst->sSizeX; x++)
+	{
+		for (c = 0; c < pHst->bChannels; c++)
+		{
+			Moment[c] += (pow(x, k)*hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c]);
+		}
+	}
+
+CLEANUP:
+	return res;
+}
+
+/*
+find the mean over histogramm 
+*/
+AWPRESULT awpGetHstMean(awpImage* pHst, awpImage* pMean)
+{
+	AWPRESULT res = AWP_OK;
+
+	if (pHst == NULL || pMean == NULL)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+
+	_AWP_BASE_ANALYSIS_CHECK_HST_(pHst);
+	_AWP_BASE_ANALYSIS_CHECK_RESULT_(pMean);
+
+	if (res = __awpHstMomemt(pHst, pMean, 1) != AWP_OK)
+		_ERR_EXIT_
+
+CLEANUP:
+	return res;
+}
 // the function of calculating the initial moments of the distribution
 static void _awpMoment(awpHistogramm* hst, awpStat* r, AWPBYTE nOrder)
 {
@@ -64,45 +310,6 @@ static void _awpGetHstChannels(awpHistogramm* hst, AWPDOUBLE* rc,
 		bc[i] = hst->ColorData.BlueChannel[i];
 		ic[i] = hst->Intensity[i];
 	}
-}
-// accumulation of image histogram
-AWPRESULT awpGetHistogramm(const awpImage* Image, awpHistogramm* Histogramm)
-{
-	AWPINT i		= 0;
-	AWPINT count	= 0;
-	AWPBYTE* p		= NULL;
-	awpColor* c = NULL;
-	/*check image*/
-	AWPRESULT res = AWP_OK;
-	res = awpCheckImage(Image);
-	if (res != AWP_OK)
-        return res;
-
-	memset((void*)Histogramm, 0, sizeof(awpHistogramm));
-	count = Image->sSizeX*Image->sSizeY;
-	if (Image->dwType == AWP_BYTE && Image->bChannels == 1)
-	{
-		p = (AWPBYTE*)Image->pPixels;
-		for (i = 0; i < count; i++)
-			Histogramm->Intensity[p[i]]++;
-	}
-	else if (Image->dwType == AWP_BYTE && Image->bChannels == 3)
-	{
-		c = (awpColor*)Image->pPixels;
-		for (i = 0; i < count; i++)
-		{
-			Histogramm->ColorData.RedChannel[c[i].bRed]++;
-			Histogramm->ColorData.GreenChannel[c[i].bGreen]++;
-			Histogramm->ColorData.BlueChannel[c[i].bBlue]++;
-
-			Histogramm->Intensity[(c[i].bRed + c[i].bGreen + c[i].bBlue) / 3]++;
-		}
-
-	}
-	else
-		return AWP_NOTSUPPORT;
-
-	return AWP_OK;
 }
 
 AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, AWPBYTE up, AWPINT needToConvert)
@@ -161,72 +368,6 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
     return AWP_OK;
 }
 
-AWPRESULT awpGetMax(const awpHistogramm* Histogramm, awpStat* Result)
-{
-	AWPINT i = 0;
-	if (Histogramm == NULL)
-        return AWP_BADMEMORY;
-	if (Result == NULL)
-        return AWP_BADMEMORY;
-	
-	memset(Result, 0, sizeof(awpStat));
-
-
-	Result->dRed	= Histogramm->ColorData.RedChannel[0];
-	Result->dGreen	= Histogramm->ColorData.GreenChannel[0];
-	Result->dBlue	= Histogramm->ColorData.BlueChannel[0];
-	Result->dBright	= Histogramm->Intensity[0];
-
-	for (i = 1; i < 256; i++)
-	{
-		if (Result->dRed < Histogramm->ColorData.RedChannel[i])
-			Result->dRed = Histogramm->ColorData.RedChannel[i];
-
-		if (Result->dGreen < Histogramm->ColorData.GreenChannel[i])
-			Result->dGreen = Histogramm->ColorData.GreenChannel[i];
-
-		if (Result->dBlue < Histogramm->ColorData.BlueChannel[i])
-			Result->dBlue = Histogramm->ColorData.BlueChannel[i];
-
-		if (Result->dBright < Histogramm->Intensity[i])
-			Result->dBright = Histogramm->Intensity[i];
-	}
-	return AWP_OK;
-}
-
-AWPRESULT awpGetMin(const awpHistogramm* Histogramm, awpStat* Result)
-{
-	AWPINT i = 0;
-	if (Histogramm == NULL)
-        return AWP_BADMEMORY;
-	if (Result == NULL)
-        return AWP_BADMEMORY;
-
-
-	memset(Result, 0, sizeof(awpStat));
-
-
-	Result->dRed	= Histogramm->ColorData.RedChannel[0];
-	Result->dGreen	= Histogramm->ColorData.GreenChannel[0];
-	Result->dBlue	= Histogramm->ColorData.BlueChannel[0];
-	Result->dBright	= Histogramm->Intensity[0];
-
-	for (i = 1; i < 256; i++)
-	{
-		if (Result->dRed > Histogramm->ColorData.RedChannel[i])
-			Result->dRed = Histogramm->ColorData.RedChannel[i];
-
-		if (Result->dGreen > Histogramm->ColorData.GreenChannel[i])
-			Result->dGreen = Histogramm->ColorData.GreenChannel[i];
-
-		if (Result->dBlue > Histogramm->ColorData.BlueChannel[i])
-			Result->dBlue = Histogramm->ColorData.BlueChannel[i];
-
-		if (Result->dBright > Histogramm->Intensity[i])
-			Result->dBright = Histogramm->Intensity[i];
-	}
-	return AWP_OK;
-}
 
 AWPRESULT awpGetAverage(const awpHistogramm* Histogramm, awpStat* Result)
 {
@@ -455,57 +596,6 @@ AWPRESULT awpGetExcess(const awpHistogramm* Histogramm, awpStat* Result)
 	return AWP_OK;
 }
 
-AWPRESULT awpGetPixCount(const awpHistogramm* Histogramm, AWPINT* count)
-{
-	AWPINT i;
-	if (Histogramm == NULL)
-        return AWP_BADMEMORY;
-
-	*count = 0;
-	for (i= 0; i < 256; i++)
-		*count += (AWPINT)Histogramm->Intensity[i];
-
-	return AWP_OK;
-}
-
-
-// Added by Radzhabova Julia
-// Normalization of histogramm
-AWPRESULT awpHistNormalization(awpHistogramm* Histogramm)
-{
-	AWPINT i = 0;
-	awpStat minH,maxH;
-
-	if (Histogramm == NULL)
-        return AWP_BADMEMORY;
-
-	awpGetMax(Histogramm, &maxH);
-	awpGetMin(Histogramm, &minH);
-
-
-	for (i=0; i< 256; i++)
-	{
-		if ((maxH.dBright - minH.dBright) > 0)
-		{
-			Histogramm->Intensity[i] /= (maxH.dBright - minH.dBright);
-		}
-		if ((maxH.dRed - minH.dRed) > 0)
-		{
-			Histogramm->ColorData.RedChannel[i] /= (maxH.dRed - minH.dRed);
-		}
-		if ((maxH.dGreen - minH.dGreen) > 0)
-		{
-			Histogramm->ColorData.GreenChannel[i] /= (maxH.dGreen - minH.dGreen);
-		}
-		if ((maxH.dBlue - minH.dBlue) > 0)
-		{
-			Histogramm->ColorData.BlueChannel[i] /= (maxH.dBlue - minH.dBlue);
-		}
-	}
-
-	return AWP_OK;
-}
-
 /*Histogramm equalize function*/
 /*The function of the histogram equilibration.Brings an image histogram
 pImage, to the form as close as possible to the uniform. */
@@ -572,28 +662,7 @@ AWPRESULT awpHistogrammNormalize(awpImage* pSource, AWPDOUBLE k1, AWPDOUBLE k2)
 }
 
 
-AWPRESULT awpSaveHistogramm(const char* lpszFileName, awpHistogramm* hist, AWPBOOL fullHist)
-{
-        AWPRESULT res = AWP_OK;
-        AWPINT i;
-        FILE* f = fopen(lpszFileName, "w+b");
-        AWPINT count = 0;
-        awpGetPixCount(hist, &count);
-        for(i = 0; i < 256; i++)
-           hist->Intensity[i] /= count;
-        fwrite(hist->Intensity, 256*sizeof(AWPDOUBLE),1,f);
-        fclose(f);
-        return res;
-}
 
-AWPRESULT awpLoadHistogramm(const char* lpszFileName, awpHistogramm* hist,AWPBOOL fullHist)
-{
-        AWPRESULT res = AWP_OK;
-        FILE* f = fopen(lpszFileName, "w+b");
-        fread(hist->Intensity, 256*sizeof(AWPDOUBLE),1,f);
-        fclose(f);
-        return res;
-}
 
 
 /*

@@ -116,60 +116,100 @@ AWPRESULT awpFilterSpotsList(awpSpotProperty* pPropListIn, awpStrokeObj* pStroke
 
 AWPRESULT awpHistogrammNormalize(awpImage* pSource, AWPDOUBLE k1, AWPDOUBLE k2);
 
-	/**
-	*	\brief Calculate entropy value of the histogram
-	*	\param Histogramm pointer to the histogram
-	*	\param Result entropy value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-	AWPRESULT awpGetEntropy(const awpHistogramm* Histogramm, awpStat* Result);
 
-	/**
-	*	\brief Calculate histogram skewness
-	*	\param Histogramm pointer to the histogram
-	*	\param Result pointer to the resulting skewness value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetSkewness(const awpHistogramm* Histogramm, awpStat* Result);
+/**
+\struct ColorHSTDef
+\brief Histogramm from color image
+*/
+typedef struct ColorHSTDef
+{
+	/** red channel */
+	AWPDOUBLE RedChannel[256];
+	/** green channel */
+	AWPDOUBLE GreenChannel[256];
+	/** blue channel */
+	AWPDOUBLE BlueChannel[256];
+}ColorHST;
 
-	/**
-	*	\brief Calculate histogram excess
-	*	\param Histogramm pointer to the histogram
-	*	\param Result pointer to the resulting excess value
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpGetExcess(const awpHistogramm* Histogramm, awpStat* Result);
+/**
+\struct awpStatDataDef Statictics result
+\brief Contain result statistics processing pictures
+*/
+typedef struct awpStatDataDef
+{
+	/** red channel */
+	AWPDOUBLE dRed;
+	/** green channel */
+	AWPDOUBLE dGreen;
+	/** blue channel */
+	AWPDOUBLE dBlue;
+	/** bright channel */
+	AWPDOUBLE dBright;
+}awpStat;
 
-
-	/**
-	*	\brief Calculate total intensity
-	*	\param Histogram pointer to the histogram
-	*	\param count total intensity
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-
-    AWPRESULT awpGetPixCount(const awpHistogramm* Histogram, AWPINT* count);
-
-	/**
-	*	\brief Save histogram to file
-	*	\param lpszFileName file name
-	*	\param hist pointer to the histogram
-	*	\param fullHist not used
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpSaveHistogramm(const char* lpszFileName, awpHistogramm* hist, AWPBOOL fullHist);
-
-	/**
-	*	\brief Load histogram from file
-	*	\param lpszFileName file name
-	*	\param hist pointer to the histogram
-	*	\param fullHist not used
-	*	\return AWP_OK if success or else AWP_ERROR
-	*/
-    AWPRESULT awpLoadHistogramm(const char* lpszFileName, awpHistogramm* hist, AWPBOOL fullHist);        
+/**
+\struct awpHistogrammDef Historgramm
+\brief Contain histogramm image
+*/
+typedef struct awpHistogrammDef
+{
+	AWPDOUBLE    Intensity[256];
+	AWPINT       NumChannels;
+	ColorHST  ColorData;
+} awpHistogramm;
 
 
+/**
+*	\brief Calculate average value of the histogram
+*	\param Histogramm pointer to the histogram
+*	\param Result average value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetAverage(const awpHistogramm* Histogramm, awpStat* Result);
 
+/**
+*	\brief Calculate dispersion value of the histogram
+*	\param Histogramm pointer to the histogram
+*	\param Result dispersion value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetDispersion(const awpHistogramm* Histogramm, awpStat* Result);
+
+/**
+*	\brief Calculate median value of the histogram
+*	\param Histogramm pointer to the histogram
+*	\param Result median value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetMedian(const awpHistogramm* Histogramm, awpStat* Result);
+
+/**
+*	\brief Calculate entropy value of the histogram
+*	\param Histogramm pointer to the histogram
+*	\param Result entropy value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetEntropy(const awpHistogramm* Histogramm, awpStat* Result);
+
+/**
+*	\brief Calculate histogram skewness
+*	\param Histogramm pointer to the histogram
+*	\param Result pointer to the resulting skewness value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetSkewness(const awpHistogramm* Histogramm, awpStat* Result);
+
+/**
+*	\brief Calculate histogram excess
+*	\param Histogramm pointer to the histogram
+*	\param Result pointer to the resulting excess value
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetExcess(const awpHistogramm* Histogramm, awpStat* Result);
+
+
+	/* TODO: add description */
+	AWPRESULT awpBackProjection(awpImage* Image, awpImage** ppProb, awpHistogramm* Histogramm);
 
 #define _8_NEIGHBOURS	0
 #define _4_NEIGHBOURS	1
@@ -215,11 +255,11 @@ AWPRESULT awpMaskConvolutionDbl(awpImage* pSrcImage,awpImage* pMask, awpImage** 
 void _awpRGBtoHSV(AWPBYTE rr,AWPBYTE gg,AWPBYTE bb,AWPFLOAT *h, AWPFLOAT *s, AWPFLOAT *l);
 /*
 the awpIntegralGrid function takes an integral image pImage
-     output - result image pDst of type AWP_DOUBLE
-	      which contains the values of the intensities in the grid cells,
-		       which are specified by the size of the resulting image and input
-			        rectangle pRect
-					*/
+output - result image pDst of type AWP_DOUBLE
+which contains the values of the intensities in the grid cells,
+which are specified by the size of the resulting image and input
+rectangle pRect
+*/
 AWPRESULT awpIntegralGrid(const awpImage* pImage, const awpRect* pRect, awpImage* pDst);
 #ifdef __cplusplus
 }

@@ -1,3 +1,12 @@
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpNorm.c
+//		Purpose: image normalizatoin implementation 
+//
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
+
 #include "_awpipl.h"
 
 #define _AWP_NORM_L1(u)\
