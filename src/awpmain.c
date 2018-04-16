@@ -1,7 +1,7 @@
 /*
     awpmain.c
 */
-#include "awpipl.h"
+#include "..\include\awpipl.h"
 
 int main (int argc, char **argv)
 {

@@ -1,8 +1,11 @@
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpchannels.c
+//		Purpose: work with awpImage channels 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
 #include "_awpipl.h"
 
 AWPRESULT awpGetChannel(const awpImage *pImage, awpImage **ppChannel, const AWPBYTE bOptions)

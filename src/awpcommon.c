@@ -1,7 +1,11 @@
-#ifdef HAVE_CONFIG_H
-        #include <config.h>
-#endif
-
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpcommon.c
+//		Purpose: awpipl2 commen functions 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
 #include "_awpipl.h"
 
 

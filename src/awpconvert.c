@@ -497,64 +497,6 @@ CLEANUP:
 }
 
 
-
-// converts Image of type AWP_GRAYSCALE to ppProb of AWP_GRAYSCALE
-// Histogramm - normal awpHistogramm
-AWPRESULT awpBackProjection(awpImage* Image, awpImage** ppProb, awpHistogramm* Histogramm)
-{
-	AWPINT i		= 0;
-	AWPINT count	= 0;
-	AWPBYTE* pProb		= NULL;
-	AWPDOUBLE db = 0.0;
-	AWPDOUBLE min_sat = 24;
-	AWPDOUBLE min_val = 111;
-	AWPDOUBLE max_val = 246;
-	AWPDOUBLE max_sat = 246;
-	/*check image*/
-	AWPRESULT res = AWP_OK;
-	res = awpCheckImage(Image);
-	if (res != AWP_OK)
-        return res;
-
-	count = Image->sSizeX*Image->sSizeY;
-	res = awpCreateImage(ppProb, Image->sSizeX,	Image->sSizeY, 1,
-						AWP_BYTE);
-    if (res != AWP_OK)
-        return res;
-
-	pProb = (AWPBYTE*)(*ppProb)->pPixels;
-	if (Image->dwType == AWP_BYTE && Image->bChannels == 1)
-	{
-		AWPBYTE* p = (AWPBYTE*)Image->pPixels;
-
-		for (i = 0; i < count; i++)
-		{
-			//db = (AWPDOUBLE)p[i]*(AWPDOUBLE)Histogramm->Intensity[p[i]];
-			db = (AWPDOUBLE)Histogramm->Intensity[p[i]]*255.0;
-			pProb[i] = (AWPBYTE)(db+0.5);
-		}
-
-	}
-	if (Image->dwType == AWP_BYTE && Image->bChannels == 3)
-	{
-		awpColor* p = (awpColor*)Image->pPixels;
-
-		for (i = 0; i < count; i++)
-		{
-
-			//db = (AWPDOUBLE)p[i]*(AWPDOUBLE)Histogramm->Intensity[p[i]];
-			if ((p[i].bGreen >= min_sat ) && (p[i].bBlue >= min_val) && (p[i].bBlue <= max_val)&&(p[i].bGreen <= max_sat)&& (p[i].bRed!=0))
-				db = (AWPDOUBLE)Histogramm->Intensity[p[i].bRed]*255.0;
-			else
-				db = 0.0;
-			pProb[i] = (AWPBYTE)(db + 0.5);
-		}
-
-	}
-
-    return AWP_OK;
-}
-
 // converts Image of type AWP_BYTE with HSV color space to ppProb of AWP_GRAYSCALE
 // Histogramm - normal awpHistogramm
 AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v)

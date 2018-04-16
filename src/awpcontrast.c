@@ -1,66 +1,54 @@
-#ifdef HAVE_CONFIG_H
-	#include <config.h>
-#endif
-#include "float.h"
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpcontrast.c
+//		Purpose: contrast functions 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
 #include "_awpipl.h"
-
+/*
+realizes a simple algorithm of autocontrast
+source image should contain AWP_BYTE  channels 
+*/
 AWPRESULT awpAutoLevels(awpImage* pImage)
 {
     AWPRESULT res = AWP_OK;
     AWPINT total = pImage->sSizeX*pImage->sSizeY;
-  	awpHistogramm			Histogramm;
-	//awpStat					stat;
-    AWPDOUBLE sum = 0;
-    AWPINT i;
-    AWPINT white_level = 255;
-    AWPINT black_level = 0;
-    AWPBYTE* b;
+	AWPDOUBLE* min_values = NULL;
+	AWPDOUBLE* max_values = NULL;
+	AWPBYTE*   pix = NULL;
+	AWPWORD x = 0;
+	AWPWORD y = 0;
+	AWPBYTE c = 0;
+	AWPBYTE* v = 0;
+	if (res = awpCheckImage(pImage) != AWP_OK)
+		_ERR_EXIT_
 
+	if (pImage->dwType != AWP_BYTE)
+		_ERROR_EXIT_RES_(AWP_NOTSUPPORT)
 
-    // autolevels
-	_CHECK_RESULT_(res = awpGetHistogramm(pImage, &Histogramm))
-    // fing white level
-    for (i = 255; i > 0; i--)
-    {
-       sum += Histogramm.Intensity[i];
-       if (sum > total / 1000)
-       {
-            white_level = i;
-            break;
-       }
+	if (res = awpMinMax(pImage, &min_values, &max_values) != AWP_OK)
+		_ERR_EXIT_
 
-    }
-
-    // find black_level
-    sum = 0;
-    for (i = 0; i < 255; i++)
-    {
-       sum += Histogramm.Intensity[i];
-       if (sum > total / 1000)
-       {
-            black_level = i;
-            break;
-       }
-    }
-
-    // transform pixels
-    b = (AWPBYTE*)pImage->pPixels;
-    for (i = 0; i < pImage->sSizeX*pImage->sSizeY; i++)
-    {
-        if (b[i] > white_level)
-            {
-                b[i] = 255;
-                continue;
-            }
-        if (b[i] < black_level)
-        {
-            b[i] = 0;
-            continue;
-        }
-        b[i] = (AWPBYTE)(255.0*((AWPDOUBLE)(b[i] - black_level)/(AWPDOUBLE)(white_level - black_level)));
-    }
-
+	pix = _AWP_BPIX_(pImage, AWPBYTE);
+	for (y = 0; y < pImage->sSizeY; y++)
+	{
+		for (x = 0; x < pImage->sSizeX; x++)
+		{
+			for (c = 0; c < pImage->bChannels; c++)
+			{
+				v = &pix[y*pImage->sSizeX*pImage->bChannels + x*pImage->bChannels + c];
+				if (max_values[c] - min_values[c] == 0)
+					*v = (AWPBYTE)max_values[c];
+				else
+					*v = (AWPBYTE)(255 * (*v - min_values[c]) / (max_values[c] - min_values[c]));
+			}
+		}
+	}
 CLEANUP:
+	_SAFE_FREE_(min_values);
+	_SAFE_FREE_(max_values);
     return res;
 }
 

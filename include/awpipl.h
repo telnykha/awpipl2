@@ -1424,6 +1424,39 @@ typedef double            AWPDOUBLE;
 	
 	AWPRESULT awpGetHst(awpImage* pImage, awpImage** pHst, AWPINT options);
 
+
+	/**
+	*	\brief Calculate mean value of the histogram
+	*	\param pHst pointer to the image histogram
+	*	\param pMean average value 
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetHstMean(awpImage* pHst, awpImage* pMean);
+
+	/**
+	*	\brief Calculate standard devation value of the histogram
+	*	\param pHst pointer to the image histogram
+	*	\param pStdDev standard devation value
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetHstStdDev(awpImage* pHst, awpImage* pStdDev);
+
+	/**
+	*	\brief Calculate median value of the histogram
+	*	\param pHst pointer to the histogram
+	*	\param pMedian median value
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetHstMedian(awpImage* pHst, awpImage* pMedian);
+
+	/**
+	*	\brief Calculate entropy value of the histogram
+	*	\param pHst pointer to the histogram
+	*	\param pEntropy entropy value
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy);
+
     /*2D Histogramm functions */
 	/**
 	*	\brief Calculate 2D HS histogramm
@@ -1437,16 +1470,21 @@ typedef double            AWPDOUBLE;
 
     AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, AWPBYTE up, AWPINT needToConvert);
 
-
-
-    /*Histogramm equalize function*/
 	/**
 	*	\brief Normalization of the light level with histogram equilization
 	*	\param PImage pointer to the image
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
     AWPRESULT awpHistogrammEqualize(awpImage* PImage);
-	AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v);
+	/**
+	*	\brief Finds probability image by using Back Projection algorythm 
+	*	\param Image pointer to the image
+	*	\param ppProb result image 
+	*	\param pPreset 2DHistogramm 
+	*	\param min_v - minimum value in the preset to use for projection 
+	*	\param max_v - maximum value in the preset to use for projection 
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/	AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v);
     /** @}	end  histogroup */
 
 

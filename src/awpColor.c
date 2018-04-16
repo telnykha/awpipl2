@@ -1,14 +1,11 @@
-/*
+/*M
 //
-//  RCS:
-//      $Source: awpColor.c
-//      $Revision: 1.0 $
-//      $Date:
-//
-//    Purpose:  AWPIPL source file
-//    Contents: source code for color space convertion
-//    Authors : Alexander Telnykh
-*/
+//      awpipl2 image processing and image analysis library
+//		File: awpColor.c
+//		Purpose: awpipl2 color space convertion 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2018 (c) ALT-Soft.net
+//M*/
 
 #include "_awpipl.h"
 

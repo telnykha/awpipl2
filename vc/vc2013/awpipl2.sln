@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpipl2", "awpipl2.vcxproj", "{EEC6D9A5-396E-4388-BD84-193BEF1657BA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpipl", "..\awpipl\awpipl.vcxproj", "{FABD2E5E-0807-4586-AD64-61176E2CBE14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,12 @@ Global
 		{EEC6D9A5-396E-4388-BD84-193BEF1657BA}.Release|Win32.Build.0 = Release|Win32
 		{EEC6D9A5-396E-4388-BD84-193BEF1657BA}.Release|x64.ActiveCfg = Release|x64
 		{EEC6D9A5-396E-4388-BD84-193BEF1657BA}.Release|x64.Build.0 = Release|x64
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Debug|Win32.Build.0 = Debug|Win32
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Debug|x64.ActiveCfg = Debug|Win32
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Release|Win32.ActiveCfg = Release|Win32
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Release|Win32.Build.0 = Release|Win32
+		{FABD2E5E-0807-4586-AD64-61176E2CBE14}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -94,7 +94,74 @@ static AWPSHORT sobel_h_mask[9] =
 	 0,0,0,
 	 -1,-2,-1};
 
+/*
+Calculates the sum of the pixel values of the pSrc image
+and stores it in pDst.
+pDst must be an image of type AWP_DOUBLE
+have one data channel, a height of 1 pixel and a width equal to the number of channels pScr
+*/
+AWPRESULT awpGetSumPix(awpImage* pSrc, awpImage* pDst)
+{
+	AWPRESULT res = AWP_OK;
+	AWPINT i, j;
+	AWPBYTE* bp = NULL;
+	short* sp = NULL;
+	AWPFLOAT* fp = NULL;
+	AWPDOUBLE* dp = NULL;
+	AWPDOUBLE* rp = (AWPDOUBLE*)pDst->pPixels;
+	memset(rp, 0, pDst->sSizeX);
 
+	_CHECK_RESULT_(res = awpCheckImage(pSrc))
+		_CHECK_RESULT_(res = awpCheckImage(pDst))
+
+		if (pDst->dwType != AWP_DOUBLE)
+			_ERROR_EXIT_RES_(AWP_BADARG)
+			if (pDst->bChannels != 1)
+				_ERROR_EXIT_RES_(AWP_BADARG)
+				if (pDst->sSizeY > 1)
+					_ERROR_EXIT_RES_(AWP_BADARG)
+					if (pDst->sSizeX != pSrc->bChannels)
+						_ERROR_EXIT_RES_(AWP_BADARG)
+
+						switch (pSrc->dwType)
+					{
+						case AWP_BYTE:
+							bp = (AWPBYTE*)pSrc->pPixels;
+							for (i = 0; i < pSrc->sSizeX*pSrc->sSizeY; i++)
+							{
+								for (j = 0; j < pSrc->bChannels; j++)
+									rp[j] += bp[pSrc->bChannels*i + j];
+							}
+							break;
+						case AWP_SHORT:
+							sp = (short*)pSrc->pPixels;
+							for (i = 0; i < pSrc->sSizeX*pSrc->sSizeY; i++)
+							{
+								for (j = 0; j < pSrc->bChannels; j++)
+									rp[j] += sp[pSrc->bChannels*i + j];
+							}
+							break;
+						case AWP_FLOAT:
+							fp = (AWPFLOAT*)pSrc->pPixels;
+							for (i = 0; i < pSrc->sSizeX*pSrc->sSizeY; i++)
+							{
+								for (j = 0; j < pSrc->bChannels; j++)
+									rp[j] += fp[pSrc->bChannels*i + j];
+							}
+							break;
+						case AWP_DOUBLE:
+							dp = (AWPDOUBLE*)pSrc->pPixels;
+							for (i = 0; i < pSrc->sSizeX*pSrc->sSizeY; i++)
+							{
+								for (j = 0; j < pSrc->bChannels; j++)
+									rp[j] += dp[pSrc->bChannels*i + j];
+							}
+							break;
+					}
+
+CLEANUP:
+	return res;
+}
 
 /*
  apply mask to all channles
