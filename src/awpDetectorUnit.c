@@ -2,6 +2,12 @@
 #include "_awpipl.h"
 #include "stdlib.h"
 
+typedef struct
+{
+	awpRect		r;
+	AWPSHORT	c;
+}cawpRect;
+
 AWPFLOAT _awpRectsOverlap(awpRect r1, awpRect r2)
 {
 	AWPFLOAT colInt, rowInt, intersection, area1, area2;

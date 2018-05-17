@@ -562,13 +562,9 @@ typedef double            AWPDOUBLE;
 		AWPSHORT nStages;
 		awpStrong* pStrongs;
 	}awpDetector;
-
-	typedef struct
-	{
-		awpRect		r;
-		AWPSHORT	c;
-	}cawpRect;
-
+	/**
+	\
+	*/
 	typedef AWPBOOL(*awpDetectFunc)(awpImage* pImage, awpImage* pImage1, awpRect* pRect, awpDetector* pDetector);
 
 	typedef struct
