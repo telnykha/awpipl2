@@ -253,10 +253,10 @@ AWPRESULT _awpDrawThickLine(awpImage* pImage, awpPoint p1, awpPoint p2, AWPBYTE 
 	res = AWP_OK;
 	_CHECK_RESULT_(( res = awpCheckImage(pImage)))
  	/*check the position*/
-	if (p1.X >= pImage->sSizeX || p1.Y >= pImage->sSizeY || p1.X < 0 || p1.Y < 0)
+	if (p1.X > pImage->sSizeX || p1.Y > pImage->sSizeY || p1.X < 0 || p1.Y < 0)
    		_ERROR_EXIT_RES_(AWP_BADARG)
 	/*check the position*/
-	if (p2.X >= pImage->sSizeX || p2.Y >= pImage->sSizeY || p2.X < 0 || p2.Y < 0)
+	if (p2.X > pImage->sSizeX || p2.Y > pImage->sSizeY || p2.X < 0 || p2.Y < 0)
    		_ERROR_EXIT_RES_(AWP_BADARG)
 	/*check the channel*/
 	if (bChan >= pImage->bChannels)
@@ -353,7 +353,7 @@ AWPRESULT _awpDrawRect(awpImage* pImage, awpRect* pRect, AWPBYTE bChan,AWPDOUBLE
 
     /* draw rect */
     /* draw horizontal line */
-    for(i=pRect->left;i<pRect->right;i++){
+    for(i=pRect->left;i<=pRect->right;i++){
 	switch(iImageType){
 	    case AWP_BYTE:
 		/* top line */

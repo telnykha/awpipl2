@@ -445,6 +445,53 @@ CLEANUP:
     return res;
 }
 
+AWPRESULT awpGetObjTotalIntensity(const awpImage* pImg, const awpStrokeObj* pObj, AWPDOUBLE* I)
+{
+    AWPINT i,j, x, y,w;
+    AWPRESULT res;
+    awpImage* pcopy = NULL;
+    AWPBYTE* p;
+
+    pcopy=NULL;
+    p=NULL;
+    res=AWP_OK;
+
+    /*check image on bag argument */
+    if(pImg->dwType!=AWP_BYTE){
+        res = AWP_NOTSUPPORT;
+        _ERR_EXIT_
+    }
+
+    if(pImg->bChannels!=1){
+        res = AWP_NOTSUPPORT;
+        _ERR_EXIT_
+    }
+
+    pcopy = (awpImage*)pImg;
+
+    p = (AWPBYTE*)pcopy->pPixels;
+    w = pcopy->sSizeX;
+
+    *I = 0.0;
+
+    for (i = 0; i < (AWPINT)pObj->Num; i++)
+    {
+        for (j = pObj->strokes[i].xl; j < pObj->strokes[i].xr; j++)
+        {
+            x = j;
+            y = pObj->strokes[i].y;
+            if (x > pcopy->sSizeX || y > pcopy->sSizeY){
+                res=AWP_BADARG;
+                _ERR_EXIT_
+            }
+            *I += p[y*w + x];
+        }
+    }
+CLEANUP:
+    return res;
+}
+
+
 AWPRESULT awpStrObjSquare(const awpStrokeObj* s, AWPINT* Sq)
 {
     AWPINT i;

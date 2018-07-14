@@ -1073,7 +1073,7 @@ typedef double            AWPDOUBLE;
 	*/
 	AWPRESULT awpGetSumPix(awpImage* pSrc, awpImage* pDst);
 	/**
-	*	\brief perform gaussian blur filter over pSrc image and store result in the pDst image 
+	*	\brief perform gaussian blur filter over pSrc image and store result in the pDst image
 	*	\param awpImage pSrc - source imaege 
 	*	\param awpImage pDst - destination image 
 	*	\param AWPFLOAT sigma - the sigma of the gaussian
@@ -1153,6 +1153,15 @@ typedef double            AWPDOUBLE;
 	*	\return AWP_OK if success else AWP_ERROR
 	*/
     AWPRESULT awpGetObjIntensity(const awpImage* pImg, const awpStrokeObj* pObj, AWPDOUBLE* I);
+
+	/**
+	*	\brief Calculate Total object intensity
+	*	\param pImg pointer to the source image
+	*	\param pObj pointer to the stroke object
+	*	\param I pointer to the resulting intensity value
+	*	\return AWP_OK if success else AWP_ERROR
+	*/
+    AWPRESULT awpGetObjTotalIntensity(const awpImage* pImg, const awpStrokeObj* pObj, AWPDOUBLE* I);
 
     /**
     *	\brief Calculate object square
@@ -1886,6 +1895,9 @@ AWPRESULT awpDistance(awpImage* src1, awpImage* src2, AWPBYTE options, AWPDOUBLE
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
 AWPRESULT awpGridDistance(awpImage* src1, awpImage* src2, awpImage* weight, AWPBYTE options, AWPDOUBLE* res);
+
+
+AWPRESULT awpDistancePoints(awpPoint p1, awpPoint p2, AWPDOUBLE* distance);
 /** @} */ /* end of distancegroup  */
 
 /** @defgroup cameragroup Single camera geometry functions

@@ -18,16 +18,19 @@ static AWPRESULT  _awpGetHstByte(awpImage* pImage, awpImage** ppHst)
 {
 	AWPRESULT  res = AWP_OK;
 	awpImage*  pHst = *ppHst;
-	AWPDOUBLE  hst_step = 256. / (AWPDOUBLE)pHst->sSizeX;
-
-	AWPDOUBLE* pix  = _AWP_BPIX_(pHst, AWPDOUBLE);
-	AWPBYTE*   spix = _AWP_BPIX_(pImage, AWPBYTE);
-
 	AWPWORD    i = 0;
 	AWPBYTE    c = 0;
 	AWPWORD    idx = 0;
 	AWPWORD    x = 0;
 	AWPWORD    y = 0;
+
+	AWPDOUBLE* pix  = NULL;
+	AWPBYTE*   spix = NULL;
+
+	AWPDOUBLE  hst_step = 256. / (AWPDOUBLE)pHst->sSizeX;
+
+	pix  = _AWP_BPIX_(pHst, AWPDOUBLE);
+	spix = _AWP_BPIX_(pImage, AWPBYTE);
 
 	/*setup histogramm value axis*/
 	for (i = 0; i < pHst->sSizeX; i++)
@@ -73,10 +76,11 @@ static AWPRESULT _awpGetHst(awpImage* pImage, awpImage** ppHst)
 	AWPWORD    idx = 0;
 	AWPWORD    x = 0;
 	AWPWORD    y = 0;
-	AWPDOUBLE* pix = _AWP_BPIX_(pHst, AWPDOUBLE);
 	AWPSHORT*  spix = NULL;
 	AWPFLOAT*  fpix = NULL;
 	AWPDOUBLE* dpix = NULL;
+
+	AWPDOUBLE* pix = _AWP_BPIX_(pHst, AWPDOUBLE);
 
 	/*range of signal variation*/
 	if (res = awpMinMax(pImage, &image_min, &image_max))
