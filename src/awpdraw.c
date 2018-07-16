@@ -513,7 +513,7 @@ CLEANUP:
 AWPRESULT awpFillRect(awpImage *pImage, awpRect* rect, AWPBYTE bChan, AWPDOUBLE dValue)
 {
 	AWPRESULT res = AWP_OK;
-	AWPWORD sx, sy, w, h, y;
+	AWPWORD sx, sy, w, h, y, x, ws;
 	AWPBYTE* data;
 	AWPBYTE  value;
 	if (pImage == NULL || rect == NULL)
@@ -529,12 +529,15 @@ AWPRESULT awpFillRect(awpImage *pImage, awpRect* rect, AWPBYTE bChan, AWPDOUBLE 
 	sx = rect->left;
 	sy = rect->top;
 	w = rect->right - rect->left;
+    ws = pImage->bChannels*pImage->sSizeX;
 	h = rect->bottom - rect->top;
 	data = (AWPBYTE*)pImage->pPixels;
 	value = (AWPBYTE)dValue;
 	for (y = sy; y < sy + h; y++)
 	{
-		memset(&data[y*pImage->sSizeX + sx], value, w*sizeof(AWPBYTE));
+        for (x = sx; x < sx + w; x++)
+            data[y*ws +x*pImage->bChannels + bChan] = value;
+//		memset(&data[y*pImage->sSizeX + sx], value, w*sizeof(AWPBYTE));
 	}
 
 CLEANUP:
