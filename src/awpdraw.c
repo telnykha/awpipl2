@@ -1141,3 +1141,64 @@ AWPRESULT awpDrawPolygon(awpImage* pImage, awpContour* pContour, AWPBYTE bChan, 
 CLEANUP:
 	return res;
 }
+
+AWPRESULT awpDrawEllipse2(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
+{
+	AWPRESULT res;
+	res = AWP_OK;
+
+CLEANUP:
+	return res;
+}
+
+AWPRESULT awpDrawEllipseCross(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
+{
+    awpPoint p1;
+    awpPoint p2;
+    AWPINT ax_len;
+    AWPDOUBLE a;
+
+	AWPRESULT res;
+	res = AWP_OK;
+
+    a = AWP_PI*angle / 180.;
+    ax_len = major / 2;
+
+    p1.X = center.X + ax_len*cos(a);
+    p1.Y = center.Y + ax_len*sin(a);
+
+    p2.X = center.X - ax_len*cos(a);
+    p2.Y = center.Y - ax_len*sin(a);
+
+	if (radius == 0)
+	{
+		_CHECK_RESULT_(res = _awpDrawLine(pImage, p1, p2,  bChan, dValue))
+	}
+	else
+	{
+		_CHECK_RESULT_(res = _awpDrawThickLine(pImage, p1, p2,  bChan, dValue, radius))
+	}
+
+
+    ax_len = minor / 2;
+    a += AWP_PI / 2;
+    p1.X = center.X + ax_len*cos(a);
+    p1.Y = center.Y + ax_len*sin(a);
+
+    p2.X = center.X - ax_len*cos(a);
+    p2.Y = center.Y - ax_len*sin(a);
+
+	if (radius == 0)
+	{
+		_CHECK_RESULT_(res = _awpDrawLine(pImage, p1, p2,  bChan, dValue))
+	}
+	else
+	{
+		_CHECK_RESULT_(res = _awpDrawThickLine(pImage, p1, p2,  bChan, dValue, radius))
+	}
+
+
+CLEANUP:
+	return res;
+}
+

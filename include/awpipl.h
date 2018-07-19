@@ -1709,7 +1709,7 @@ typedef double            AWPDOUBLE;
 	*	\brief Draw ellipse
 	*	\param pImage pointer to the image
 	*	\param center center of the ellipce
-	*	\param width  width of the bounding rectangle 
+	*	\param width  width of the bounding rectangle
 	*	\param height height of the bounding rectangle
 	*   \param angle angle of the ellipse
 	*	\param bChan image channel
@@ -1717,6 +1717,34 @@ typedef double            AWPDOUBLE;
 	*	\return AWP_OK if success else AWP_ERROR
 	*/
     AWPRESULT awpDrawEllipse(awpImage* pImage, awpPoint center, AWPWORD width, AWPWORD height, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius);
+
+	/**
+	*	\brief Draw ellipse 2
+	*	\param pImage pointer to the image
+	*	\param center center of the ellipce
+	*	\param major  lenght of major axis
+	*	\param minor  lenght of minor axis
+	*   \param angle  angle of major axis counterclockwise with respect to the colum axis
+	*	\param bChan image channel
+	*	\param dValue pixels value
+	*	\return AWP_OK if success else AWP_ERROR
+	*/
+    AWPRESULT awpDrawEllipse2(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius);
+
+	/**
+	*	\brief Draw Ellipse Cross
+	*	\param pImage pointer to the image
+	*	\param center center of the ellipce
+	*	\param major  lenght of major axis
+	*	\param minor  lenght of minor axis
+	*   \param angle  angle of major axis counterclockwise with respect to the colum axis
+	*	\param bChan image channel
+	*	\param dValue pixels value
+	*	\return AWP_OK if success else AWP_ERROR
+	*/
+    AWPRESULT awpDrawEllipseCross(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius);
+
+
 	/**
 	*	\brief Draw polygon 
 	*	\param pImage pointer to the image
@@ -1835,6 +1863,25 @@ typedef double            AWPDOUBLE;
 	awpDrawEllipse(pImage, p, w, h, a, 1, g, rd);\
 	awpDrawEllipse(pImage, p, w, h, a, 2, b, rd);\
 	}\
+	/**
+	*	\brief Draw color ellipce cross with thick border
+	*	\param pImage pointer to the image
+	*	\param p center of the ellipce
+	*	\param ma lenght of major axis
+	*	\param mi lenght of minor axis
+	*	\param a angle of the ellipse
+	*	\param r red channel value
+	*	\param g green channel value
+	*	\param b blue channel value
+	*	\param rd radius
+	*/
+	#define awpDrawCEllipseCross(pImage, p,ma,mi,a, r, g, b, rd)\
+	{\
+	awpDrawEllipseCross(pImage, p, ma, mi, a, 0, r, rd);\
+	awpDrawEllipseCross(pImage, p, ma, mi, a, 1, g, rd);\
+	awpDrawEllipseCross(pImage, p, ma, mi, a, 2, b, rd);\
+	}\
+
 	/**
 	*	\brief Draw color polygon with thick border 
 	*	\param pImage pointer to the image
