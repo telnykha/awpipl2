@@ -680,26 +680,17 @@ AWPRESULT awpImageToDIB( const awpImage* pImage, BITMAPINFO* pBMI, unsigned char
 	return AWP_OK;
 }
 /*
-
+    Windows DIB to awpImage convertor
 */
-AWPRESULT awpDIBToImage( const BITMAPINFO* pBMI, const void* pBMData, awpImage** ppImage )
+
+static AWPBOOL _awp24DibToAwp(const BITMAPINFO* pBMI, const void* pBMData, awpImage** ppImage)
 {
 	awpImage *pImage  = NULL;
-	AWPRESULT res     = AWP_OK;
-	AWPBYTE *pBytes      = (AWPBYTE *)pBMData;
-	AWPBYTE *dib_row, *awp_row;
-	WORD awp_width, awp_height, dib_width;
-	WORD row;
-
-
-	if (pBMI == NULL)
-		return AWP_BADARG;
-
-	if (pBMI->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
-		return AWP_BADARG;
-
-	if (pBMI->bmiHeader.biBitCount != 24)
-		return AWP_BADARG;
+	AWPBYTE  *pBytes      = (AWPBYTE *)pBMData;
+	AWPBYTE  *dib_row, *awp_row;
+	WORD     awp_width, awp_height, dib_width;
+    AWPRESULT res;
+	WORD     row;
 
 	awp_width  = (WORD)pBMI->bmiHeader.biWidth;
 	awp_height = (WORD)pBMI->bmiHeader.biHeight;
@@ -707,7 +698,7 @@ AWPRESULT awpDIBToImage( const BITMAPINFO* pBMI, const void* pBMData, awpImage**
 
 	res = awpCreateImage(&pImage, awp_width, awp_height, 3, AWP_BYTE);
 	if (res != AWP_OK)
-		return res;
+		return FALSE;
 
 	if (awp_width % 4 == 0)
 	{
@@ -724,7 +715,92 @@ AWPRESULT awpDIBToImage( const BITMAPINFO* pBMI, const void* pBMData, awpImage**
 
 	*ppImage = pImage;
 
-	return AWP_OK;
+    return TRUE;
+}
+
+static AWPBOOL _awp32DibToAwp(const BITMAPINFO* pBMI, const void* pBMData, awpImage** ppImage )
+{
+    awpImage *pImage  = NULL;
+    AWPBYTE  *pBytes      = (AWPBYTE *)pBMData;
+    AWPBYTE  *awp_row, *dib_row;
+    AWPWORD  w,h;
+    WORD     awp_width, awp_height, dib_width;
+    WORD     row;
+    DWORD    *dib_dw, d, i ,j;
+
+	awp_width  = (WORD)pBMI->bmiHeader.biWidth;
+	awp_height = (WORD)pBMI->bmiHeader.biHeight;
+	dib_width  = (WORD)pBMI->bmiHeader.biWidth*4;
+
+	if (awpCreateImage(&pImage, awp_width, awp_height, 3, AWP_BYTE) != AWP_OK)
+		return FALSE;
+
+
+    if (pBMI->bmiHeader.biCompression == BI_RGB)
+    {
+        //todo: decompress
+        awp_row = (AWPBYTE*)pImage->pPixels;
+        dib_dw  = (DWORD*)pBMData;
+        i=0;
+        for (h = 0; h < awp_height; h++)
+        {
+            for (w = 0; w < awp_width; w++)
+            {
+                j = 3*h*awp_width + w*3;
+                d = dib_dw[i];
+                awp_row[j + 0] = d & 0x000000FF;
+                awp_row[j + 1] = (d & 0x0000FF00) >> 8;
+                awp_row[j + 2] = (d & 0x00FF0000) >> 16;
+                i++;
+            }
+        }
+    }
+    else if (pBMI->bmiHeader.biCompression == BI_BITFIELDS)
+    {
+        // decompress
+        awp_row = (AWPBYTE*)pImage->pPixels;
+        dib_row = (AWPBYTE*)pBMData;
+        for (h = 0; h < awp_height; h++)
+        {
+            for (w = 0; w < awp_width; w++)
+            {
+                i = h*dib_width + w*4;
+                j = 3*h*awp_width + w*3;
+
+                awp_row[j + 0] = dib_row[i + 0];
+                awp_row[j + 1] = dib_row[i + 1];
+                awp_row[j + 2] = dib_row[i + 2];
+
+            }
+        }
+    }
+    else
+        return FALSE;
+ 	awpFlip(&pImage, AWP_FLIP_VERT);
+
+	*ppImage = pImage;
+    return TRUE;
+}
+
+AWPRESULT awpDIBToImage( const BITMAPINFO* pBMI, const void* pBMData, awpImage** ppImage )
+{
+	if (pBMI == NULL)
+		return AWP_BADARG;
+
+	if (pBMI->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
+		return AWP_BADARG;
+
+	if (pBMI->bmiHeader.biBitCount == 24)
+    {
+        if (_awp24DibToAwp(pBMI, pBMData, ppImage))
+            return AWP_OK;
+    }
+    else if (pBMI->bmiHeader.biBitCount == 32)
+    {
+        if (_awp32DibToAwp(pBMI, pBMData, ppImage))
+            return AWP_OK;
+    }
+	return AWP_BADARG;
 }
 #endif //WIN32
 
