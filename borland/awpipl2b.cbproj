@@ -109,6 +109,7 @@
         <BCC_Defines>NDEBUG;$(BCC_Defines);$(BCC_Defines)</BCC_Defines>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="New1.txt"/>
         <CppCompile Include="..\src\awpBaseAnalysis.c">
             <BuildOrder>17</BuildOrder>
             <BuildOrder>13</BuildOrder>

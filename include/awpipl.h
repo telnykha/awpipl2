@@ -1857,12 +1857,32 @@ typedef double            AWPDOUBLE;
 	*	\param b blue channel value
 	*	\param rd radius
 	*/
+	#define awpDrawCEllipse2(pImage, p,ma,mi,a, r, g, b, rd)\
+	{\
+	awpDrawEllipse2(pImage, p, ma,mi, a, 0, r, rd);\
+	awpDrawEllipse2(pImage, p, ma,mi, a, 1, g, rd);\
+	awpDrawEllipse2(pImage, p, ma,mi, a, 2, b, rd);\
+	}\
+
+	/**
+	*	\brief Draw color ellipce with thick border
+	*	\param pImage pointer to the image
+	*	\param p center of the ellipce
+	*	\param w width of the bounding rectangle
+	*	\param h height of the bounding rectangle
+	*	\param a angle of the ellipse
+	*	\param r red channel value
+	*	\param g green channel value
+	*	\param b blue channel value
+	*	\param rd radius
+	*/
 	#define awpDrawCEllipse(pImage, p,w,h,a, r, g, b, rd)\
 	{\
 	awpDrawEllipse(pImage, p, w, h, a, 0, r, rd);\
 	awpDrawEllipse(pImage, p, w, h, a, 1, g, rd);\
 	awpDrawEllipse(pImage, p, w, h, a, 2, b, rd);\
 	}\
+
 	/**
 	*	\brief Draw color ellipce cross with thick border
 	*	\param pImage pointer to the image

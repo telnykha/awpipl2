@@ -645,7 +645,7 @@ AWPRESULT _awpDrawEllipseV2(awpImage* pImage, awpPoint center, AWPWORD width, AW
 	if (width > height)
 		freq = 1 * AWP_PI / width;
 	else
-		freq = 1 * AWP_PI / height;		
+		freq = 1 * AWP_PI / height;
 
 	W_S = width * sin(angle);
 	W_C = width * cos(angle);
@@ -788,7 +788,7 @@ AWPRESULT _awpDrawThickEllipseV2(awpImage* pImage, awpPoint center, AWPWORD widt
 	if (width > height)
 		freq = 1 * AWP_PI / width;
 	else
-		freq = 1 * AWP_PI / height;		
+		freq = 1 * AWP_PI / height;
 
 	W_S = width * sin(angle);
 	W_C = width * cos(angle);
@@ -1144,11 +1144,66 @@ CLEANUP:
 
 AWPRESULT awpDrawEllipse2(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
 {
-	AWPRESULT res;
-	res = AWP_OK;
+	AWPRESULT res = AWP_OK;
+	AWPDOUBLE phase, freq;
+	AWPDOUBLE W_S, W_C, H_S, H_C;
+	AWPDOUBLE C_T, S_T;
+	awpPoint p_last, p_first, p;
+
+	if ((major == 0) || (minor == 0))
+		_ERROR_EXIT_RES_(AWP_BADARG)
+	_CHECK_RESULT_((res = awpCheckImage(pImage)))
+	/*check the channel*/
+	if (bChan >= pImage->bChannels)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+
+	freq = AWP_PI / major;
+
+	W_S = major * sin(angle);
+	W_C = major * cos(angle);
+
+	H_S = minor * sin(angle);
+	H_C = minor * cos(angle);
+
+	phase = 0;
+	p_last.X = -1;
+	while(phase <= 2 * AWP_PI)
+	{
+		C_T = cos(phase);
+		S_T = sin(phase);
+
+		p.Y = center.Y - (AWPWORD) (W_S * C_T - H_C * S_T);
+		if (p.Y > pImage->sSizeY) p.Y = pImage->sSizeY;
+		if (p.Y < 0) p.Y = 0;
+
+		p.X = center.X + (AWPWORD) (W_C * C_T + H_S * S_T);
+		if (p.X > pImage->sSizeX) p.X = pImage->sSizeX;
+		if (p.X < 0) p.X = 0;
+
+		if (p_last.X == -1)
+		{
+			p_last = p;
+			p_first = p;
+		}
+		else
+        {
+            if (radius > 0)
+				_CHECK_RESULT_((res = _awpDrawThickLine(pImage, p_last, p, bChan, dValue, radius)))
+            else
+				_CHECK_RESULT_((res = _awpDrawLine(pImage, p_last, p, bChan, dValue)))
+        }
+
+		p_last = p;
+		phase += freq;
+	}
+
+    if (radius > 0)
+        _CHECK_RESULT_((res = _awpDrawThickLine(pImage, p_last, p, bChan, dValue, radius)))
+    else
+        _CHECK_RESULT_((res = _awpDrawLine(pImage, p_last, p, bChan, dValue)))
 
 CLEANUP:
-	return res;
+    return res;
 }
 
 AWPRESULT awpDrawEllipseCross(awpImage* pImage, awpPoint center, AWPWORD major, AWPWORD minor, AWPDOUBLE angle, AWPBYTE bChan, AWPDOUBLE dValue, AWPBYTE radius)
