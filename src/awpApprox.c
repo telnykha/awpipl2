@@ -4,6 +4,7 @@
 //		File: awpApprox.c
 //		Purpose: approximation implementation 
 //		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//				Mike Gorelikov 
 //      CopyRight 2004-2018 (c) ALT-Soft.net
 //M*/
 #include "_awpipl.h"
@@ -25,12 +26,12 @@ void _awpPolynomCalculate(AWPINT K, AWPINT N, AWPDOUBLE*x, AWPDOUBLE*y, AWPDOUBL
 	AWPDOUBLE** sums = NULL;
 	memset(a, 0, N*sizeof(AWPDOUBLE));
 	b = (double*)malloc(N * sizeof(AWPDOUBLE));
-	sums = (AWPDOUBLE**)malloc(N* sizeof(AWPDOUBLE*));//создание двумерного массива
+	sums = (AWPDOUBLE**)malloc(N* sizeof(AWPDOUBLE*));//creating a two-dimensional array
 	for (i = 0; i < N; i++)
 	{
 		sums[i] = (AWPDOUBLE*)malloc(N* sizeof(AWPDOUBLE));
 	}
-	//заполняем коэффициенты системы уравнений
+	//fill the coefficients of the system of equations
 	for (i = 0; i<K + 1; i++)
 	{
 		for (j = 0; j<K + 1; j++)
@@ -40,14 +41,14 @@ void _awpPolynomCalculate(AWPINT K, AWPINT N, AWPDOUBLE*x, AWPDOUBLE*y, AWPDOUBL
 				sums[i][j] += Power(x[k], i + j);
 		}
 	}
-	//заполняем столбец свободных членов
+	//fill in the free members column
 	for (i = 0; i<K + 1; i++)
 	{
 		b[i] = 0;
 		for (k = 0; k<N; k++)
 			b[i] += Power(x[k], i)*y[k];
 	}
-	//применяем метод Гаусса для приведения матрицы системы к треугольному виду
+	//we use the Gauss method to bring the system matrix to a triangular shape
 	for (k = 0; k<K + 1; k++)
 	{
 		for (i = k + 1; i<K + 1; i++)
@@ -58,7 +59,7 @@ void _awpPolynomCalculate(AWPINT K, AWPINT N, AWPDOUBLE*x, AWPDOUBLE*y, AWPDOUBL
 			b[i] -= M*b[k];
 		}
 	}
-	//вычисляем коэффициенты аппроксимирующего полинома
+	//calculate the coefficients of the approximating polynomial
 	for (i = K; i >= 0; i--)
 	{
 		s = 0;
