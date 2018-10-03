@@ -212,10 +212,6 @@
         <CppCompile Include="..\src\_awpColor.c">
             <BuildOrder>26</BuildOrder>
         </CppCompile>
-        <CppCompile Include="..\src\_awpHSL.c">
-            <BuildOrder>8</BuildOrder>
-            <BuildOrder>16</BuildOrder>
-        </CppCompile>
         <CppCompile Include="..\src\_awpio.c">
             <BuildOrder>14</BuildOrder>
             <BuildOrder>12</BuildOrder>

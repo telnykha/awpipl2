@@ -98,6 +98,9 @@
     <ClCompile Include="..\..\src\awpDetectorUnit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\awpApprox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\_include\_awpipl.h">

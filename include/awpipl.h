@@ -2215,6 +2215,28 @@ AWPRESULT awpLBPGridDescriptor(awpImage* src, awpImage* dst, awpRect* roi, AWPBY
 
 /** @} */ /*  end of awplbbgroup */
 
+
+/** @defgroup approximation
+*   @{
+*/
+
+/**
+*	\brief polynom approximation function 
+*	\param src pointer to the source image 
+*		   image sould be type AWP_DOUBLE and has sSizeY = 2 
+*		   first line contains x0,x1...xN, where N  = sSizeX 
+*		   second line contaims y0,y1...yN, where N = sSizeX
+*	\param dst pointer to coefficients 
+*	       dst should be type AWP_DOUBLE and has sSizeY == 1
+*		   sSizeX contans power of polynom 	sSizeX <= 6
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpApproxPoly(awpImage* src, awpImage* dst);
+
+
+/** @} */ /* end of approximation  */
+
+
 #ifdef __cplusplus
 };
 #endif

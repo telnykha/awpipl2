@@ -227,6 +227,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\awpApprox.c" />
     <ClCompile Include="..\..\src\awpCameraUnit.c" />
     <ClCompile Include="..\..\src\awpColor.c" />
     <ClCompile Include="..\..\src\awpDetectorUnit.c" />
