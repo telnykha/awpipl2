@@ -90,6 +90,7 @@
         <_TCHARMapping>wchar_t</_TCHARMapping>
         <BCC_Defines>_DEBUG;$(BCC_Defines);$(BCC_Defines)</BCC_Defines>
         <TLIB_PageSize>64</TLIB_PageSize>
+        <FinalOutputDir>$(PHOTON41)\lib\</FinalOutputDir>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <BCC_DisableOptimizations>false</BCC_DisableOptimizations>
@@ -110,6 +111,9 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="New1.txt"/>
+        <CppCompile Include="..\src\awpApprox.c">
+            <BuildOrder>29</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\src\awpBaseAnalysis.c">
             <BuildOrder>17</BuildOrder>
             <BuildOrder>13</BuildOrder>

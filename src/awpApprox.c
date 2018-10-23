@@ -24,7 +24,7 @@ void _awpPolynomCalculate(AWPINT K, AWPINT N, AWPDOUBLE*x, AWPDOUBLE*y, AWPDOUBL
 	AWPDOUBLE s, M;
 	AWPDOUBLE *b = NULL;
 	AWPDOUBLE** sums = NULL;
-	memset(a, 0, N*sizeof(AWPDOUBLE));
+	memset(a, 0, (K+1)*sizeof(AWPDOUBLE));
 	b = (double*)malloc(N * sizeof(AWPDOUBLE));
 	sums = (AWPDOUBLE**)malloc(N* sizeof(AWPDOUBLE*));//creating a two-dimensional array
 	for (i = 0; i < N; i++)
@@ -87,13 +87,13 @@ AWPRESULT awpApproxPoly(awpImage* src, awpImage* dst)
 		_ERROR_EXIT_RES_(AWP_BADARG)
 	if (src->sSizeY != 2 || dst->sSizeY != 1)
 		_ERROR_EXIT_RES_(AWP_BADARG)
-	if (dst->sSizeX > 6)
-		_ERROR_EXIT_RES_(AWP_BADARG)
+ //	if (dst->sSizeX > 6)
+ //		_ERROR_EXIT_RES_(AWP_BADARG)
 
 	s = _AWP_BPIX_(src, AWPDOUBLE)
 	d = _AWP_BPIX_(dst, AWPDOUBLE)
 
-	_awpPolynomCalculate(src->sSizeX, dst->sSizeX, s, s + src->sSizeX, d);
+	_awpPolynomCalculate( dst->sSizeX-1, src->sSizeX, s, s + src->sSizeX, d);
 
 CLEANUP:
 	return res;
