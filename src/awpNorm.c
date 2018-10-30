@@ -4,7 +4,7 @@
 //		File: awpNorm.c
 //		Purpose: image normalizatoin implementation 
 //
-//      CopyRight 2004-2018 (c) ALT-Soft.net
+//      CopyRight 2004-2018 (c) NN-Videolab.net
 //M*/
 
 #include "_awpipl.h"

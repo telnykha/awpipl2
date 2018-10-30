@@ -4,7 +4,7 @@
 //    Purpose: AWPIPL header file
 //    Author : Alex A.Telnykh
 //    CoAutors: Eugeny Eremin, Andrey Kovalchuck, Youry Yakhno, Olga Shemagina
-//    Copyright (c) 2004-2018 ALT-soft.net
+//    Copyright (c) 2004-2018 NN-Videolab.net
 //
 //M*/
 

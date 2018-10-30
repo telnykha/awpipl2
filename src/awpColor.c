@@ -4,7 +4,7 @@
 //		File: awpColor.c
 //		Purpose: awpipl2 color space convertion 
 //		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
-//      CopyRight 2004-2018 (c) ALT-Soft.net
+//      CopyRight 2004-2018 (c) NN-Videolab.net
 //M*/
 
 #include "_awpipl.h"
