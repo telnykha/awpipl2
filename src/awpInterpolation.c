@@ -1,4 +1,3 @@
-
 #include "_awpipl.h"
 
 //A macro that performs interpolation in the x - direction, regardless of

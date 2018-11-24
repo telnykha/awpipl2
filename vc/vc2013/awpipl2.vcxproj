@@ -232,6 +232,7 @@
     <ClCompile Include="..\..\src\awpColor.c" />
     <ClCompile Include="..\..\src\awpDetectorUnit.c" />
     <ClCompile Include="..\..\src\awpDistance.c" />
+    <ClCompile Include="..\..\src\awpGetUnit.c" />
     <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c" />
     <ClCompile Include="..\..\src\awpInterpolation.c" />
     <ClCompile Include="..\..\src\awpLBPUnit.c" />

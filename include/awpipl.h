@@ -266,9 +266,9 @@ typedef double            AWPDOUBLE;
     typedef struct
     {
         /** X coordinate */
-        AWPSHORT X;
+		AWPWORD X;
         /** Y coordinate */
-        AWPSHORT Y;
+		AWPWORD Y;
 
     }awpPoint;
 
@@ -2235,6 +2235,24 @@ AWPRESULT awpApproxPoly(awpImage* src, awpImage* dst);
 
 
 /** @} */ /* end of approximation  */
+
+
+/** @defgroup get
+*   @{
+*/
+
+/**
+*	\brief get pixels data from line 
+*	\param src pointer to the source image
+*	\param p1 start point of line 
+*	\param p2 end point of line 
+*	\param dst double pointer to destination image, contains pixels data 
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetLine(awpImage* src, awpPoint p1, awpPoint p2, awpImage** dst);
+
+
+/** @} */ /* end of get  */
 
 
 #ifdef __cplusplus

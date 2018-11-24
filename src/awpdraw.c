@@ -185,8 +185,7 @@ AWPRESULT _awpDrawLine(awpImage* pImage, awpPoint p1, awpPoint p2, AWPBYTE bChan
 	/*check the channel*/
 	if (bChan >= pImage->bChannels)
 		_ERROR_EXIT_RES_(AWP_BADARG)
-	//width = pImage->bChannels*pImage->sSizeX;
-/*	pos = p1.Y*width + p.X*bChan + bChan;*/
+
 
 	delta_x = endx - startx;
 	delta_y = endy - starty;
@@ -261,8 +260,6 @@ AWPRESULT _awpDrawThickLine(awpImage* pImage, awpPoint p1, awpPoint p2, AWPBYTE 
 	/*check the channel*/
 	if (bChan >= pImage->bChannels)
 		_ERROR_EXIT_RES_(AWP_BADARG)
-	//width = pImage->bChannels*pImage->sSizeX;
-/*	pos = p1.Y*width + p.X*bChan + bChan;*/
 
 	delta_x = endx - startx;
 	delta_y = endy - starty;

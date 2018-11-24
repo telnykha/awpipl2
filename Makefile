@@ -1,7 +1,7 @@
 #makefile for awpipl2 software 
 
 # The name of your C compiler:
-CC= cc
+CC= gcc
 
 # You may need to adjust these cc options:
 CFLAGS= -O
@@ -41,7 +41,7 @@ LIBOBJECTS=    awpcommon.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o\
 all: awpipl2.a awpmain awptest
 
 awpipl:   
-	$(CC)  -c $(INC) $(addprefix src/, $(LIBSOURCES)) -DHAVE_JPEG
+	$(CC)  -c $(INC) $(addprefix src/, $(LIBSOURCES)) 
 awpipl2.a: awpipl
 	ar cr $(LIB)awpipl2.a $(LIBOBJECTS)
 	rm -f *.o *.awp 

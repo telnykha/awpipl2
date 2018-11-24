@@ -288,9 +288,9 @@ AWPRESULT _awp_xyz_to_rgb(AWPDOUBLE x, AWPDOUBLE y, AWPDOUBLE z, AWPBYTE* r, AWP
 	gg = var_g < 0 ? 0 : var_g;
 	bb = var_b < 0 ? 0 : var_b;
 
-	*r = (AWPBYTE)floor(255.*rr + 0.5);
-	*g = (AWPBYTE)floor(255.*gg + 0.5);
-	*b = (AWPBYTE)floor(255.*bb + 0.5);
+	*r = (AWPBYTE)(floor(255.*rr + 0.5) > 255 ? 255 : floor(255.*rr + 0.5));
+	*g = (AWPBYTE)(floor(255.*gg + 0.5)  > 255 ? 255 : floor(255.*gg + 0.5));
+	*b = (AWPBYTE)(floor(255.*bb + 0.5)  > 255 ? 255 : floor(255.*bb + 0.5));
 
 	return AWP_OK;
 }
