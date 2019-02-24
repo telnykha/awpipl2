@@ -102,7 +102,7 @@ AWPRESULT awpCopyRect (const awpImage* pSrcImage, awpImage** ppDstImage, const a
         PixelSize = sizeof(AWPFLOAT)*pSrcImage->bChannels;
         break;
     case AWP_DOUBLE:
-        PixelSize = sizeof(AWPFLOAT)*pSrcImage->bChannels;
+        PixelSize = sizeof(AWPDOUBLE)*pSrcImage->bChannels;
 
         break;
     default:

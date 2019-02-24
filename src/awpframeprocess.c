@@ -342,7 +342,7 @@ static AWPRESULT _awpSubImages(const awpImage *pImageSrc1, awpImage *pImageSrc2,
                        }
             }
 
-            ((AWPDOUBLE*)pData3)[dwIndex] = ((dSrc1-dSrc2)<0)? 0:(dSrc1-dSrc2);
+            ((AWPDOUBLE*)pData3)[dwIndex] = dSrc1-dSrc2;//((dSrc1-dSrc2)<0)? 0:(dSrc1-dSrc2);
     }
 
     if(lWhere == AWP_CALC_OUTPLACE)

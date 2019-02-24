@@ -57,7 +57,7 @@ CLEANUP:
 	return res;
 }
 #define _CALC_IDX_(v)\
-	idx = (AWPBYTE)floor(v[y*pImage->bChannels*pImage->sSizeX + x*pImage->bChannels + c] + 0.5 - image_min[c]);
+	idx = (AWPBYTE)(255*(v[y*pImage->bChannels*pImage->sSizeX + x*pImage->bChannels + c] - image_min[c]) /(image_max[c] - image_min[c]) );
 
 
 /*
@@ -95,14 +95,14 @@ static AWPRESULT _awpGetHst(awpImage* pImage, awpImage** ppHst)
 		_ERROR_EXIT_RES_(AWP_NOTENOUGH_MEM)
 
 		for (i = 0; i < pImage->bChannels; i++)
-			hst_step[i] = (image_max[i] - image_min[i]) / pHst->sSizeX;
+			hst_step[i] = (image_max[i] - image_min[i]) / (AWPDOUBLE)pHst->sSizeX;
 
 	/*setup histogramm value axis*/
 	for (i = 0; i < pHst->sSizeX; i++)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-			pix[i*pHst->bChannels + c] = floor(i*hst_step[c] + 0.5);
+			pix[i*pHst->bChannels + c] = image_min[c] + i*hst_step[c];// + 0.5);
 		}
 	}
 	/*calc histogramm*/
@@ -224,6 +224,7 @@ static AWPRESULT __awpHstMomemt(awpImage* pHst, awpImage* pMoment, AWPDOUBLE k)
 	AWPBYTE c = 0;
 	AWPDOUBLE* hst		= NULL;
 	AWPDOUBLE* Moment	= NULL;
+    AWPDOUBLE* sum = NULL;
 
 	if (pHst == NULL || pMoment == NULL || k < 1 || k>3)
 		_ERROR_EXIT_RES_(AWP_BADARG)
@@ -231,14 +232,25 @@ static AWPRESULT __awpHstMomemt(awpImage* pHst, awpImage* pMoment, AWPDOUBLE k)
 	_AWP_BASE_ANALYSIS_CHECK_HST_(pHst);
 	_AWP_BASE_ANALYSIS_CHECK_RESULT_(pMoment);
 
+    Moment = (AWPDOUBLE*)pMoment->pPixels;
+    hst    = (AWPDOUBLE*)pHst->pPixels;
+    sum    = (AWPDOUBLE*)malloc(pHst->bChannels);
+
 	for (x = 0; x < pHst->sSizeX; x++)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-			Moment[c] += (pow(x, k)*hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c]);
+			Moment[c] += pow(hst[pHst->bChannels*x + c],k)*hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
+            sum[c] += hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
 		}
 	}
 
+    for (c = 0; c < pHst->bChannels; c++)
+    {
+        Moment[c] /= sum[c];
+    }
+
+    free(sum);
 CLEANUP:
 	return res;
 }
