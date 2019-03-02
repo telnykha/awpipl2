@@ -266,9 +266,9 @@ typedef double            AWPDOUBLE;
     typedef struct
     {
         /** X coordinate */
-		AWPWORD X;
+		AWPSHORT X;
         /** Y coordinate */
-		AWPWORD Y;
+		AWPSHORT Y;
 
     }awpPoint;
 
@@ -1489,10 +1489,32 @@ typedef double            AWPDOUBLE;
 	*	\param min_v - minimum value in the preset to use for projection 
 	*	\param max_v - maximum value in the preset to use for projection 
 	*	\return AWP_OK if success or else AWP_ERROR
-	*/	AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v);
+	*/	
+	AWPRESULT awpBackProjection2D(awpImage* Image, awpImage** ppProb, awpImage* pPreset, AWPBYTE min_v, AWPBYTE max_v);
     /** @}	end  histogroup */
 
+	/** @defgroup momemtsgroup Moments related functions
+	*   @{
+	*/
+	
+	/**
+	*	\brief finds centroid of awpImage
+	*	\param Image pointer to the image
+	*	\param p    result centroid location 
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetCentroid(const awpImage* Image, awpPoint* p);
+	/**
+	*	\brief finds ellipse orientation 
+	*	\param Image pointer to the image
+	*	\param teta    angle of ellipse axis 
+	*	\param mi      length of minor axis 
+	*	\param ma      length of major axis 
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpGetOrientation(const awpImage* Image, AWPDOUBLE* teta, AWPDOUBLE* mi, AWPDOUBLE* ma);
 
+	/** @}	end  momemtsgroup */
 
     /** @defgroup contourgroup Contour functions
     *   @{

@@ -392,7 +392,7 @@ AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-			entropy[c] += pix[x*pHst->bChannels + c] * awpLog2(pix[x*pHst->bChannels + c]);
+			entropy[c] += pix[x*pHst->bChannels + c] != 0?pix[x*pHst->bChannels + c] * awpLog2(pix[x*pHst->bChannels + c]):0;
 		}
 	}
 
@@ -518,5 +518,147 @@ CLEANUP:
 	_SAFE_RELEASE_(pHst)
 	_SAFE_RELEASE_(pFunc)
 	_SAFE_FREE_(SumOfEntries)
+	return res;
+}
+
+
+AWPRESULT awpGetCentroid(const awpImage* pImg, awpPoint* p)
+{
+	AWPRESULT res;
+	AWPDOUBLE sum, x0, y0;
+	AWPBYTE* pix;
+	AWPINT  x, y;
+	AWPDWORD i;
+
+	res = AWP_OK;
+	_CHECK_RESULT_((res = awpCheckImage(pImg)))
+
+		if (pImg->dwType != AWP_BYTE)
+		{
+			res = AWP_NOTSUPPORT;
+			_ERR_EXIT_
+		}
+
+	if (pImg->bChannels != 1)
+	{
+		res = AWP_NOTSUPPORT;
+		_ERR_EXIT_
+	}
+	x0 = 0;
+	y0 = 0;
+	sum = 0;
+	pix = (AWPBYTE*)pImg->pPixels;
+	for (i = 0; i < pImg->sSizeY; i++)
+	{
+		y = i;
+		for (x = 0; x <= pImg->sSizeX; x++)
+		{
+			sum += pix[y*pImg->sSizeX + x];
+			x0 += x*pix[y*pImg->sSizeX + x];
+			y0 += y*pix[y*pImg->sSizeX + x];
+		}
+	}
+
+	p->X = (AWPSHORT)floor(x0 / (double)sum + 0.5);
+	p->Y = (AWPSHORT)floor(y0 / (double)sum + 0.5);
+CLEANUP:
+	return res;
+}
+
+AWPRESULT awpGetOrientation(const awpImage* pImg, AWPDOUBLE* teta, AWPDOUBLE* mi, AWPDOUBLE* ma)
+{
+	/*local variables*/
+	AWPRESULT res;
+	AWPINT  x, y, j;
+	AWPDOUBLE mxx, myy, mxy, intes, s; /*cental moments*/
+	AWPBYTE* pixels;
+	awpPoint center;
+	AWPDWORD i;
+	/*init out arguments */
+	*teta = 0;
+	*mi = 0;
+	*ma = 0;
+	res = AWP_OK;
+	/*check the arguments*/
+	_CHECK_RESULT_((res = awpCheckImage(pImg)))
+		if (teta == NULL || mi == NULL || ma == NULL)
+		{
+			res = AWP_BADARG;
+			_ERR_EXIT_
+		}
+	/*check the capabilities*/
+	if (pImg->bChannels > 1 || pImg->dwType != AWP_BYTE)
+	{
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+	/*init local variables*/
+	mxx = 0; myy = 0; mxy = 0;
+	if (awpGetCentroid(pImg, &center) != AWP_OK)
+	{
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+
+	/*find the moment*/
+	intes = 0;
+	s = 0;
+	pixels = (AWPBYTE*)pImg->pPixels;
+	for (i = 0; i < pImg->sSizeY; i++)
+	{
+		for (j = 0; j <pImg->sSizeX; j++)
+		{
+			x = j;
+			y = i;
+			intes += pixels[y*pImg->sSizeX + x];
+			if (pixels[y*pImg->sSizeX + x] > 0)
+			{
+				mxx += (x - center.X)*(x - center.X);
+				myy += (y - center.Y)*(y - center.Y);
+				mxy += (x - center.X)*(y - center.Y);
+				s++;
+			}
+		}
+	}
+	if (intes == 0)
+	{
+
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+	intes = s;
+	mxx /= intes;
+	myy /= intes;
+	mxy /= intes;
+
+	/*find the moment*/
+	if (mxy == 0 && myy <= mxx)
+	{
+		*teta = -AWP_PI / 2;
+		*ma = 4 * sqrt(mxx);
+		*mi = 4 * sqrt(myy);
+	}
+	else if (mxy == 0 && myy > mxx)
+	{
+		*teta = 0;
+		*ma = 4 * sqrt(myy);
+		*mi = 4 * sqrt(mxx);
+	}
+	else if (myy <= mxx)
+	{
+		*teta = atan(-2 * mxy*myy - mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy));
+		*ma = sqrt(8 * (myy + mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
+		*mi = sqrt(8 * (myy + mxx - sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
+
+	}
+	else if (myy > mxx)
+	{
+		*teta = atan(sqrt(mxx + myy + sqrt((mxx - myy)*(mxx - myy) + 4 * mxy*mxy)) / (-2 * mxy + 0.000001));
+		*ma = sqrt(8 * (myy + mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
+		*mi = sqrt(8 * (myy + mxx - sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
+	}
+
+	*teta = 180.0*(*teta) / AWP_PI;
+CLEANUP:
 	return res;
 }

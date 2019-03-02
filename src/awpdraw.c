@@ -138,7 +138,7 @@ beyond the image*/
 		_ERROR_EXIT_RES_(AWP_BADARG)
 	/* The channel number on which the point should be drawn can not be
 more than the number of channels of the input image */
-	if (bChan > pImage->bChannels)
+	if (bChan >= pImage->bChannels)
 		_ERROR_EXIT_RES_(AWP_BADARG)
 	/*todo: The value of the anchor of the drawn point dValue can not exceed the allowable range defined by
 selected image type*/
