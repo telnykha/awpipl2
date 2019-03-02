@@ -56,7 +56,7 @@
         <BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
         <DynamicRTL>true</DynamicRTL>
         <BCC_DisableOptimizations>true</BCC_DisableOptimizations>
-        <FinalOutputDir>$(PHOTON)\lib\</FinalOutputDir>
+        <FinalOutputDir>$(PHOTON41)\lib\</FinalOutputDir>
         <BRCC_OutputDir>..\obj\</BRCC_OutputDir>
         <TASM_IncludePath>..\src;$(BDS)\Projects\awpipl2\src;..\..\..;$(BDS)\Bin;$(BDS)\Projects;..\include;$(BDS)\include;$(BDS)\include\vcl;..\..\jpeg-6b\src;..\include\_include;$(TASM_IncludePath)</TASM_IncludePath>
         <BRCC_IncludePath>..\src;$(BDS)\Projects\awpipl2\src;..\..\..;$(BDS)\Bin;$(BDS)\Projects;..\include;$(BDS)\include;$(BDS)\include\vcl;..\..\jpeg-6b\src;..\include\_include;$(BRCC_IncludePath)</BRCC_IncludePath>
