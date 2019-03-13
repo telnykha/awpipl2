@@ -297,7 +297,7 @@ AWPRESULT awpGetHstStdDev(awpImage* pHst, awpImage* pStdDev)
 	if (pHst->bChannels != pStdDev->bChannels)
 		_ERROR_EXIT_RES_(AWP_BADARG)
 
-	if (res = awpCreateImage(&mean, 1, 1, pStdDev->bChannels, AWP_DOUBLE) != S_OK)
+	if (res = awpCreateImage(&mean, 1, 1, pStdDev->bChannels, AWP_DOUBLE) != AWP_OK)
 		_ERR_EXIT_
 
 	if (res = __awpHstMomemt(pHst, mean, 1) != AWP_OK)

@@ -1,7 +1,7 @@
 /*
     awpmain.c
 */
-#include "..\include\awpipl.h"
+#include "../include/awpipl.h"
 #include "stdlib.h"
 #define __GET_IDX__ \
 int idx0 = InputKey(argc, argv, "-i");\

@@ -30,18 +30,18 @@ LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCameraUnit.c\
 APPSOURCE = awpmain.c 
 
 # awpipl2 object files	
-LIBOBJECTS=    awpcommon.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o\
+LIBOBJECTS=    awpcommon.o awpEdge.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o\
 	awpchannels.o awpColor.o _awpColor.o awpcontour.o awpcontrast.o\
 	awpconvert.o awpcopypaste.o awpDetectorUnit.o awpDistance.o\
-	awpdraw.o awpEdge.o awpfft.o awpframeprocess.o awpgeometry.o\
+	awpdraw.o  awpfft.o awpframeprocess.o awpgeometry.o\
 	awpIntegralFeaturesUnit.o awpInterpolation.o\
 	awpio.o _awpio.o awpLBPUnit.o awpNorm.o awpopencv.o awpPointUtils.o\
 	awpstroke.o awpthreshold.o awpmaskconvolution.o awpScannersUnit.o
 
-all: awpipl2.a awpmain awptest
+all: awpipl2.a awpmain awptest clean
 
 awpipl:   
-	$(CC)  -c $(INC) $(addprefix src/, $(LIBSOURCES)) 
+	$(CC)  -fPIC -c $(INC) $(addprefix src/, $(LIBSOURCES)) 
 awpipl2.a: awpipl
 	ar cr $(LIB)awpipl2.a $(LIBOBJECTS)
 	rm -f *.o *.awp 
