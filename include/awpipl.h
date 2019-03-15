@@ -993,7 +993,30 @@ typedef double            AWPDOUBLE;
 	 */
     AWPRESULT awpCalcImage(const awpImage* pImageSrc1,  awpImage* pImageSrc2, awpImage** ppImageDst, const long lOptions, const long lWhere);
 
-    /* statistics function */
+	/**
+	*	\brief  Calculates weighted sum of input image pSrcImage and the 
+	*    accumulator acc so that acc becomes a running average of frame sequence 
+	*    pAcc(x,y)=(1-alpha) * pAcc(x,y) + alpha * pSrcImage(x,y) 
+	*     where alpha regulates update speed (how fast accumulator forgets about previous frames) 
+	*	\param const awpImage* pImage pointer to the source image source image should be AWP_DOUBLE 
+	*	\param pAcc -accamulator image with same size as source image and should be AWP_DOUBLE 
+	*	\param alfa - regulates update factor 
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+    AWPRESULT  awpRunningAvg(const awpImage* pSrcImage, awpImage* pAcc, AWPDOUBLE alfa);
+    
+	/**
+	*	\brief  Calculates absolute difference between two images  
+	* 	ppDiff(x,y)= abs(pSrcImage1(x,y) - pSrcImage2(x,y)). 
+	* 	All the images must have the same data type and the same size
+	*	\param const awpImage1* pImage pointer to the first source image 
+	*	\param const awpImage2* pImage pointer to the second source image 
+	*	\param ppDiff - double pointer to the destination image  
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+
+    AWPRESULT  awpAbsDiff(const awpImage* pSrcImage1, const awpImage* pSrcImage2, awpImage** ppDiff);
+
 	/**
 	*	\brief Calculate minimum and maximum light levels
 	*	\param const awpImage* pImage pointer to the source image

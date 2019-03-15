@@ -820,3 +820,136 @@ CLEANUP:
     return res;
 }
 
+AWPRESULT  awpRunningAvg(const awpImage* pSrcImage, awpImage* pAcc, AWPDOUBLE alfa)
+{
+	AWPRESULT  res = AWP_OK;
+	AWPDOUBLE* acc = NULL;
+	AWPDOUBLE* src = NULL;
+	AWPINT	i = 0;
+	AWPBYTE c = 0;
+	
+	if (pSrcImage == NULL || pAcc == NULL || alfa < 0 || alfa > 1)
+	{
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+	
+	_CHECK_SAME_SIZES(pSrcImage,pAcc)
+	_CHECK_NUM_CHANNELS(pSrcImage,pAcc)
+	
+	if (pAcc->dwType != AWP_DOUBLE)
+	{
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+	
+	for (i = 0; i < pAcc->sSizeX*pAcc->sSizeY; i++)
+	{
+		for (c = 0; c < pAcc->bChannels; c++)
+			acc[i+c] = (1 - alfa)*acc[i+c] + alfa*src[i + c];
+	}
+
+CLEANUP:
+    return res;
+}
+
+static void _awp_abs_diff_byte(const awpImage* src1, const awpImage* src2, awpImage* dst)
+{
+	AWPBYTE* s1 = (AWPBYTE*)src1->pPixels;
+	AWPBYTE* s2 = (AWPBYTE*)src2->pPixels;
+	AWPBYTE* d  = (AWPBYTE*)dst->pPixels;
+	AWPINT i = 0;
+	AWPDOUBLE v = 0;
+	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
+	{
+		v = fabs(s1[i] - s2[i]);
+		d[i] = (AWPBYTE)v;
+	}
+}
+
+static void _awp_abs_diff_short(const awpImage* src1, const awpImage* src2, awpImage* dst)
+{
+	AWPSHORT* s1 = (AWPSHORT*)src1->pPixels;
+	AWPSHORT* s2 = (AWPSHORT*)src2->pPixels;
+	AWPSHORT* d  = (AWPSHORT*)dst->pPixels;
+	AWPINT i = 0;
+	AWPDOUBLE v = 0;
+	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
+	{
+		v = fabs(s1[i] - s2[i]);
+		d[i] = (AWPSHORT)v;
+	}
+}
+
+static void _awp_abs_diff_float(const awpImage* src1, const awpImage* src2, awpImage* dst)
+{
+	AWPFLOAT* s1 = (AWPFLOAT*)src1->pPixels;
+	AWPFLOAT* s2 = (AWPFLOAT*)src2->pPixels;
+	AWPFLOAT* d  = (AWPFLOAT*)dst->pPixels;
+	AWPINT i = 0;
+	AWPDOUBLE v = 0;
+	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
+	{
+		v = fabs(s1[i] - s2[i]);
+		d[i] = (AWPFLOAT)v;
+	}
+}
+static void _awp_abs_diff_double(const awpImage* src1, const awpImage* src2, awpImage* dst)
+{
+	AWPDOUBLE* s1 = (AWPDOUBLE*)src1->pPixels;
+	AWPDOUBLE* s2 = (AWPDOUBLE*)src2->pPixels;
+	AWPDOUBLE* d  = (AWPDOUBLE*)dst->pPixels;
+	AWPINT i = 0;
+	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
+	{
+		d[i] = fabs(s1[i] - s2[i]);
+	}
+}
+
+static void _awpAbsDiff(const awpImage* src1, const awpImage* src2, awpImage* dst)
+{
+	switch(src1->dwType)
+	{
+		case AWP_BYTE:
+			_awp_abs_diff_byte(src1, src2, dst);
+		break;
+		case AWP_SHORT:
+			_awp_abs_diff_short(src1, src2, dst);
+		break;
+		case AWP_FLOAT:
+			_awp_abs_diff_float(src1, src2, dst);
+		break;
+		case AWP_DOUBLE:
+			_awp_abs_diff_float(src1, src2, dst);
+		break;
+	}
+}
+
+AWPRESULT  awpAbsDiff(const awpImage* pSrcImage1, const awpImage* pSrcImage2, awpImage** ppDiff)
+{
+	AWPRESULT  res = AWP_OK;
+	
+	if (ppDiff == NULL)
+	{
+		res = AWP_BADARG;
+		_ERR_EXIT_
+	}
+	_CHECK_RESULT_(res = awpCheckImage(pSrcImage1)) 
+	_CHECK_RESULT_(res = awpCheckImage(pSrcImage2))
+	
+	_CHECK_SAME_SIZES(pSrcImage1, pSrcImage2)
+	_CHECK_SAME_TYPE(pSrcImage1, pSrcImage2)
+	_CHECK_NUM_CHANNELS(pSrcImage1, pSrcImage2)
+	
+	if (*ppDiff != NULL)
+		_CHECK_RESULT_(res = awpCheckImage(*ppDiff))
+	else
+		_CHECK_RESULT_(res = awpCreateImage(ppDiff, pSrcImage1->sSizeX, pSrcImage1->sSizeY, 
+		pSrcImage1->bChannels, pSrcImage1->dwType))
+	
+	_awpAbsDiff(pSrcImage1, pSrcImage2, *ppDiff);
+	
+
+CLEANUP:
+    return res;
+}
