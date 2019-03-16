@@ -46,7 +46,7 @@ extern "C" {
 #ifdef HAVE_CONFIG_H
         #include <config.h>
 #endif
-
+#include <stdlib.h>
 #include "awperror.h"
 
 #ifdef WIN32
@@ -580,6 +580,7 @@ typedef double            AWPDOUBLE;
            (type*)v->pPixels;
 
 #define _AWP_SAFE_RELEASE_(img) if (img != NULL){ awpReleaseImage(&img); img = NULL;}
+#define _AWP_SAFE_FREE_(v) if(v != NULL){free(v); v = NULL;}
 
     /** \addtogroup commongroup
     *   @{
