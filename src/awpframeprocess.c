@@ -843,6 +843,9 @@ AWPRESULT  awpRunningAvg(const awpImage* pSrcImage, awpImage* pAcc, AWPDOUBLE al
 		_ERR_EXIT_
 	}
 	
+	acc = (AWPDOUBLE*)pAcc->pPixels;
+	src = (AWPDOUBLE*)pSrcImage->pPixels;
+
 	for (i = 0; i < pAcc->sSizeX*pAcc->sSizeY; i++)
 	{
 		for (c = 0; c < pAcc->bChannels; c++)
@@ -862,7 +865,7 @@ static void _awp_abs_diff_byte(const awpImage* src1, const awpImage* src2, awpIm
 	AWPDOUBLE v = 0;
 	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
 	{
-		v = fabs(s1[i] - s2[i]);
+		v = fabs((double)s1[i] - (double)s2[i]);
 		d[i] = (AWPBYTE)v;
 	}
 }
@@ -876,7 +879,7 @@ static void _awp_abs_diff_short(const awpImage* src1, const awpImage* src2, awpI
 	AWPDOUBLE v = 0;
 	for (i = 0; i < src1->sSizeX*src1->sSizeY; i++)
 	{
-		v = fabs(s1[i] - s2[i]);
+		v = fabs((double)s1[i] - (double)s2[i]);
 		d[i] = (AWPSHORT)v;
 	}
 }
@@ -920,7 +923,7 @@ static void _awpAbsDiff(const awpImage* src1, const awpImage* src2, awpImage* ds
 			_awp_abs_diff_float(src1, src2, dst);
 		break;
 		case AWP_DOUBLE:
-			_awp_abs_diff_float(src1, src2, dst);
+			_awp_abs_diff_double(src1, src2, dst);
 		break;
 	}
 }
@@ -942,10 +945,15 @@ AWPRESULT  awpAbsDiff(const awpImage* pSrcImage1, const awpImage* pSrcImage2, aw
 	_CHECK_NUM_CHANNELS(pSrcImage1, pSrcImage2)
 	
 	if (*ppDiff != NULL)
+	{
 		_CHECK_RESULT_(res = awpCheckImage(*ppDiff))
+
+	}
 	else
-		_CHECK_RESULT_(res = awpCreateImage(ppDiff, pSrcImage1->sSizeX, pSrcImage1->sSizeY, 
-		pSrcImage1->bChannels, pSrcImage1->dwType))
+	{
+		_CHECK_RESULT_(res = awpCreateImage(ppDiff, pSrcImage1->sSizeX, pSrcImage1->sSizeY,
+			pSrcImage1->bChannels, pSrcImage1->dwType))
+	}
 	
 	_awpAbsDiff(pSrcImage1, pSrcImage2, *ppDiff);
 	
