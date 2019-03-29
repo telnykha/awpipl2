@@ -1,16 +1,16 @@
 /*
     awpmain.c
 */
-
-
 #define _CRT_SECURE_NO_WARNINGS
 #include "../include/awpipl.h"
 #include "stdlib.h"
+
 #define CHECK_RESULT  \
 	if(res!=AWP_OK){ \
 		printf("ERROR CODE:%i", res);\
 		exit(-1); \
 	}\
+
 
 #define __GET_IDX__ \
 int idx0 = InputKey(argc, argv, "-i");\
@@ -186,11 +186,7 @@ void Flip(int argc, char **argv)
 {
 	awpImage* img = NULL;
 	int res = AWP_OK;
-	//int idx0 = InputKey(argc, argv, "-i");
-	//int idx1 = InputKey(argc, argv, "-o");
-	//int idx2 = InputKey(argc, argv, "-p");
-	//if (idx0 < 2)
-	//	exit(-1);
+
 	__GET_IDX__
 
 	img = __LoadImage(argv[idx0]);
@@ -519,12 +515,6 @@ void Filter(int argc, char **argv)
 int main (int argc, char **argv)
 {
   int i = 0;
-  /*
-   printf("Hello awpipl!\n");
-   printf("argc = %d\n", argc);
-   for (i = 0; i < argc; i++)
-	printf("argv[%d] = %s\n", i, argv[i]);
-   */
   if (argc < 2)
   {
 	  return -1;
@@ -574,11 +564,9 @@ int main (int argc, char **argv)
    {
 	   Contrast(argc, argv);
    }
-   else if (strcmp(arg1, "--hst") == 0)
-   {
-   }
    else if (strcmp(arg1, "--stat") == 0)
    {
+	   // image staistics analysis 
    }
    else if (strcmp(arg1, "--convert") == 0)
    {
@@ -586,53 +574,23 @@ int main (int argc, char **argv)
    }
    else if (strcmp(arg1, "--draw") == 0)
    {
-   }
-   else if (strcmp(arg1, "--stroke") == 0)
-   {
-   }
-   else if (strcmp(arg1, "--contour") == 0)
-   {
+	   // drawing functions sample 
    }
    else if (strcmp(arg1, "--blobs") == 0)
    {
-   }
-   else if (strcmp(arg1, "--distanse") == 0)
-   {
+	   // Binary objects analysis 
    }
    else if (strcmp(arg1, "--detect") == 0)
    {
-   }
-   else if (strcmp(arg1, "--lbp") == 0)
-   {
+	   // object detection 
    }
    else if (strcmp(arg1, "--backproject") == 0)
    {
+	   // 
    }
    else if (strcmp(arg1, "--camera") == 0)
    {
+	   // 
    }
-
-   awpImage* img = NULL;
-   if (awpCreateImage(&img, 512,512,3, AWP_BYTE) != AWP_OK)
-   {			
-	printf("cannot create image.\n");
-	return -1;
-   }
-   
-   awpRect rect;
-   rect.left = 32;
-   rect.top  = 32;
-   rect.right = rect.left + 64;
-   rect.bottom = rect.top + 64;
-
-   awpPoint point;
-   point.X = 256;
-   point.Y = 256;	
-
-   awpDrawRect(img, &rect, 1, 255, 1);
-   awpDrawEllipse(img, point, 50, 150, 30,2, 200, 1);
-
-   awpSaveImage("test.awp", img);  	
-   _AWP_SAFE_RELEASE_(img);  
    return 0;
 }
