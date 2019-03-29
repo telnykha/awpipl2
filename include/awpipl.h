@@ -1,4 +1,4 @@
-﻿/*M
+﻿ /*M
 //
 //    awpipl2 image processing and image analysis library
 //    Purpose: AWPIPL header file
@@ -819,7 +819,7 @@ typedef double            AWPDOUBLE;
 	*	\param ppImage destination awpImage pointer
 	*	\return AWP_OK if success else AWP_ERROR
 	*/
-    AWPRESULT awpJpegToImage( const AWPBYTE* pJpegData, AWPDWORD length, awpImage** ppImage );
+    AWPRESULT awpJpegToImage( const AWPBYTE* pJpegData, AWPDWORD length,   );
 #endif
 
 

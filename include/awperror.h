@@ -10,13 +10,13 @@ typedef  long AWPRESULT;
 #define  AWP_BASE_ERR  0
 
 /* base awp errors*/
-#define AWP_OK					AWP_BASE_ERR
+#define AWP_OK						AWP_BASE_ERR
 #define AWP_BADMEMORY				AWP_BASE_ERR + 1
 #define AWP_NOTAWPIMAGE				AWP_BASE_ERR + 2
 #define AWP_BADVERSION				AWP_BASE_ERR + 3
 #define AWP_BADCOLOR				AWP_BASE_ERR + 4
 #define AWP_NOTSUPPORT				AWP_BASE_ERR + 5
-#define AWP_BADARG				AWP_BASE_ERR + 6
+#define AWP_BADARG					AWP_BASE_ERR + 6
 #define AWP_NOTENOUGH_MEM			AWP_BASE_ERR + 7
 #define AWP_BADSIZES				AWP_BASE_ERR + 8
 #define AWP_BADIMAGE_FORMAT			AWP_BASE_ERR + 9

@@ -704,7 +704,8 @@ jpeg_buffer_dest (j_compress_ptr cinfo,char* buffer, AWPINT len )
     dest->next_output_byte = (JOCTET *)buffer;
     dest->free_in_buffer = 0;
 }
-#ifdef WIN32
+#if 0
+
  static AWPRESULT _awpLoadFormatImage(const char* lpFileName, awpImage** ppImage, int format)
  {
     awpImage* pImage;
