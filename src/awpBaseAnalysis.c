@@ -309,7 +309,14 @@ AWPRESULT awpGetHstStdDev(awpImage* pHst, awpImage* pStdDev)
 	m2 = _AWP_BPIX_(pStdDev, AWPDOUBLE)
 	
 	for (c = 0; c < pStdDev->bChannels; c++)
-		m2[c] = sqrt(m2[c] - m1[c]*m1[c]);
+    {
+        if (m2[c] - m1[c]*m1[c] < 1e-30)
+        {
+            m2[c] = 1e-30;
+        }
+        else
+			m2[c] = sqrt(m2[c] - m1[c]*m1[c]);
+    }
 
 CLEANUP:
 	_SAFE_RELEASE_(mean)
