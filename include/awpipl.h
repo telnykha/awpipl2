@@ -819,7 +819,7 @@ typedef double            AWPDOUBLE;
 	*	\param ppImage destination awpImage pointer
 	*	\return AWP_OK if success else AWP_ERROR
 	*/
-    AWPRESULT awpJpegToImage( const AWPBYTE* pJpegData, AWPDWORD length,   );
+    AWPRESULT awpJpegToImage( const AWPBYTE* pJpegData, AWPDWORD length,   awpImage** ppImage);
 #endif
 
 

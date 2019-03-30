@@ -505,7 +505,7 @@ AWPRESULT awpHistogrammEqualize(awpImage* pImage)
 		}
 
 	}
-
+	p = _AWP_BPIX_(pImage, AWPBYTE);
 	for (i = 0; i < count; i++)
 	{
 		for (c = 0; c < pImage->bChannels; c++)
