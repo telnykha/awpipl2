@@ -259,62 +259,65 @@ void Info(int argc, char **argv)
 	_AWP_SAFE_RELEASE_(img);
 }
 void Stat(int argc, char** argv) {
-		int idx = InputKey(argc, argv, "-i");
-		FILE * stat = fopen("result.txt", "w");
-		awpImage* img = NULL; 
-		awpImage* hst = NULL; 
-		awpImage* mean = NULL;
-		awpImage *median = NULL;
-		awpImage *entropy = NULL;
-		awpImage *StdDev = NULL;
-		double *a =  NULL ;
-		double *b=  NULL ;
-		img = __LoadImage(argv[idx]);
-		double w = (double)img->sSizeX;
-		double y = (double)img->sSizeY;
+	int idx = InputKey(argc, argv, "-i");
+	FILE * stat = fopen("result.txt", "w");
+	awpImage* img = NULL; 
+	awpImage* hst = NULL; 
+	awpImage* mean = NULL;
+	awpImage *median = NULL;
+	awpImage *entropy = NULL;
+	awpImage *StdDev = NULL;
+	double *a =  NULL ;
+	double *b=  NULL ;
+	img = __LoadImage(argv[idx]);
+	double w = (double)img->sSizeX;
+	double y = (double)img->sSizeY;
 	fprintf(stat,"width = %lf\n",w);
 	fprintf(stat, "height = %lf\n", y);
 	awpGetHst(img, &hst , 0);
-		double *d = (double*)hst->pPixels;
+	double *d = (double*)hst->pPixels;
 	for (int i = 0; i < hst->sSizeX; i++)
 	{
-	for (int g = 0; g < hst->bChannels; g++)
-	{
-	fprintf(stat, "%lf\t", d[i*hst->bChannels+g + hst->bChannels*hst->sSizeX]);
-	}
-	fprintf(stat, "\n");}
-		awpCreateImage(&mean, 1, 1, hst->bChannels, hst->dwType);
-		awpCreateImage(&median, 1, 1, hst->bChannels, hst->dwType);
-		awpCreateImage(&StdDev, 1, 1, hst->pPixels , hst->dwType);
-		awpCreateImage(&entropy, 1, 1, hst->bChannels, hst->dwType);
-		awpMinMax(img, &a, &b);
-		for (int  f = 0; f < img->bChannels; f++)
+		for (int g = 0; g < hst->bChannels; g++)
 		{
-			fprintf(stat, "min = %lf\t max = %lf\n", a[f] , b[f]);}
-		free(a);
-		free(b);
+			fprintf(stat, "%lf\t", d[i*hst->bChannels+g + hst->bChannels*hst->sSizeX]);
+		}
+		fprintf(stat, "\n");
+	}
+	awpCreateImage(&mean, 1, 1, hst->bChannels, hst->dwType);
+	awpCreateImage(&median, 1, 1, hst->bChannels, hst->dwType);
+	awpCreateImage(&StdDev, 1, 1, hst->bChannels , hst->dwType);
+	awpCreateImage(&entropy, 1, 1, hst->bChannels, hst->dwType);
+	awpMinMax(img, &a, &b);
+	for (int  f = 0; f < img->bChannels; f++)
+	{
+		fprintf(stat, "min = %lf\t max = %lf\n", a[f] , b[f]);
+	}
+	free(a);
+	free(b);
 
-			awpGetHstMean(hst, mean);
-			double *men = (double*)hst->pPixels;
-			for (int h = 0; h<hst->pPixels; h++){
-			fprintf(stat, "avg = %lf", men[h]);}
+	awpGetHstMean(hst, mean);
+	double *men = (double*)mean->pPixels;
+	for (int h = 0; h<hst->bChannels; h++){
+	fprintf(stat, "avg = %lf", men[h]);}
 
-			awpGetHstMedian(hst, median);
-				double *medin = (double*)median->pPixels;
-				for (int i  = 0; i <hst->bChannels; i++){
-				fprintf(stat, "%lf\t\n", medin[i]);}
+	awpGetHstMedian(hst, median);
+	double *medin = (double*)median->pPixels;
+	for (int i  = 0; i <hst->bChannels; i++){
+	fprintf(stat, "%lf\t\n", medin[i]);}
 
-				awpGetHstStdDev(hst, StdDev);
-				double *q = (double*)StdDev->pPixels;
-				for (int i= 0; i < hst->bChannels; i++){
-				fprintf(stat, "%lf\n", q[i]);}
-				free(q);
+	awpGetHstStdDev(hst, StdDev);
+	double *q = (double*)StdDev->pPixels;
+	for (int i= 0; i < hst->bChannels; i++){
+	fprintf(stat, "%lf\n", q[i]);}
+	free(q);
 
-				awpGetHstEntropy(hst, entropy);
-				double *ent = (double*)entropy->pPixels; 
-				for (int i = 0; i < hst->bChannels; i++){
-				fprintf(stat, "%lf\n", ent[i]);}
-				fclose(stat); }
+	awpGetHstEntropy(hst, entropy);
+	double *ent = (double*)entropy->pPixels; 
+	for (int i = 0; i < hst->bChannels; i++){
+	fprintf(stat, "%lf\n", ent[i]);}
+	fclose(stat); 
+}
 
 
 void Flip(int argc, char **argv)
