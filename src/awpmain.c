@@ -11,6 +11,25 @@
 		exit(-1); \
 	}\
 
+#define _CHECK\
+	if (k != 8)\
+	{\
+		printf("invalid draw params = %s\n", argv[idx2]);\
+		exit(-1);\
+	}\
+
+#define _CHECK2\
+	if (k != 6)\
+	{\
+		printf("invalid draw params = %s\n", argv[idx2]);\
+		exit(-1);\
+	}\
+
+#define _CHECK3\
+	if (k != 9) {\
+printf("invalid draw params = %s\n", argv[idx2]);\
+exit(-1);\
+	}\
 
 #define __GET_IDX__ \
 int idx0 = InputKey(argc, argv, "-i");\
@@ -18,6 +37,7 @@ int idx1 = InputKey(argc, argv, "-o");\
 int idx2 = InputKey(argc, argv, "-p");\
 if (idx0 < 2)\
 	exit(-1);\
+	
 
 int InputKey(int argc, char **argv, const char* key)
 {
@@ -75,9 +95,9 @@ void Help(int argc, char **argv)
 	printf("--crop -i filename -o outfile -p left:top:right:bottom\n");
 	printf("--filter options -i filename -o outfile\n");
 	printf("--contrast -i filename -o outfile -p mode [mode = a - autolevels, h - histogramm equalize]\n");
-	printf("--stat \n");
+	printf("--stat -i namefile\n");
 	printf("--convert -i filename -o outfile\n");
-	printf("--draw \n");
+	printf("--draw -i file name -o outfile -f mode [mode = line,rect,point,cross,ellipse,ellipse2] -p x1:x2:y1:y2:r:g:b:rd \n");
 	printf("--blobs \n");
 	printf("--detect \n");
 	printf("--bacrproject \n");
@@ -96,6 +116,64 @@ void Convert(int argc, char** argv) {
 
 	__SaveImage(argv[idx1], img);
 	_AWP_SAFE_RELEASE_(img);
+}
+void Draw(int argc, char** argv) {
+	awpImage* img = NULL;
+	AWPDOUBLE r = 0, g = 0, b = 0 , angle = 0;
+	AWPWORD w= 0, h= 0;
+	int rd =1;
+	awpRect a;
+	int k = 0 , left = 0, top = 0, right = 0, bottom = 0;;
+	int idx3 = InputKey(argc, argv, "-f");
+	awpPoint p1;
+	awpPoint p2;
+	__GET_IDX__
+
+		img = __LoadImage(argv[idx0]);
+	if (strcmp(argv[idx3], "line") == 0){
+		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &p2.X, &p2.Y, &r, &g, &b, &rd);
+			_CHECK
+			awpDrawCLine(img, p1, p2, r, g, b, rd);}
+
+	else if (strcmp(argv[idx3], "rect") == 0){
+		k = sscanf(argv[idx2], "%i:%i:%i:%i:%lf:%lf:%lf:%i", &left,&top,&bottom,&right,&r, &g, &b, &rd);
+			_CHECK
+		a.left = left;
+		a.bottom = bottom;
+		a.right = right;
+		a.top = top;
+			awpDrawCRect(img, &a, r, g, b, rd);}
+
+	else if (strcmp(argv[idx3], "point") == 0){
+		k = sscanf(argv[idx2], "%hi:%hi:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &r, &g, &b, &rd);
+			_CHECK2
+			awpDrawCPoint(img, p1, r, g, b, rd);}
+
+	else if (strcmp(argv[idx3], "cross") == 0){
+		k = sscanf(argv[idx2], "%i:%i:%i:%i:%lf:%lf:%lf:%i", &left, &top, &bottom, &right, &r, &g, &b, &rd);
+			_CHECK
+		a.left = left;
+		a.bottom = bottom;
+		a.right = right;
+		a.top = top;
+			awpDrawCCross(img, &a, r, g, b, rd);}
+
+	else if (strcmp(argv[idx3], "ellipse") == 0) {
+		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &w, &h, &angle, &r, &g, &b, &rd);
+			_CHECK3
+			awpDrawCEllipse(img, p1, w, h, angle, r, g, b, rd);}
+
+	else if (strcmp(argv[idx3], "ellipse2") == 0) {
+		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &w, &h, &angle, &r, &g, &b, &rd);
+			_CHECK3
+	}
+
+	else{
+			printf("unknown draw option %s\n", argv[idx2]);
+			exit(-1);}
+
+			__SaveImage(argv[idx1], img);
+			_AWP_SAFE_RELEASE_(img);
 }
 void Calc(int argc,char** argv) {
 	awpImage* img = NULL;
@@ -178,10 +256,67 @@ void Info(int argc, char **argv)
 	{
 		printf("cannot open file.\n");
 	}
-
-
 	_AWP_SAFE_RELEASE_(img);
 }
+/*void Stat(int argc, char** argv) {
+		int idx = InputKey(argc, argv, "-i");
+		FILE * stat = fopen("result.txt", "w");
+		awpImage* img = NULL; 
+		awpImage* hst = NULL; 
+		awpImage* mean = NULL;
+		awpImage *median = NULL;
+		awpImage *entropy = NULL;
+		awpImage *StdDev = NULL;
+		double *a =  NULL ;
+		double *b=  NULL ;
+		img = __LoadImage(argv[idx]);
+		double w = (double)img->sSizeX;
+		double y = (double)img->sSizeY;
+	fprintf(stat,"width = %lf\n",w);
+	fprintf(stat, "height = %lf\n", y);
+	awpGetHst(img, &hst , 0);
+		double *d = (double*)hst->pPixels;
+	for (int i = 0; i < hst->sSizeX; i++)
+	{
+	for (int g = 0; g < hst->bChannels; g++)
+	{
+	fprintf(stat, "%lf\t", d[i*hst->bChannels+g + hst->bChannels*hst->sSizeX]);
+	}
+	fprintf(stat, "\n");}
+		awpCreateImage(&mean, 1, 1, hst->bChannels, hst->dwType);
+		awpCreateImage(&median, 1, 1, hst->bChannels, hst->dwType);
+		awpCreateImage(&StdDev, 1, 1, hst->pPixels , hst->dwType);
+		awpCreateImage(&entropy, 1, 1, hst->bChannels, hst->dwType);
+		awpMinMax(img, &a, &b);
+		for (int  f = 0; f < img->bChannels; f++)
+		{
+			fprintf(stat, "min = %lf\t max = %lf\n", a[f] , b[f]);}
+		free(a);
+		free(b);
+
+			/*awpGetHstMean(hst, mean);
+			double *men = (double*)hst->pPixels;
+			for (int h = 0; h<hst->pPixels; h++){
+			fprintf(stat, "avg = %lf", men[h]);}*/
+
+		/*		awpGetHstMedian(hst, median);
+				double *medin = (double*)median->pPixels;
+				for (int i  = 0; i <hst->bChannels; i++){
+				fprintf(stat, "%lf\t\n", medin[i]);}
+
+				awpGetHstStdDev(hst, StdDev);
+				double *q = (double*)StdDev->pPixels;
+				for (int i= 0; i < hst->bChannels; i++){
+				fprintf(stat, "%lf\n", q[i]);}
+				free(q);
+
+				awpGetHstEntropy(hst, entropy);
+				double *ent = (double*)entropy->pPixels; 
+				for (int i = 0; i < hst->bChannels; i++){
+				fprintf(stat, "%lf\n", ent[i]);}
+				fclose(stat); }*/
+
+
 void Flip(int argc, char **argv)
 {
 	awpImage* img = NULL;
@@ -566,7 +701,7 @@ int main (int argc, char **argv)
    }
    else if (strcmp(arg1, "--stat") == 0)
    {
-	   // image staistics analysis 
+	   Stat(argc, argv);
    }
    else if (strcmp(arg1, "--convert") == 0)
    {
@@ -574,7 +709,7 @@ int main (int argc, char **argv)
    }
    else if (strcmp(arg1, "--draw") == 0)
    {
-	   // drawing functions sample 
+	   Draw(argc, argv);
    }
    else if (strcmp(arg1, "--blobs") == 0)
    {
