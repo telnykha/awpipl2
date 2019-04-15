@@ -258,7 +258,7 @@ void Info(int argc, char **argv)
 	}
 	_AWP_SAFE_RELEASE_(img);
 }
-/*void Stat(int argc, char** argv) {
+void Stat(int argc, char** argv) {
 		int idx = InputKey(argc, argv, "-i");
 		FILE * stat = fopen("result.txt", "w");
 		awpImage* img = NULL; 
@@ -294,12 +294,12 @@ void Info(int argc, char **argv)
 		free(a);
 		free(b);
 
-			/*awpGetHstMean(hst, mean);
+			awpGetHstMean(hst, mean);
 			double *men = (double*)hst->pPixels;
 			for (int h = 0; h<hst->pPixels; h++){
-			fprintf(stat, "avg = %lf", men[h]);}*/
+			fprintf(stat, "avg = %lf", men[h]);}
 
-		/*		awpGetHstMedian(hst, median);
+			awpGetHstMedian(hst, median);
 				double *medin = (double*)median->pPixels;
 				for (int i  = 0; i <hst->bChannels; i++){
 				fprintf(stat, "%lf\t\n", medin[i]);}
@@ -314,7 +314,7 @@ void Info(int argc, char **argv)
 				double *ent = (double*)entropy->pPixels; 
 				for (int i = 0; i < hst->bChannels; i++){
 				fprintf(stat, "%lf\n", ent[i]);}
-				fclose(stat); }*/
+				fclose(stat); }
 
 
 void Flip(int argc, char **argv)
