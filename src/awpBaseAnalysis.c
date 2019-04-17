@@ -234,14 +234,14 @@ static AWPRESULT __awpHstMomemt(awpImage* pHst, awpImage* pMoment, AWPDOUBLE k)
 
     Moment = (AWPDOUBLE*)pMoment->pPixels;
     hst    = (AWPDOUBLE*)pHst->pPixels;
-    sum    = (AWPDOUBLE*)malloc(pHst->bChannels*sizeof(AWPDOUBLE));
-	memset(sum, 0, pHst->bChannels*sizeof(AWPDOUBLE));
+    sum    = (AWPDOUBLE*)malloc(pHst->bChannels);
+
 	for (x = 0; x < pHst->sSizeX; x++)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-			Moment[c]  += pow(hst[pHst->bChannels*x + c], k)*hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
-			sum[c] += hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
+			Moment[c] += pow(hst[pHst->bChannels*x + c],k)*hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
+            sum[c] += hst[pHst->bChannels*pHst->sSizeX + x*pHst->bChannels + c];
 		}
 	}
 
@@ -386,7 +386,6 @@ AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy)
 	AWPWORD     x = 0;
 	AWPDOUBLE*  pix = NULL;
 	AWPDOUBLE*  entropy = NULL;
-	AWPDOUBLE* sum = NULL;
 	if (pHst == NULL || pEntropy == NULL)
 		_ERROR_EXIT_RES_(AWP_BADARG)
 
@@ -395,23 +394,12 @@ AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy)
 
 	entropy = _AWP_BPIX_(pEntropy, AWPDOUBLE);
 	pix =     _AWP_BPIX_(pHst, AWPDOUBLE);
-	sum = (AWPDOUBLE*)malloc(pHst->bChannels*sizeof(AWPDOUBLE));
-	memset(sum, 0, pHst->bChannels*sizeof(AWPDOUBLE));
 	pix += pHst->sSizeX*pHst->bChannels;
 	for (x = 0; x < pHst->sSizeX; x++)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-//			entropy[c] += pix[x*pHst->bChannels + c] != 0?pix[x*pHst->bChannels + c] * awpLog2(pix[x*pHst->bChannels + c]):0;
-			sum[c] += pix[x*pHst->bChannels + c];
-		}
-	}
-	
-	for (x = 0; x < pHst->sSizeX; x++)
-	{
-		for (c = 0; c < pHst->bChannels; c++)
-		{
-			entropy[c] += pix[x*pHst->bChannels + c] != 0?pix[x*pHst->bChannels + c] / sum[c] * awpLog2(pix[x*pHst->bChannels + c]/sum[c]):0;
+			entropy[c] += pix[x*pHst->bChannels + c] != 0?pix[x*pHst->bChannels + c] * awpLog2(pix[x*pHst->bChannels + c]):0;
 		}
 	}
 
@@ -420,7 +408,6 @@ AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy)
 		entropy[c] = -entropy[c];
 	}
 CLEANUP:
-	free(sum);
 	return res;
 }
 
