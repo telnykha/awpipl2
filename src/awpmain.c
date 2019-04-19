@@ -280,12 +280,13 @@ void Stat(int argc, char** argv) {
 	fprintf(stat, "height = %lf\n", y);
 
 	res=awpGetHst(img, &hst, 0);
+	CHECK_RESULT
 	double *d = (double*)hst->pPixels;
 	for (int i = 0; i < hst->sSizeX; i++){
 	for (int g = 0; g < hst->bChannels; g++){
 	fprintf(stat, "%lf\t", d[i*hst->bChannels+g + hst->bChannels*hst->sSizeX]);}
 	fprintf(stat, "\n");}
-	CHECK_RESULT
+	
 					
 	awpCreateImage(&mean, 1, 1, hst->bChannels, hst->dwType);
 	awpCreateImage(&median, 1, 1, hst->bChannels, hst->dwType);
@@ -293,6 +294,7 @@ void Stat(int argc, char** argv) {
 	awpCreateImage(&entropy, 1, 1, hst->bChannels, hst->dwType);
 
 	res=awpMinMax(img, &a, &b);
+	CHECK_RESULT
 	fprintf(stat, "min:\t");
 	for (int  f = 0; f < img->bChannels; f++){
 	fprintf(stat, "ch%i = %lf\t",f,a[f]);}
@@ -304,37 +306,37 @@ void Stat(int argc, char** argv) {
 	free(b);
 
 	res=awpGetHstMean(hst, mean);
+	CHECK_RESULT
 	double *men = (double*)mean->pPixels;
 	fprintf(stat, "\n");
 	fprintf(stat, "mean:\t");
 	for (int h = 0; h<hst->bChannels; h++){
 	fprintf(stat, "ch%i = %lf\t", h, men[h]);}
 	fprintf(stat, "\n");
-	CHECK_RESULT
-
+	
 	res=awpGetMedian(img, median);
+	CHECK_RESULT
 	double *medin = (double*)median->pPixels;
 	fprintf(stat, "median:\t");
 	for (int i  = 0; i <hst->bChannels; i++){
 	fprintf(stat, "ch%i = %lf\t",i, medin[i]);}
 	fprintf(stat, "\n");
-	CHECK_RESULT
 
 	res=awpGetHstStdDev(hst, StdDev);
+	CHECK_RESULT
 	double *q = (double*)StdDev->pPixels;
 	fprintf(stat, "stddev:\t");
 	for (int i= 0; i < hst->bChannels; i++){
 	fprintf(stat, "ch%i %lf\t",i,q[i]);}
 	fprintf(stat, "\n");
-	CHECK_RESULT
 
 	res=awpGetHstEntropy(hst, entropy);
+	CHECK_RESULT
 	double *ent = (double*)entropy->pPixels; 
 	fprintf(stat, "entropy:");
 	for (int i = 0; i < hst->bChannels; i++){
 	fprintf(stat, "ch%i %lf\t",i, ent[i]);}
 	fprintf(stat, "\n");
-	CHECK_RESULT
 	
 	fclose(stat); 
 }
