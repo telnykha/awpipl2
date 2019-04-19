@@ -337,33 +337,99 @@ static AWPINT AWP_CDECL _awpDCompare(const void* a1, const void* a2)
 	else
 		return 0;
 }
+
+static AWPINT AWP_CDECL _awpBCompare(const void* a1, const void* a2)
+{
+	AWPBYTE* e1 = (AWPBYTE*)a1;
+	AWPBYTE* e2 = (AWPBYTE*)a2;
+
+	if (*e1 > *e2)
+		return 1;
+	else if (*e1 < *e2)
+		return -1;
+	else
+		return 0;
+}
+static AWPINT AWP_CDECL _awpFCompare(const void* a1, const void* a2)
+{
+	AWPFLOAT* e1 = (AWPFLOAT*)a1;
+	AWPFLOAT* e2 = (AWPFLOAT*)a2;
+
+	if (*e1 > *e2)
+		return 1;
+	else if (*e1 < *e2)
+		return -1;
+	else
+		return 0;
+}
+static AWPINT AWP_CDECL _awpSCompare(const void* a1, const void* a2)
+{
+	AWPSHORT* e1 = (AWPSHORT*)a1;
+	AWPSHORT* e2 = (AWPSHORT*)a2;
+
+	if (*e1 > *e2)
+		return 1;
+	else if (*e1 < *e2)
+		return -1;
+	else
+		return 0;
+}
 /*
 find the median values over histogramm
 */
-AWPRESULT awpGetHstMedian(awpImage* pHst, awpImage* pMedian)
+AWPRESULT awpGetMedian(awpImage* pImage, awpImage* pMedian)
 {
 	AWPRESULT   res = AWP_OK;
 	awpImage*   channel = NULL;
 	AWPBYTE		c = 0;
 	AWPDOUBLE*  pix = NULL;
+	AWPFLOAT *  fpix = NULL;
+	AWPBYTE *   bpix = NULL;
+	AWPSHORT*   spix = NULL;
 	AWPDOUBLE*  median = NULL;
-	if (pHst == NULL || pMedian == NULL)
+	if (pImage == NULL || pMedian == NULL)
 		_ERROR_EXIT_RES_(AWP_BADARG)
 
-	_AWP_BASE_ANALYSIS_CHECK_HST_(pHst);
 	_AWP_BASE_ANALYSIS_CHECK_RESULT_(pMedian);
 
 	median = _AWP_BPIX_(pMedian, AWPDOUBLE);
+
 	for (c = 0; c < pMedian->bChannels; c++)
-	{
-		if (res =awpGetChannel(pHst, &channel, c) != AWP_OK)
+	{	
+		if (res =awpGetChannel(pImage, &channel, c) != AWP_OK)
 			_ERR_EXIT_
-		pix = _AWP_BPIX_(channel, AWPDOUBLE);
-		pix += channel->sSizeX;
+			if (pImage->dwType == AWP_DOUBLE)
+			{
+				pix = _AWP_BPIX_(channel, AWPDOUBLE);
+			
+			
+				qsort((void*)pix, pImage->sSizeX*pImage->sSizeY, sizeof(AWPDOUBLE), _awpDCompare);
+				median[c] = pix[channel->sSizeX*pImage->sSizeY/2];
+			}
+			else if (pImage->dwType == AWP_BYTE)
+			{
+				bpix = _AWP_BPIX_(channel, AWPBYTE);
+			
 
-		qsort((void*)pix, channel->sSizeX, sizeof(AWPDOUBLE), _awpDCompare);
-		median[c] = pix[channel->sSizeX / 2];
+				qsort((void*)bpix, pImage->sSizeX*pImage->sSizeY, sizeof(AWPBYTE), _awpBCompare);
+				median[c] = bpix[channel->sSizeX*pImage->sSizeY / 2];
+			}
+			else if (pImage->dwType ==AWP_FLOAT)
+			{
+				fpix = _AWP_BPIX_(channel, AWPFLOAT);
 
+
+				qsort((void*)fpix, pImage->sSizeX*pImage->sSizeY, sizeof(AWPFLOAT), _awpFCompare);
+				median[c] = fpix[channel->sSizeX*pImage->sSizeY / 2];
+			}
+			else if (pImage->dwType == AWP_SHORT)
+			{
+				spix = _AWP_BPIX_(channel, AWPSHORT);
+
+
+				qsort((void*)spix, pImage->sSizeX*pImage->sSizeY, sizeof(AWPSHORT), _awpSCompare);
+				median[c] = spix[channel->sSizeX*pImage->sSizeY / 2];
+			}
 		_SAFE_RELEASE_(channel)
 	}
 CLEANUP:
@@ -411,7 +477,7 @@ AWPRESULT awpGetHstEntropy(awpImage* pHst, awpImage* pEntropy)
 	{
 		for (c = 0; c < pHst->bChannels; c++)
 		{
-			entropy[c] += pix[x*pHst->bChannels + c] != 0 ? pix[x*pHst->bChannels + c] / sum[c] * awpLog2(pix[x*pHst->bChannels + c] / sum[c]) : 0;
+			entropy[c] += pix[x*pHst->bChannels + c] != 0 ? -pix[x*pHst->bChannels + c] / sum[c] * awpLog2(pix[x*pHst->bChannels + c] / sum[c]) : 0;
 		}
 	}
 CLEANUP:

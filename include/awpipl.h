@@ -1471,12 +1471,12 @@ typedef double            AWPDOUBLE;
 	AWPRESULT awpGetHstStdDev(awpImage* pHst, awpImage* pStdDev);
 
 	/**
-	*	\brief Calculate median value of the histogram
-	*	\param pHst pointer to the histogram
+	*	\brief Calculate median value of the image
+	*	\param pImage pointer to the image
 	*	\param pMedian median value
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
-	AWPRESULT awpGetHstMedian(awpImage* pHst, awpImage* pMedian);
+	AWPRESULT awpGetMedian(awpImage* pImage, awpImage* pMedian);
 
 	/**
 	*	\brief Calculate entropy value of the histogram
