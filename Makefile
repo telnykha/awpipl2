@@ -41,7 +41,7 @@ LIBOBJECTS=    awpcommon.o awpEdge.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o
 all: awpipl2.a awpmain awptest clean
 
 awpipl:   
-	$(CC)  -fPIC -c $(INC) $(addprefix src/, $(LIBSOURCES)) 
+	$(CC) -Ofast -fPIC -c $(INC) $(addprefix src/, $(LIBSOURCES)) 
 awpipl2.a: awpipl
 	ar cr $(LIB)awpipl2.a $(LIBOBJECTS)
 	rm -f *.o *.awp 
