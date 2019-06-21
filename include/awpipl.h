@@ -43,6 +43,9 @@
 extern "C" {
 #endif
 
+
+#define HAVE_JPEG
+
 #ifdef HAVE_CONFIG_H
         #include <config.h>
 #endif
