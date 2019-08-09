@@ -7,11 +7,11 @@ AWPRESULT _awpLoadAWPImage(const char* lpFileName, awpImage** ppImage);
 AWPRESULT _awpSaveAWPImage(const char* lpFileName, awpImage* pImage);
 #ifdef HAVE_JPEG
 /*bmp image io*/
-//AWPRESULT _awpLoadBMPImage(const char* lpFileName, awpImage** ppImage);
+AWPRESULT _awpLoadBMPImage(const char* lpFileName, awpImage** ppImage);
 /*ppm image io*/
-//AWPRESULT _awpLoadPPMImage(const char* lpFileName, awpImage** ppImage);
+AWPRESULT _awpLoadPPMImage(const char* lpFileName, awpImage** ppImage);
 /*tga image io*/
-//AWPRESULT _awpLoadTGAImage(const char* lpFileName, awpImage** ppImage);
+AWPRESULT _awpLoadTGAImage(const char* lpFileName, awpImage** ppImage);
 /*gif image io*/
 //AWPRESULT _awpLoadGIFImage(const char* lpFileName, awpImage** ppImage);
 

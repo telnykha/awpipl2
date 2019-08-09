@@ -355,6 +355,7 @@ AWPRESULT awpLoadCascade(awpCascade* pCascade, const char* lpFileName)
 {
 	AWPRESULT res = AWP_OK;
 	awpImage* tmp = NULL;
+
 	AWPDOUBLE* pix;
 	AWPINT     type;
 	if (pCascade == NULL)
@@ -390,6 +391,7 @@ AWPRESULT awpLoadCascade(awpCascade* pCascade, const char* lpFileName)
 	}
 */
 	res =  awpInitCascade(pCascade,tmp);
+
 cleanup:
 	awpReleaseImage(&tmp);
 	return res;

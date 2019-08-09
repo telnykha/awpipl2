@@ -68,6 +68,7 @@
         <BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
         <BCC_PCHCache>true</BCC_PCHCache>
         <DCC_UnitSearchPath>.\;$(BDS)\lib;$(BDS)\lib\obj;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Defines>HAVE_JPEG;$(Defines)</Defines>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
