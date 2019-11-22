@@ -1216,11 +1216,11 @@ AWPRESULT awpDrawEllipseCross(awpImage* pImage, awpPoint center, AWPWORD major, 
     a = AWP_PI*angle / 180.;
     ax_len = major / 2;
 
-    p1.X = center.X + ax_len*cos(a);
-    p1.Y = center.Y + ax_len*sin(a);
+    p1.X = (AWPSHORT)floor(center.X + ax_len*cos(a));
+	p1.Y = (AWPSHORT)floor(center.Y + ax_len*sin(a));
 
-    p2.X = center.X - ax_len*cos(a);
-    p2.Y = center.Y - ax_len*sin(a);
+	p2.X = (AWPSHORT)floor(center.X - ax_len*cos(a));
+	p2.Y = (AWPSHORT)floor(center.Y - ax_len*sin(a));
 
 	if (radius == 0)
 	{
@@ -1234,11 +1234,11 @@ AWPRESULT awpDrawEllipseCross(awpImage* pImage, awpPoint center, AWPWORD major, 
 
     ax_len = minor / 2;
     a += AWP_PI / 2;
-    p1.X = center.X + ax_len*cos(a);
-    p1.Y = center.Y + ax_len*sin(a);
+	p1.X = (AWPSHORT)floor(center.X + ax_len*cos(a));
+	p1.Y = (AWPSHORT)floor(center.Y + ax_len*sin(a));
 
-    p2.X = center.X - ax_len*cos(a);
-    p2.Y = center.Y - ax_len*sin(a);
+	p2.X = (AWPSHORT)floor(center.X - ax_len*cos(a));
+	p2.Y = (AWPSHORT)floor(center.Y - ax_len*sin(a));
 
 	if (radius == 0)
 	{

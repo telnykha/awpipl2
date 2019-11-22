@@ -92,12 +92,6 @@
     <ClCompile Include="..\..\src\awpLBPUnit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpScannersUnit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\awpDetectorUnit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpApprox.c">
       <Filter>Source Files</Filter>
     </ClCompile>

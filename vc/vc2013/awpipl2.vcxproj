@@ -230,14 +230,12 @@
     <ClCompile Include="..\..\src\awpApprox.c" />
     <ClCompile Include="..\..\src\awpCameraUnit.c" />
     <ClCompile Include="..\..\src\awpColor.c" />
-    <ClCompile Include="..\..\src\awpDetectorUnit.c" />
     <ClCompile Include="..\..\src\awpDistance.c" />
     <ClCompile Include="..\..\src\awpGetUnit.c" />
     <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c" />
     <ClCompile Include="..\..\src\awpInterpolation.c" />
     <ClCompile Include="..\..\src\awpLBPUnit.c" />
     <ClCompile Include="..\..\src\awpNorm.c" />
-    <ClCompile Include="..\..\src\awpScannersUnit.c" />
     <ClCompile Include="..\..\src\_awpColor.c" />
     <ClCompile Include="..\..\src\_awpio.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>

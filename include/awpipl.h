@@ -2298,7 +2298,29 @@ AWPRESULT awpApproxPoly(awpImage* src, awpImage* dst);
 *	\param dst double pointer to destination image, contains pixels data 
 *	\return AWP_OK if success or else AWP_ERROR
 */
-AWPRESULT awpGetLine(awpImage* src, awpPoint p1, awpPoint p2, awpImage** dst);
+
+AWPRESULT awpGetLineImage(awpImage* src, awpPoint p1, awpPoint p2, awpImage** dst);
+
+/**
+*	\brief retruns size of buffer for awpGetLineData
+*	\param src pointer to the source image. 
+*	\param p1 start point of line
+*	\param p2 end point of line
+*	\param linelenght pointer to integer contains lene lenght 
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetLineDataLenght(awpImage* src, awpPoint p1, awpPoint p2, AWPINT* linelenght);
+
+
+/**
+*	\brief get pixels data from line
+*	\param src pointer to the source image. image should be single channel
+*	\param p1 start point of line 
+*	\param p2 end point of line 
+*	\param data double pointer to destination buffer
+*	\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpGetLineData(awpImage* src, awpPoint p1, awpPoint p2, AWPDOUBLE* data);
 
 
 /** @} */ /* end of get  */

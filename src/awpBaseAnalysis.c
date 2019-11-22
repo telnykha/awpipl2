@@ -53,7 +53,6 @@ static AWPRESULT  _awpGetHstByte(awpImage* pImage, awpImage** ppHst)
 		}
 	}
 
-CLEANUP:
 	return res;
 }
 #define _CALC_IDX_(v)\

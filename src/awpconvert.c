@@ -725,7 +725,7 @@ static AWPBOOL _awp32DibToAwp(const BITMAPINFO* pBMI, const void* pBMData, awpIm
     AWPBYTE  *awp_row, *dib_row;
     AWPWORD  w,h;
     WORD     awp_width, awp_height, dib_width;
-    WORD     row;
+//    WORD     row;
     DWORD    *dib_dw, d, i ,j;
 
 	awp_width  = (WORD)pBMI->bmiHeader.biWidth;
