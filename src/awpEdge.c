@@ -76,7 +76,7 @@ AWPRESULT awpLocalMin(awpImage* pImage, awpImage** ppImage, AWPBYTE thr, AWPINT 
 	AWPBYTE *pSrcPix, *pDstPix;
 	AWPWORD i, j;
 	AWPBYTE curcolor;
-	
+
 	_CHECK_RESULT_((res = awpCheckImage(pImage)))
 	if ((pImage->bChannels != 1) || (pImage->dwType != AWP_BYTE))
 		_ERROR_EXIT_RES_(AWP_NOTSUPPORT)
@@ -228,7 +228,7 @@ AWPRESULT awpFeaturesV2(awpImage* pImage, awpImage** ppImage, AWPBYTE thr_max, A
 	_CHECK_RESULT_((res = awpCheckImage(pImage)))
 
 	_CHECK_RESULT_((res = awpLocalMax(pImage, &pImageMax, thr_max, MinMax_options)))
-	
+
 	_CHECK_RESULT_((res = awpCreateImage(&pTempImage, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, AWP_BYTE)))
 
 	pSrcMaxPix = (AWPBYTE *) pImageMax->pPixels;
@@ -279,251 +279,6 @@ CLEANUP:
 	return res;
 }
 
-#define _AWP_MAKE_GRADIENT_AMPL_(type)																\
-	AWPINT i;																							\
-	AWPBYTE ch;																						\
-	AWPDOUBLE alfa = 1. / AWP_SQTR2;																	\
-	awpImage* pChannelDx = NULL;																	\
-	awpImage* pChannelDy = NULL;																	\
-	awpImage* pDstChannel = NULL;																	\
-	type* dxpix = NULL;																				\
-	type* dypix = NULL;																				\
-	type* dpix = NULL;																				\
-	_CHECK_RESULT_(res = awpCreateImage(&pDstChannel, pDx->sSizeX, pDx->sSizeY, 1, pDx->dwType))	\
-	dpix = (type*)pDstChannel->pPixels;																\
-	for (ch = 0; ch < pDx->bChannels; ch++)															\
-	{																								\
-		_CHECK_RESULT_(res = awpGetChannel(pDx, &pChannelDx, ch))									\
-		_CHECK_RESULT_(res = awpGetChannel(pDy, &pChannelDy, ch))									\
-		dxpix = (type*)pChannelDx->pPixels;															\
-		dypix = (type*)pChannelDy->pPixels;															\
-		for (i = 0; i < pDx->sSizeY*pDx->sSizeX; i++)												\
-		{																							\
-			dpix[i] = (type)(alfa*sqrt((AWPFLOAT)(dxpix[i]*dxpix[i] + dypix[i]*dypix[i])));						\
-		}																							\
-		_CHECK_RESULT_(res = awpPutChannel(pDst, pDstChannel, ch));									\
-		_SAFE_RELEASE_(pChannelDx);																	\
-		_SAFE_RELEASE_(pChannelDy);																	\
-	}																								\
-	_SAFE_RELEASE_(pDstChannel)																		\
-	
-const AWPDOUBLE c_dVertSobelGrad[9] = 
-{-1,-2,-1,
-0,0,0,
-1,2,1};
-const AWPDOUBLE c_dHorzSobelGrad[9] = 
-{-1,0,1,
--2,0,2,
--1,0,1};
-AWPRESULT awpCreateSobelKernel(awpImage** ppKernel, AWPINT Direction)
-{
-    AWPRESULT res = AWP_OK;
-	AWPDOUBLE* pix = NULL;
-	if (ppKernel == NULL)
-		_ERROR_EXIT_RES_(AWP_BADARG)
-	if (Direction != AWP_EDGE_DIR_VERT && Direction != AWP_EDGE_DIR_HORZ)
-		_ERROR_EXIT_RES_(AWP_BADARG)
-
-	_CHECK_RESULT_(res = awpCreateImage(ppKernel, 3, 3, 1, AWP_DOUBLE))
-	pix = (AWPDOUBLE*)(*ppKernel)->pPixels;
-	switch(Direction)
-	{
-	case AWP_EDGE_DIR_VERT:
-		memcpy(pix, c_dVertSobelGrad, sizeof(c_dVertSobelGrad)); 
-		break;
-	case AWP_EDGE_DIR_HORZ:
-		memcpy(pix, c_dHorzSobelGrad, sizeof(c_dHorzSobelGrad));
-		break;
-	}
-CLEANUP:
-    return res;
-}
-const AWPDOUBLE AWP_SQTR2 = 1.4142135623730950488016887242097;
-
-AWPRESULT awpGradientAmplByte(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-	_AWP_MAKE_GRADIENT_AMPL_(AWPBYTE)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientAmplShort(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-	_AWP_MAKE_GRADIENT_AMPL_(AWPSHORT)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientAmplFloat(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-	_AWP_MAKE_GRADIENT_AMPL_(AWPFLOAT)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientAmplAWPAWPDOUBLE(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-	_AWP_MAKE_GRADIENT_AMPL_(AWPDOUBLE)
-CLEANUP:
-	return res;
-}
-
-AWPRESULT awpGradientDirByte(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientDirShort(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientDirFloat(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
-AWPRESULT awpGradientDirAWPAWPDOUBLE(awpImage* pDx, awpImage* pDy, awpImage* pDst)
-{
-AWPRESULT res = AWP_OK;
-_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
-
-
-/*
-	awpEdgeSobel1 - 
-*/
-AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir, AWPINT Direction)
-{
-	AWPRESULT res = AWP_OK;
-	awpImage* pDx = NULL; 
-	awpImage* pDy = NULL; 
-	awpImage* pDxKernel = NULL;
-	awpImage* pDyKernel = NULL;
-
-	_CHECK_RESULT_(res = awpCheckImage(pImage))
-    _CHECK_RESULT_(res = awpCheckImage(pGradAmpl))
-	_CHECK_SAME_SIZES(pImage, pGradAmpl)
-    _CHECK_SAME_TYPE(pImage,pGradAmpl)
-    _CHECK_NUM_CHANNELS(pImage, pGradAmpl)
-	
-	if (Direction != AWP_EDGE_DIR_HORZ && Direction  != AWP_EDGE_DIR_VERT && Direction != AWP_EDGE_DIR_BOTH)
-		_ERROR_EXIT_RES_(AWP_BADARG)
-
-	if (Direction == AWP_EDGE_DIR_BOTH && pGradDir != NULL)
-	{
-	    _CHECK_RESULT_(res = awpCheckImage(pGradDir))
-		_CHECK_SAME_SIZES(pGradDir, pGradAmpl)
-		_CHECK_SAME_TYPE(pGradDir,pGradAmpl)
-		_CHECK_NUM_CHANNELS(pGradDir, pGradAmpl)
-	}
-
-	switch(Direction)
-	{
-	case AWP_EDGE_DIR_HORZ:
-		{
-			_CHECK_RESULT_(res = awpCreateSobelKernel(&pDxKernel, AWP_EDGE_DIR_HORZ))
-			_CHECK_RESULT_(res = awpCreateImage(&pDx, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, pImage->dwType))
-			_CHECK_RESULT_(res = awpMaskConvolution2(pImage, pDx, pDxKernel))
-			_CHECK_RESULT_(res = awpFastCopyImage(pDx, pGradAmpl))
-		}
-		break;
-	case AWP_EDGE_DIR_VERT:
-		{
-			_CHECK_RESULT_(res = awpCreateSobelKernel(&pDyKernel, AWP_EDGE_DIR_VERT))
-			_CHECK_RESULT_(res = awpCreateImage(&pDy, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, pImage->dwType))
-			_CHECK_RESULT_(res = awpMaskConvolution2(pImage, pDy, pDyKernel))
-			_CHECK_RESULT_(res = awpFastCopyImage(pDy, pGradAmpl))
-		}
-		break;
-	case AWP_EDGE_DIR_BOTH:
-		{
-			_CHECK_RESULT_(res = awpCreateImage(&pDx, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, pImage->dwType))
-			_CHECK_RESULT_(res = awpCreateImage(&pDy, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, pImage->dwType))
-			_CHECK_RESULT_(res = awpCreateSobelKernel(&pDxKernel, AWP_EDGE_DIR_HORZ))
-			_CHECK_RESULT_(res = awpMaskConvolution2(pImage, pDx, pDxKernel))
-			_CHECK_RESULT_(res = awpCreateSobelKernel(&pDyKernel, AWP_EDGE_DIR_VERT))
-			_CHECK_RESULT_(res = awpMaskConvolution2(pImage, pDy, pDyKernel))
-		}
-		break;
-	}
-
-	if (Direction == AWP_EDGE_DIR_BOTH)
-	{
-		switch(pImage->dwType)
-		{
-			case AWP_BYTE:
-				_CHECK_RESULT_(res = awpGradientAmplByte(pDx,pDy,pGradAmpl))
-					if (pGradDir != NULL)
-						_CHECK_RESULT_(res = awpGradientDirByte(pDx,pDy,pGradAmpl))
-			break;
-			case AWP_SHORT:
-				_CHECK_RESULT_(res = awpGradientAmplShort(pDx,pDy,pGradAmpl))
-					if (pGradDir != NULL)
-						_CHECK_RESULT_(res = awpGradientDirShort(pDx,pDy,pGradAmpl))
-			break;
-			case AWP_FLOAT:
-				_CHECK_RESULT_(res = awpGradientAmplFloat(pDx,pDy,pGradAmpl))
-					if (pGradDir != NULL)
-						_CHECK_RESULT_(res = awpGradientDirFloat(pDx,pDy,pGradAmpl))
-			break;
-			case AWP_DOUBLE:
-				_CHECK_RESULT_(res = awpGradientAmplAWPAWPDOUBLE(pDx,pDy,pGradAmpl))
-					if (pGradDir != NULL)
-						_CHECK_RESULT_(res = awpGradientDirAWPAWPDOUBLE(pDx,pDy,pGradAmpl))
-			break;
-		}
-	}
-CLEANUP:
-	_SAFE_RELEASE_(pDx);
-	_SAFE_RELEASE_(pDy);
-	_SAFE_RELEASE_(pDxKernel);
-	_SAFE_RELEASE_(pDyKernel);
-
-    return res;
-}
-
-static AWPRESULT _awpCannyAWP_BYTE(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma)
-{
-    AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-CLEANUP:
-   return res;
-}
-static AWPRESULT _awpCannyAWP_SHORT(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma)
-{
-    AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-
-CLEANUP:
-    return res;
-}
-
-static AWPRESULT _awpCannyAWP_FLOAT(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma)
-{
-    AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-CLEANUP:
-    return res;
-}
-
-static AWPRESULT _awpCannyAWP_AWPAWPDOUBLE(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma)
-{
-    AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-
-CLEANUP:
-    return res;
-}
 // awpCanny implementation
 // supported data types: AWP_BYTE, AWP_SHORT, AWP_FLOAT, AWP_DOUBLE
 // the data types of pSrc and pDst should be same.
@@ -545,7 +300,7 @@ AWPRESULT awpCanny(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma 
 
     if (thr <= 0 || thr >1)
         _ERROR_EXIT_RES_(AWP_BADARG)
-
+/*
     switch(pSrc->dwType)
     {
         case AWP_BYTE:
@@ -561,6 +316,7 @@ AWPRESULT awpCanny(awpImage* pSrc, awpImage* pDst, AWPFLOAT thr, AWPFLOAT sigma 
             res = _awpCannyAWP_AWPAWPDOUBLE(pSrc,pDst,thr,sigma);
         break;
     }
+*/
 CLEANUP:
     return res;
 }
@@ -574,6 +330,9 @@ static const AWPSHORT sobel_h_mask[9] =
 	 0,0,0,
     -1,-2,-1};
 
+/*
+	convolutions with Sobel masks on the double image pImage
+*/
 AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
 {
     AWPRESULT res = AWP_OK;
@@ -603,8 +362,7 @@ AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
     _CHECK_NUM_CHANNELS(pHImage, pVImage)
     _CHECK_SAME_TYPE(pHImage, pVImage)
     //-------------------------
-
-    b = (AWPBYTE*)pImage->pPixels;
+    b = (AWPDOUBLE*)pImage->pPixels;
     h = (AWPDOUBLE*)pHImage->pPixels;
     v = (AWPDOUBLE*)pVImage->pPixels;
 
@@ -624,10 +382,8 @@ AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
                     c++;
                }
             }
-
             v[x+y*pImage->sSizeX] = sumv;
             h[x+y*pImage->sSizeX] = sumh;
-
         }
     }
 
@@ -635,4 +391,69 @@ CLEANUP:
     return res;
 }
 
-  
+/*
+	perfoms SOBEL filter over awpImage
+*/
+AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir)
+{
+	AWPRESULT res = AWP_OK;
+    awpImage* img_dx = NULL;
+    awpImage* img_dy = NULL;
+    awpImage* img_grad = NULL;
+    awpImage* img_dir  = NULL;
+    awpImage* img_src = NULL;
+
+    AWPINT i = 0;
+    AWPINT j = 0;
+    AWPDOUBLE* dx = NULL;
+    AWPDOUBLE* dy = NULL;
+    AWPDOUBLE* grad = NULL;
+    AWPBYTE*   b = 0;
+    AWPINT     idx = 0;
+    _CHECK_RESULT_(res = awpCheckImage(pGradAmpl))
+    _CHECK_RESULT_(res = awpCheckImage(pImage))
+
+    _CHECK_RESULT_(res = awpCreateImage(&img_dx, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCreateImage(&img_dy, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCreateImage(&img_grad, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCopyImage(pImage, &img_src))
+    _CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_TO_DOUBLE))
+
+	// call edge sobel dx-dy convolutoin
+    _CHECK_RESULT_(res = awpEdgeSobel1(pImage, img_dx, img_dy))
+
+    dx = (AWPDOUBLE*)img_dx->pPixels;
+    dy = (AWPDOUBLE*)img_dy->pPixels;
+    grad  = (AWPDOUBLE*)img_grad->pPixels;
+    for (i = 0; i < pImage->sSizeY; i++)
+    {
+		idx = i*pImage->sSizeX;
+	    for (j = 0; j < pImage->sSizeX; j++)
+        {
+	       idx++;
+           grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+        }
+    }
+
+    // convert result to desired type
+    switch(pImage->dwType)
+    {
+     	case AWP_BYTE:
+    		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_BYTE_WITH_NORM));
+	    break;
+        case AWP_SHORT:
+    		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_SHORT));
+        break;
+        case AWP_FLOAT:
+    		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_FLOAT));
+        break;
+    }
+    _CHECK_RESULT_(res = awpCopyImage(img_grad, &pGradAmpl));
+CLEANUP:
+	_SAFE_RELEASE_(img_dx);
+	_SAFE_RELEASE_(img_dy);
+	_SAFE_RELEASE_(img_grad);
+    _SAFE_RELEASE_(img_src);
+
+    return res;
+}

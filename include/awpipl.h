@@ -103,7 +103,6 @@ extern "C" {
 
 /*norm options*/
 
-
 #define AWP_NORM_L1 1
 #define AWP_NORM_L2 2
 	
@@ -143,10 +142,6 @@ extern "C" {
         #define AWP_FFT_INVERSE FFTW_BACKWARD
 #endif
 
-
-#define AWP_EDGE_DIR_HORZ			0
-#define AWP_EDGE_DIR_VERT			1
-#define AWP_EDGE_DIR_BOTH			2
 
 #define AWP_BLUR					0
 #define AWP_BLUR_MORE				1
@@ -1672,18 +1667,14 @@ typedef double            AWPDOUBLE;
 	*	\param pGradAmpl pointer to the resulting gradient image
 	*   \param pGradDir pointer to gradient direction image. To supress gardient dir calculation
 	*	\      set pGradDir to NULL;
-	*	\param Direction option for contours direction. Should be one of the following:\n
-	*		AWP_EDGE_DIR_HORZ - horizontal direction\n
-	*		AWP_EDGE_DIR_VERT - vertical direction\n
-	*		AWP_EDGE_DIR_BOTH - both horizontal and vertical directions\n
 	*	\return AWP_OK if success or else AWP_ERROR
 	*	\remarks Resulting image is creating by the function. So *ppPhase should be NULL
 	*/
-	AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir, AWPINT Direction);
+	AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir);
 
 	/**
 	*	\brief Perform Sobel operator on image
-	*	\param pImage pointer to the source image. Source image should be one channel AWP_BYTE type
+	*	\param pImage pointer to the source image. Source image should be one channel AWP_DOUBLE type
 	*	\param pVImage pointer to the resulting vertical gradient image. pVImage should be one channel AWP_DOUBLE image, same size as pImage
 	*   \param pHImage pointer to gradient direction image. pHImage should be one channel AWP_DOUBLE image, same size as pImage
 	*/
