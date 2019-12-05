@@ -336,7 +336,7 @@ static const AWPSHORT sobel_h_mask[9] =
 AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
 {
     AWPRESULT res = AWP_OK;
-    AWPBYTE*  b = NULL;
+    AWPDOUBLE*  b = NULL;
     AWPDOUBLE* v = NULL;
     AWPDOUBLE* h = NULL;
     AWPSHORT    y = 0;
@@ -390,10 +390,42 @@ AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
 CLEANUP:
     return res;
 }
+/*
+	calculate arctan
+*/
+inline static double _awpAtan(double dx, double dy)
+{
+    AWPDOUBLE t = 0;
+	if (dx == 0)
+    	return 0;
+    t = fabs(dy / dx);
+    if (dx > 0 && dy >= 0)
+    {
+    	return atan(t);
+    }
+    else if (dx >=0 && dy < 0)
+    {
+    	return 1.5*AWP_PI + atan(t);
+    }
+    else if (dx < 0 && dy < 0)
+    {
+    	return AWP_PI + atan(t);
+    }
+    else
+	    return 0.5*AWP_PI + atan(t);
+}
 
+#define _CONVERT_SOBEL_ANGLE_(b) \
+if (pGradDir != NULL)\
+	_CHECK_RESULT_(res = awpConvert(img_dir, b))
+
+#define _COPY_SOBEL_RESULT_ANGLE_ \
+if (pGradDir != NULL)\
+ _CHECK_RESULT_(res = awpCopyImage(img_dir, &pGradDir));
 /*
 	perfoms SOBEL filter over awpImage
 */
+
 AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir)
 {
 	AWPRESULT res = AWP_OK;
@@ -408,8 +440,8 @@ AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir
     AWPDOUBLE* dx = NULL;
     AWPDOUBLE* dy = NULL;
     AWPDOUBLE* grad = NULL;
-    AWPBYTE*   b = 0;
-    AWPINT     idx = 0;
+    AWPDOUBLE* dir = NULL;
+     AWPINT     idx = 0;
     _CHECK_RESULT_(res = awpCheckImage(pGradAmpl))
     _CHECK_RESULT_(res = awpCheckImage(pImage))
 
@@ -417,43 +449,76 @@ AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir
     _CHECK_RESULT_(res = awpCreateImage(&img_dy, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
     _CHECK_RESULT_(res = awpCreateImage(&img_grad, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
     _CHECK_RESULT_(res = awpCopyImage(pImage, &img_src))
-    _CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_TO_DOUBLE))
+    _CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_3TO1_BYTE))
+    if (img_src->dwType != AWP_DOUBLE)
+    	_CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_TO_DOUBLE))
 
 	// call edge sobel dx-dy convolutoin
-    _CHECK_RESULT_(res = awpEdgeSobel1(pImage, img_dx, img_dy))
+    _CHECK_RESULT_(res = awpEdgeSobel1(img_src, img_dx, img_dy))
+
+    if (pGradDir != NULL)
+    {
+	    _CHECK_RESULT_(res = awpCheckImage(pGradDir))
+        _CHECK_SAME_SIZES(pGradDir, pGradAmpl)
+    	_CHECK_NUM_CHANNELS(pGradDir, pGradAmpl)
+    	_CHECK_SAME_TYPE(pGradDir, pGradAmpl)
+        _CHECK_RESULT_(res = awpCreateImage(&img_dir, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+    }
 
     dx = (AWPDOUBLE*)img_dx->pPixels;
     dy = (AWPDOUBLE*)img_dy->pPixels;
     grad  = (AWPDOUBLE*)img_grad->pPixels;
-    for (i = 0; i < pImage->sSizeY; i++)
+    if (pGradDir == NULL)
     {
-		idx = i*pImage->sSizeX;
-	    for (j = 0; j < pImage->sSizeX; j++)
+        for (i = 0; i < pImage->sSizeY; i++)
         {
-	       idx++;
-           grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+            idx = i*pImage->sSizeX;
+            for (j = 0; j < pImage->sSizeX; j++)
+            {
+               grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+               idx++;
+            }
         }
     }
-
+    else
+    {
+    	dir  = (AWPDOUBLE*)img_dir->pPixels;
+        for (i = 0; i < pImage->sSizeY; i++)
+        {
+            idx = i*pImage->sSizeX;
+            for (j = 0; j < pImage->sSizeX; j++)
+            {
+           	   dir[idx]  = _awpAtan(dx[idx], dy[idx]);
+               grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+               idx++;
+            }
+        }
+    }
     // convert result to desired type
     switch(pImage->dwType)
     {
      	case AWP_BYTE:
     		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_BYTE_WITH_NORM));
+            _CONVERT_SOBEL_ANGLE_(AWP_CONVERT_TO_BYTE_WITH_NORM)
 	    break;
         case AWP_SHORT:
     		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_SHORT));
+            _CONVERT_SOBEL_ANGLE_(AWP_CONVERT_TO_SHORT)
         break;
         case AWP_FLOAT:
     		_CHECK_RESULT_(res = awpConvert(img_grad, AWP_CONVERT_TO_FLOAT));
+			_CONVERT_SOBEL_ANGLE_(AWP_CONVERT_TO_FLOAT)
         break;
     }
     _CHECK_RESULT_(res = awpCopyImage(img_grad, &pGradAmpl));
+
+    _COPY_SOBEL_RESULT_ANGLE_
+
 CLEANUP:
 	_SAFE_RELEASE_(img_dx);
 	_SAFE_RELEASE_(img_dy);
 	_SAFE_RELEASE_(img_grad);
     _SAFE_RELEASE_(img_src);
-
+    _SAFE_RELEASE_(img_dir);
     return res;
 }
