@@ -321,11 +321,11 @@ CLEANUP:
     return res;
 }
 
-static const AWPSHORT sobel_v_mask[9] =
+static const AWPDOUBLE sobel_v_mask[9] =
 	{-1,0,1,
 	 -2,0,2,
 	 -1,0,1};
-static const AWPSHORT sobel_h_mask[9] =
+static const AWPDOUBLE sobel_h_mask[9] =
 	{1,2,1,
 	 0,0,0,
     -1,-2,-1};
@@ -341,49 +341,54 @@ AWPRESULT awpEdgeSobel1(awpImage* pImage, awpImage* pVImage, awpImage* pHImage)
     AWPDOUBLE* h = NULL;
     AWPSHORT    y = 0;
     AWPSHORT    x = 0;
+    AWPBYTE		k = 0;
     AWPSHORT    xx = 0;
     AWPSHORT    yy = 0;
-    AWPDOUBLE  sumv = 0;
-    AWPDOUBLE  sumh = 0;
-    AWPWORD    c = 0;
+    AWPDOUBLE   sumv = 0;
+    AWPDOUBLE   sumh = 0;
+    AWPWORD     c = 0;
+    AWPBYTE     _nc = 0;
+    AWPWORD		_w = 0;
+    AWPWORD     _h = 0;
     _CHECK_RESULT_(res = awpCheckImage(pImage))
     _CHECK_RESULT_(res = awpCheckImage(pVImage))
     _CHECK_RESULT_(res = awpCheckImage(pHImage))
 
     _CHECK_SAME_SIZES(pHImage, pVImage)
     _CHECK_SAME_SIZES(pImage, pVImage)
-
-    if (pHImage->bChannels != 1)
-    {
-        res = AWP_BADARG;
-        _ERROR_EXIT_RES_(res)
-    }
-
     _CHECK_NUM_CHANNELS(pHImage, pVImage)
     _CHECK_SAME_TYPE(pHImage, pVImage)
+
     //-------------------------
     b = (AWPDOUBLE*)pImage->pPixels;
     h = (AWPDOUBLE*)pHImage->pPixels;
     v = (AWPDOUBLE*)pVImage->pPixels;
 
-    for ( y = 1; y < pImage->sSizeY - 1; y++)
+    _nc = pImage->bChannels;
+    _w  = pImage->sSizeX;
+    _h  = pImage->sSizeY;
+
+	for (k = 0; k < _nc; k++)
     {
-        for ( x = 1; x < pImage->sSizeX - 1; x++)
+        for ( y = 1; y < _h - 1; y++)
         {
-            sumv = 0;
-            sumh = 0;
-            c = 0;
-            for (yy = -1; yy <=1; yy++)
+            for ( x = 1; x < _w - 1; x++)
             {
-               for (xx = -1; xx <= 1; xx++)
-               {
-                    sumv += sobel_v_mask[c]*b[x+xx +(y+yy)*pImage->sSizeX];
-                    sumh += sobel_h_mask[c]*b[x+xx +(y+yy)*pImage->sSizeX];
-                    c++;
-               }
+                sumv = 0;
+                sumh = 0;
+                c = 0;
+                for (yy = -1; yy <=1; yy++)
+                {
+                   for (xx = -1; xx <= 1; xx++)
+                   {
+                        sumv += sobel_v_mask[c]*b[k+_nc*(x+xx) +(y+yy)*pImage->sSizeX*_nc];
+                        sumh += sobel_h_mask[c]*b[k+_nc*(x+xx) +(y+yy)*pImage->sSizeX*_nc];
+                        c++;
+                   }
+                }
+                v[k+_nc*x+y*_nc*pImage->sSizeX] = sumv;
+                h[k+_nc*x+y*_nc*pImage->sSizeX] = sumh;
             }
-            v[x+y*pImage->sSizeX] = sumv;
-            h[x+y*pImage->sSizeX] = sumh;
         }
     }
 
@@ -391,26 +396,21 @@ CLEANUP:
     return res;
 }
 /*
-	calculate arctan
+	calculate arctan [0..2*pi]
 */
-inline static double _awpAtan(double dx, double dy)
+
+__inline static double _awpAtan(double dx, double dy)
 {
     AWPDOUBLE t = 0;
 	if (dx == 0)
     	return 0;
     t = fabs(dy / dx);
     if (dx > 0 && dy >= 0)
-    {
     	return atan(t);
-    }
     else if (dx >=0 && dy < 0)
-    {
     	return 1.5*AWP_PI + atan(t);
-    }
     else if (dx < 0 && dy < 0)
-    {
     	return AWP_PI + atan(t);
-    }
     else
 	    return 0.5*AWP_PI + atan(t);
 }
@@ -437,19 +437,20 @@ AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir
 
     AWPINT i = 0;
     AWPINT j = 0;
+    AWPBYTE k = 0;
     AWPDOUBLE* dx = NULL;
     AWPDOUBLE* dy = NULL;
     AWPDOUBLE* grad = NULL;
     AWPDOUBLE* dir = NULL;
      AWPINT     idx = 0;
+     AWPINT     idx0 = 0;
     _CHECK_RESULT_(res = awpCheckImage(pGradAmpl))
     _CHECK_RESULT_(res = awpCheckImage(pImage))
 
-    _CHECK_RESULT_(res = awpCreateImage(&img_dx, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
-    _CHECK_RESULT_(res = awpCreateImage(&img_dy, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
-    _CHECK_RESULT_(res = awpCreateImage(&img_grad, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCreateImage(&img_dx, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCreateImage(&img_dy, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, AWP_DOUBLE))
+    _CHECK_RESULT_(res = awpCreateImage(&img_grad, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, AWP_DOUBLE))
     _CHECK_RESULT_(res = awpCopyImage(pImage, &img_src))
-    _CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_3TO1_BYTE))
     if (img_src->dwType != AWP_DOUBLE)
     	_CHECK_RESULT_(res = awpConvert(img_src, AWP_CONVERT_TO_DOUBLE))
 
@@ -462,7 +463,7 @@ AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir
         _CHECK_SAME_SIZES(pGradDir, pGradAmpl)
     	_CHECK_NUM_CHANNELS(pGradDir, pGradAmpl)
     	_CHECK_SAME_TYPE(pGradDir, pGradAmpl)
-        _CHECK_RESULT_(res = awpCreateImage(&img_dir, pImage->sSizeX, pImage->sSizeY, 1, AWP_DOUBLE))
+        _CHECK_RESULT_(res = awpCreateImage(&img_dir, pImage->sSizeX, pImage->sSizeY, pImage->bChannels, AWP_DOUBLE))
     }
 
     dx = (AWPDOUBLE*)img_dx->pPixels;
@@ -470,27 +471,34 @@ AWPRESULT awpEdgeSobel(awpImage* pImage, awpImage* pGradAmpl, awpImage* pGradDir
     grad  = (AWPDOUBLE*)img_grad->pPixels;
     if (pGradDir == NULL)
     {
-        for (i = 0; i < pImage->sSizeY; i++)
+        for (k = 0; k < pImage->bChannels; k++)
         {
-            idx = i*pImage->sSizeX;
-            for (j = 0; j < pImage->sSizeX; j++)
+            for (i = 0; i < pImage->sSizeY; i++)
             {
-               grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
-               idx++;
+                idx0 = i*pImage->sSizeX*pImage->bChannels;
+                for (j = 0; j < pImage->sSizeX; j++)
+                {
+                   grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+                   idx = idx0 + pImage->bChannels*j + k;
+                }
             }
+
         }
     }
     else
     {
     	dir  = (AWPDOUBLE*)img_dir->pPixels;
-        for (i = 0; i < pImage->sSizeY; i++)
+        for (k = 0; k < pImage->bChannels; k++)
         {
-            idx = i*pImage->sSizeX;
-            for (j = 0; j < pImage->sSizeX; j++)
+            for (i = 0; i < pImage->sSizeY; i++)
             {
-           	   dir[idx]  = _awpAtan(dx[idx], dy[idx]);
-               grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
-               idx++;
+                idx0 = i*pImage->sSizeX*pImage->bChannels;
+                for (j = 0; j < pImage->sSizeX; j++)
+                {
+                   dir[idx]  = _awpAtan(dx[idx], dy[idx]);
+                   grad[idx] = sqrt(dx[idx]*dx[idx] + dy[idx]*dy[idx]);
+                   idx = idx0 + pImage->bChannels*j + k;
+                }
             }
         }
     }
