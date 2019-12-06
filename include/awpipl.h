@@ -1050,7 +1050,7 @@ typedef double            AWPDOUBLE;
 	*	\return AWP_OK if success or else AWP_ERROR
 	*	\remarks Resulting image is creating by the function. So *ppDstImage should be NULL
 	*/
-    AWPRESULT awpMaskConvolution2(awpImage* pSrcImage, awpImage* pDst, awpImage* pMask);
+    AWPRESULT awpMaskConvolution(awpImage* pSrcImage, awpImage* pDst, awpImage* pMask);
 	/**
 	*	\brief Perfom image filtering with predifined masks 
 	*	\param awpImage pImage image to be filtered 
@@ -1075,14 +1075,9 @@ typedef double            AWPDOUBLE;
 	*	AWP_PREWITT_H			Horizontal prewitt mask 	
 	*	AWP_SOBEL_V				Vartical sobel mask	
 	*	AWP_SOBEL_H				Horizonral sobel mask 	
-	*  \param method - method of convolution 
-	*  possible values 
-	*	AWP_FILTER_METHOD_ORDINARY  use source image to perform calculation    
-	*	AWP_FILTER_METHOD_FFT use FFTW lib to perform filtering 			
-	*	AWP_FILTER_METHOD_DOUBLE obsolete  	    
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
-	AWPRESULT awpFilter(awpImage* pImage, AWPINT options, AWPINT method);
+	AWPRESULT awpFilter(awpImage* src, awpImage* dst,  AWPINT options);
 
 
 	/** \brief Calculates sum of all pixels in the source image and store sum in the pDst image 

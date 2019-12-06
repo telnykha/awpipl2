@@ -4,7 +4,7 @@
   high_precision = true - creates AWPDOUBLE kernel
   else creates AWPFLOAT kernel.
 */
-AWPRESULT awpCreateGaussKernel(awpImage** ppKernel, AWPFLOAT sigma, AWPBOOL high_precision)
+AWPRESULT awpCreateGaussKernel(awpImage** ppKernel, AWPDOUBLE sigma, AWPBOOL high_precision)
 {
     AWPRESULT res = AWP_OK;
     AWPDWORD type =  high_precision?AWP_DOUBLE:AWP_FLOAT;
@@ -14,9 +14,7 @@ AWPRESULT awpCreateGaussKernel(awpImage** ppKernel, AWPFLOAT sigma, AWPBOOL high
     AWPFLOAT* fp = NULL;
     AWPDOUBLE* dp = NULL;
     AWPDOUBLE  falfa = 1;
-    AWPDOUBLE dalfa = 1;
     AWPDOUBLE  fbeta = 1;
-    AWPDOUBLE dbeta = 1;
     if (sigma <= 0)
         _ERROR_EXIT_RES_(AWP_BADARG)
     w = (AWPWORD)(4*sigma);
@@ -49,8 +47,8 @@ AWPRESULT awpCreateGaussKernel(awpImage** ppKernel, AWPFLOAT sigma, AWPBOOL high
         case AWP_DOUBLE:
         {
             dp = (AWPDOUBLE*)p;
-            dalfa = 1 /(2*AWP_PI*sigma*sigma);
-            dbeta = 1/(2*sigma*sigma);
+            falfa = 1. /(2.*3.14159*sigma*sigma);
+            fbeta = -1./(2.*sigma*sigma);
             for (y=0; y < w; y++)
             {
                 yy = y - hw;
@@ -74,7 +72,7 @@ AWPRESULT awpGaussianBlurAWP_AWPAWPDOUBLE(awpImage* pSrc, awpImage* pDst, AWPFLO
 	awpImage* pKernel = NULL;
 
 	_CHECK_RESULT_(res = awpCreateGaussKernel(&pKernel, sigma, TRUE))
-	_CHECK_RESULT_(res = awpMaskConvolution2(pSrc, pDst, pKernel))
+	_CHECK_RESULT_(res = awpMaskConvolution(pSrc, pDst, pKernel))
 
 
 CLEANUP:
@@ -106,8 +104,8 @@ AWPRESULT awpGaussianBlur(awpImage* pSrc, awpImage* pDst, AWPFLOAT sigma)
 		res = awpGaussianBlurAWP_AWPAWPDOUBLE(pSrc,pDst,sigma);
 	else
 	{
-		_CHECK_RESULT_(res = awpCreateGaussKernel(&pKernel, sigma, FALSE))
-		_CHECK_RESULT_(res = awpMaskConvolution2(pSrc, pDst, pKernel))
+		_CHECK_RESULT_(res = awpCreateGaussKernel(&pKernel, sigma, TRUE))
+		_CHECK_RESULT_(res = awpMaskConvolution(pSrc, pDst, pKernel))
 	}
 
 CLEANUP:
