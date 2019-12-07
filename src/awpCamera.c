@@ -1,3 +1,11 @@
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpCamera.c
+//		Purpose: videocamera geometry
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2019 (c) NN-Videolab.net
+//M*/
 #include "_awpipl.h"
 //---------------------------------------------------------------------------
 AWPRESULT awpCameraHorizontalView(awpCamera* pCamera, double* Value)

@@ -1,3 +1,12 @@
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpBlur.c
+//		Purpose: Gaussian Blur Filter
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2019 (c) NN-Videolab.net
+//M*/
+
 #include "_awpipl.h"
 /*
   awpCreateGaussKernel - creates Gauss kernel as with sigma. sigma  < 50

@@ -228,7 +228,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\awpApprox.c" />
-    <ClCompile Include="..\..\src\awpCameraUnit.c" />
+    <ClCompile Include="..\..\src\awpCamera.c" />
     <ClCompile Include="..\..\src\awpColor.c" />
     <ClCompile Include="..\..\src\awpDistance.c" />
     <ClCompile Include="..\..\src\awpGetUnit.c" />
@@ -294,6 +294,7 @@
     <ClCompile Include="..\..\src\awpthreshold.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="awpMedian.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\_include\awpLBPUnit.h" />

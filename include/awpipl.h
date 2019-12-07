@@ -4,7 +4,7 @@
 //    Purpose: AWPIPL header file
 //    Author : Alex A.Telnykh
 //    CoAutors: Eugeny Eremin, Andrey Kovalchuck, Youry Yakhno, Olga Shemagina
-//    Copyright (c) 2004-2018 NN-Videolab.net
+//    Copyright (c) 2004-2019 NN-Videolab.net
 //
 //M*/
 
@@ -1097,6 +1097,16 @@ typedef double            AWPDOUBLE;
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
 	AWPRESULT awpGaussianBlur(awpImage* pSrc, awpImage* pDst, AWPFLOAT sigma);
+
+	/**
+	*	\brief perform median filter over pSrc image and store result in the pDst image
+	*	\param awpImage pSrc - source imaege
+	*	\param awpImage pDst - destination image
+	*	\param AWPBYTE radius - the radius of the filter area
+	*	\return AWP_OK if success or else AWP_ERROR
+	*/
+	AWPRESULT awpMedian(awpImage* pSrc, awpImage* pDst, AWPBYTE radius);
+
 	/**
 	*	\brief Light level normalization
 	*

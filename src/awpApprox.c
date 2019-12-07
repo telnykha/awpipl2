@@ -5,7 +5,7 @@
 //		Purpose: approximation implementation 
 //		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
 //				Mike Gorelikov 
-//      CopyRight 2004-2018 (c) NN-Videolab.net
+//      CopyRight 2004-2019 (c) NN-Videolab.net
 //M*/
 #include "_awpipl.h"
 

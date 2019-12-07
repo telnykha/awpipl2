@@ -71,9 +71,6 @@
     <ClCompile Include="..\..\src\awpInterpolation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpCameraUnit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpDistance.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,6 +93,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\awpGetUnit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awpCamera.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="awpMedian.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
