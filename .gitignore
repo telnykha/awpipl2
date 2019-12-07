@@ -72,5 +72,6 @@ vc/vc2013/Debug/result.txt
 vc/vc2017/Debug/hst.txt
 vc/vc2017/Debug/result.txt
 src/__history/
+include/__history/
 borland/release_build/
 borland/debug_build/

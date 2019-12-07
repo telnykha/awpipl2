@@ -32,6 +32,7 @@ AWPRESULT __awpMedian_double(awpImage* src, awpImage* dst, AWPBYTE radius)
     AWPDOUBLE* _src    = NULL;
     AWPDOUBLE* _buffer = NULL;
 	AWPINT buffer_size = 0;
+    AWPINT median_idx = 0;
     AWPINT 		c = 0;
     AWPSHORT    y = 0;
     AWPSHORT    x = 0;
@@ -51,9 +52,9 @@ AWPRESULT __awpMedian_double(awpImage* src, awpImage* dst, AWPBYTE radius)
     _nc = src->bChannels;
     _w  = src->sSizeX;
     _h  = src->sSizeY;
-    buffer_size = 4*radius*radius*sizeof(AWPDOUBLE);
+    buffer_size = (2*radius + 1)*(2*radius + 1)*sizeof(AWPDOUBLE);
     _buffer = (AWPDOUBLE*)malloc(buffer_size);
-
+    median_idx = buffer_size/sizeof(AWPDOUBLE) / 2;
 	for (k = 0; k < _nc; k++)
     {
         for ( y = 0; y < _h; y++)
@@ -69,11 +70,12 @@ AWPRESULT __awpMedian_double(awpImage* src, awpImage* dst, AWPBYTE radius)
                    for (xx = x- sx; xx <= x + sx; xx++)
                    {
 						_x = xx < 0 ? abs(xx):xx >= _w ? _w -1 : xx;
-                        _buffer[c++] = _src[k+_nc*_x +_y*_w*_nc];
+                        _buffer[c] =_src[k+_nc*_x +_y*_w*_nc];
+                        c++;
                    }
                 }
-                qsort(_buffer, buffer_size, sizeof(AWPDOUBLE), compare);
-                _dst[k+_nc*x+y*_nc*_w] = _buffer[buffer_size / 2];
+                qsort(_buffer, buffer_size/sizeof(AWPDOUBLE), sizeof(AWPDOUBLE), compare);
+                _dst[k+_nc*x+y*_nc*_w] = _buffer[median_idx];
             }
         }
     }
@@ -85,7 +87,7 @@ CLEANUP:
 /*
 	multichannel median filter 
 */
-AWPRESULT awpMedianFilter(awpImage* src, awpImage* dst, AWPBYTE radius)
+AWPRESULT awpMedian(awpImage* src, awpImage* dst, AWPBYTE radius)
 {
 	AWPRESULT res = AWP_OK;
 	awpImage* median_src = NULL;
@@ -98,6 +100,8 @@ AWPRESULT awpMedianFilter(awpImage* src, awpImage* dst, AWPBYTE radius)
 
 	_CHECK_RESULT_(res = awpCreateImage(&median_dst, src->sSizeX, src->sSizeY, src->bChannels, AWP_DOUBLE))
 	_CHECK_RESULT_(res = awpCopyImage(src, &median_src))
+    if (median_src->dwType != AWP_DOUBLE)
+    	_CHECK_RESULT_(res = awpConvert(median_src, AWP_CONVERT_TO_DOUBLE))
 
 	_CHECK_RESULT_(res = __awpMedian_double(median_src, median_dst, radius))
 

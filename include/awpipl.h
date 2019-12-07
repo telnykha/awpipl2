@@ -1100,12 +1100,12 @@ typedef double            AWPDOUBLE;
 
 	/**
 	*	\brief perform median filter over pSrc image and store result in the pDst image
-	*	\param awpImage pSrc - source imaege
-	*	\param awpImage pDst - destination image
+	*	\param awpImage src - source imaege
+	*	\param awpImage dst - destination image
 	*	\param AWPBYTE radius - the radius of the filter area
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
-	AWPRESULT awpMedian(awpImage* pSrc, awpImage* pDst, AWPBYTE radius);
+	AWPRESULT awpMedian(awpImage* src, awpImage* dst, AWPBYTE radius);
 
 	/**
 	*	\brief Light level normalization
