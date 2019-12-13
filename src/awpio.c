@@ -23,8 +23,6 @@
 #   include <jpeglib.h>
 #endif
 
-#include "_awpipl.h"
-
 #ifdef HAVE_JPEG
 GLOBAL(void) jpeg_buffer_src (j_decompress_ptr cinfo, const char* buffer, AWPINT len );
 GLOBAL(void) jpeg_buffer_dest (j_compress_ptr cinfo,char* buffer, AWPINT len );
@@ -51,14 +49,14 @@ AWPRESULT awpLoadImage(const char* lpFileName, awpImage** ppImage)
         res = _awpLoadAWPImage(lpFileName, ppImage);
 #ifdef HAVE_JPEG
 #ifdef WIN32
-#if 0
+//#if 0
     else if (strcmp(lpExt, "bmp") == 0 || strcmp(lpExt,"BMP") == 0)
         res = _awpLoadBMPImage(lpFileName, ppImage);
     else if (strcmp(lpExt, "ppm") == 0 || strcmp(lpExt,"PPM") == 0)
         res = _awpLoadPPMImage(lpFileName, ppImage);
     else if (strcmp(lpExt, "tga") == 0 || strcmp(lpExt,"TGA") == 0)
         res = _awpLoadTGAImage(lpFileName, ppImage);
-#endif 
+//#endif
 #endif 
     else if (strcmp(lpExt, "jpg") == 0 || strcmp(lpExt,"JPG") == 0 || strcmp(lpExt, "jpeg") == 0 || strcmp(lpExt,"jpeg") == 0 || strcmp(lpExt,"JPEG") == 0)
         res = _awpLoadJPEGImage(lpFileName, ppImage);

@@ -235,6 +235,7 @@
     <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c" />
     <ClCompile Include="..\..\src\awpInterpolation.c" />
     <ClCompile Include="..\..\src\awpLBPUnit.c" />
+    <ClCompile Include="..\..\src\awpMedian.c" />
     <ClCompile Include="..\..\src\awpNorm.c" />
     <ClCompile Include="..\..\src\_awpColor.c" />
     <ClCompile Include="..\..\src\_awpio.c">
@@ -294,7 +295,6 @@
     <ClCompile Include="..\..\src\awpthreshold.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="awpMedian.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\_include\awpLBPUnit.h" />

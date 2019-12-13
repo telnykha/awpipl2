@@ -98,7 +98,7 @@
     <ClCompile Include="..\..\src\awpCamera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="awpMedian.c">
+    <ClCompile Include="..\..\src\awpMedian.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

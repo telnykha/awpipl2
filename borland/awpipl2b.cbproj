@@ -223,8 +223,7 @@
             <BuildOrder>26</BuildOrder>
         </CppCompile>
         <CppCompile Include="..\src\_awpio.c">
-            <BuildOrder>14</BuildOrder>
-            <BuildOrder>12</BuildOrder>
+            <BuildOrder>30</BuildOrder>
         </CppCompile>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
