@@ -18,7 +18,7 @@ SRCPATH= src/
 INC= -Iinclude/_include/ -Iinclude
 
 # source files: awpipl2 library proper
-LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCameraUnit.c\
+LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCamera.c\
 	awpchannels.c awpColor.c _awpColor.c awpcontour.c awpcontrast.c\
         awpconvert.c awpcopypaste.c awpDetectorUnit.c awpDistance.c awpdraw.c\
         awpEdge.c awpfft.c awpframeprocess.c awpgeometry.c\
@@ -30,7 +30,7 @@ LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCameraUnit.c\
 APPSOURCE = awpmain.c 
 
 # awpipl2 object files	
-LIBOBJECTS=    awpcommon.o awpEdge.o awpBaseAnalysis.o awpBlur.o awpCameraUnit.o\
+LIBOBJECTS=    awpcommon.o awpEdge.o awpBaseAnalysis.o awpBlur.o awpCamera.o\
 	awpchannels.o awpColor.o _awpColor.o awpcontour.o awpcontrast.o\
 	awpconvert.o awpcopypaste.o awpDetectorUnit.o awpDistance.o\
 	awpdraw.o  awpfft.o awpframeprocess.o awpgeometry.o\
