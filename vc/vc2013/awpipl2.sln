@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpipl2", "awpipl2.vcxproj", "{EEC6D9A5-396E-4388-BD84-193BEF1657BA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D22F6666-746D-4436-8EAD-481C2C37AF55} = {D22F6666-746D-4436-8EAD-481C2C37AF55}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpipl", "..\awpipl\awpipl.vcxproj", "{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}"
 EndProject
@@ -35,7 +38,8 @@ Global
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|Win32.Build.0 = Debug|Win32
-		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|x64.ActiveCfg = Debug|Win32
+		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|x64.ActiveCfg = Debug|x64
+		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Debug|x64.Build.0 = Debug|x64
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{CEC3DC9A-B25D-4CAD-BBB8-51612B445E06}.Release|Win32.ActiveCfg = Release|Win32
