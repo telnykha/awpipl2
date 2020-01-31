@@ -6,8 +6,12 @@
     $Date: 2005/04/02 15:48:48 $
 		
     Authors: Eugene Eremin <medlab@appl.sci-nnov.ru>
-    Alexander Telnykh <alt@awp.nnov.ru>
+    Alexander Telnykh <telnykha@yahoo.com>
     Alex Chaykin <gnull@awp.nnov.ru>
+
+	CopyRight 2004-2019 (c) NN-Videolab.net
+
+
 */
 
 #ifdef HAVE_CONFIG_H
