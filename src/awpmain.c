@@ -93,7 +93,7 @@ void Help(int argc, char **argv)
 	printf("--rotatecenter -i filename -o outfile -p angle:x:y\n");
 	printf("--calc -i filename -i1 - filename2 -p mode [mode = and,or,xor,add,sub,mlt,div,min,max,avg] -o outfile \n");
 	printf("--crop -i filename -o outfile -p left:top:right:bottom\n");
-	printf("--filter options -i filename -o outfile\n");
+	printf("--filter -p mode [mode = b,bm,s,sm,se,fe,fe1,en,eno,eo,eso,es,esw,ew,enw,pv,ph,sv,sh] -i filename -o outfile\n");
 	printf("--contrast -i filename -o outfile -p mode [mode = a - autolevels, h - histogramm equalize]\n");
 	printf("--stat -i namefile\n");
 	printf("--convert -i filename -o outfile\n");
@@ -565,103 +565,105 @@ void Filter(int argc, char **argv)
 {
 	int res;
 	awpImage* img = NULL;
+	awpImage* dst = NULL;
 	__GET_IDX__
 
 		img = __LoadImage(argv[idx0]);
-	awpConvert(img, AWP_CONVERT_3TO1_BYTE);
+	awpCopyImage(img, &dst);
+	//awpConvert(img, AWP_CONVERT_3TO1_BYTE);
 	if (strcmp(argv[idx2], "b") == 0)
 	{
-		res=awpFilter(img, AWP_BLUR, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_BLUR);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "bm") == 0)
 	{
-		res=awpFilter(img, AWP_BLUR_MORE, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_BLUR_MORE);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "s") == 0)
 	{
-		res=awpFilter(img, AWP_SHARPEN, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_SHARPEN);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "sm") == 0)
 	{
-		res=awpFilter(img, AWP_SHARPEN_MORE, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_SHARPEN_MORE);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "se") == 0)
 	{
-		res=awpFilter(img, AWP_SHARPEN_EDGES, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_SHARPEN_EDGES);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "fe") == 0)
 	{
-		res=awpFilter(img, AWP_FIND_EDGES, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_FIND_EDGES);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "fe1") == 0)
 	{
-		res=awpFilter(img, AWP_FIND_EDGES1, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_FIND_EDGES1);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "en") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_NORTH, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_NORTH);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "eno") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_NORTH_OST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_NORTH_OST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "eo") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_OST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_OST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "eso") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_SOUTH_OST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_SOUTH_OST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "es") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_SOUTH, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_SOUTH);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "esw") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_SOUTH_WEST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_SOUTH_WEST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "ew") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_WEST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_WEST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "enw") == 0)
 	{
-		res=awpFilter(img, AWP_EMBOSS_NORTH_WEST, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_EMBOSS_NORTH_WEST);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "pv") == 0)
 	{
-		res=awpFilter(img, AWP_PREWITT_V, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_PREWITT_V);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "ph") == 0)
 	{
-		res=awpFilter(img, AWP_PREWITT_H, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_PREWITT_H);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "sv") == 0)
 	{
-		res=awpFilter(img, AWP_SOBEL_V, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_SOBEL_V);
 		CHECK_RESULT
 	}
 	else if (strcmp(argv[idx2], "sh") == 0)
 	{
-		res=awpFilter(img, AWP_SOBEL_H, AWP_FILTER_METHOD_ORDINARY);
+		res=awpFilter(img, dst, AWP_SOBEL_H);
 		CHECK_RESULT
 	}
 	else
@@ -669,8 +671,9 @@ void Filter(int argc, char **argv)
 		printf("unknown filter option %s\n", argv[idx2]);
 		exit(-1);
 	}
-	__SaveImage(argv[idx1], img);
+	__SaveImage(argv[idx1], dst);
 	_AWP_SAFE_RELEASE_(img);
+	_AWP_SAFE_RELEASE_(dst);
 }
 int main (int argc, char **argv)
 {
