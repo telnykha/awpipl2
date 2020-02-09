@@ -229,25 +229,24 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\awpApprox.c" />
-    <ClCompile Include="..\..\src\awpCamera.c" />
-    <ClCompile Include="..\..\src\awpColor.c" />
-    <ClCompile Include="..\..\src\awpDistance.c" />
-    <ClCompile Include="..\..\src\awpGetUnit.c" />
-    <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c" />
+    <ClCompile Include="..\..\src\awpapprox.c" />
+    <ClCompile Include="..\..\src\awpbaseanalysis.c" />
+    <ClCompile Include="..\..\src\awpblur.c" />
+    <ClCompile Include="..\..\src\awpcamera.c" />
+    <ClCompile Include="..\..\src\awpcolor.c" />
+    <ClCompile Include="..\..\src\awpdetector.c" />
+    <ClCompile Include="..\..\src\awpdistance.c" />
+    <ClCompile Include="..\..\src\awpget.c" />
+    <ClCompile Include="..\..\src\awpintegralfeatures.c" />
     <ClCompile Include="..\..\src\awpInterpolation.c" />
-    <ClCompile Include="..\..\src\awpLBPUnit.c" />
-    <ClCompile Include="..\..\src\awpMedian.c" />
-    <ClCompile Include="..\..\src\awpNorm.c" />
-    <ClCompile Include="..\..\src\_awpColor.c" />
+    <ClCompile Include="..\..\src\awplbp.c" />
+    <ClCompile Include="..\..\src\awpmedian.c" />
+    <ClCompile Include="..\..\src\awpnorm.c" />
+    <ClCompile Include="..\..\src\awppoints.c" />
+    <ClCompile Include="..\..\src\awpscanners.c" />
+    <ClCompile Include="..\..\src\_awpcolor.c" />
     <ClCompile Include="..\..\src\_awpio.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\src\awpBaseAnalysis.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\..\src\awpBlur.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="..\..\src\awpchannels.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
@@ -270,9 +269,6 @@
     <ClCompile Include="..\..\src\awpdraw.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpEdge.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpfft.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
@@ -288,9 +284,6 @@
     <ClCompile Include="..\..\src\awpmaskconvolution.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpPointUtils.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpstroke.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
@@ -299,11 +292,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\_include\awpLBPUnit.h" />
-    <ClInclude Include="..\..\include\_include\_awpColor.h" />
+    <ClInclude Include="..\..\include\_include\_awpcolor.h" />
+    <ClInclude Include="..\..\include\_include\_awpdetect.h" />
+    <ClInclude Include="..\..\include\_include\_awpdraw.h" />
+    <ClInclude Include="..\..\include\_include\_awpio.h" />
     <ClInclude Include="..\..\include\_include\_awpipl.h" />
     <ClInclude Include="..\..\include\awperror.h" />
-    <ClInclude Include="..\..\include\_include\awpio.h" />
     <ClInclude Include="..\..\include\awpipl.h" />
   </ItemGroup>
   <ItemGroup>

@@ -14,12 +14,6 @@
     <ClCompile Include="..\..\src\_awpio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpBaseAnalysis.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\awpBlur.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpchannels.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,9 +35,6 @@
     <ClCompile Include="..\..\src\awpdraw.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpEdge.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpfft.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,9 +50,6 @@
     <ClCompile Include="..\..\src\awpmaskconvolution.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpPointUtils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\awpstroke.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,34 +59,49 @@
     <ClCompile Include="..\..\src\awpInterpolation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpDistance.c">
+    <ClCompile Include="..\..\src\awpdetector.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpIntegralFeaturesUnit.c">
+    <ClCompile Include="..\..\src\awpdistance.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpNorm.c">
+    <ClCompile Include="..\..\src\_awpcolor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\_awpColor.c">
+    <ClCompile Include="..\..\src\awpapprox.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpColor.c">
+    <ClCompile Include="..\..\src\awpbaseanalysis.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpLBPUnit.c">
+    <ClCompile Include="..\..\src\awpblur.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpApprox.c">
+    <ClCompile Include="..\..\src\awpcamera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpGetUnit.c">
+    <ClCompile Include="..\..\src\awpcolor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpCamera.c">
+    <ClCompile Include="..\..\src\awpget.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\awpMedian.c">
+    <ClCompile Include="..\..\src\awpintegralfeatures.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awplbp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awpmedian.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awpnorm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awppoints.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\awpscanners.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -109,16 +112,19 @@
     <ClInclude Include="..\..\include\awperror.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\_include\awpio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\awpipl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\_include\_awpColor.h">
+    <ClInclude Include="..\..\include\_include\_awpdraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\_include\awpLBPUnit.h">
+    <ClInclude Include="..\..\include\_include\_awpio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\_include\_awpcolor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\_include\_awpdetect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
