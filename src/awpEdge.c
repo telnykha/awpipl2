@@ -530,3 +530,4 @@ CLEANUP:
     _SAFE_RELEASE_(img_dir);
     return res;
 }
+

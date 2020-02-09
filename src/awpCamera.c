@@ -4,7 +4,7 @@
 //		File: awpCamera.c
 //		Purpose: videocamera geometry
 //		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
-//      CopyRight 2004-2019 (c) NN-Videolab.net
+//      CopyRight 2004-2020 (c) NN-Videolab.net
 //M*/
 #include "_awpipl.h"
 //---------------------------------------------------------------------------

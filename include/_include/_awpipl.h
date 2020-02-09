@@ -25,9 +25,10 @@ extern "C" {
 #include "awperror.h"
 
 /*library's internal*/
-#include "awpio.h"
-#include "awpDraw.h"
-#include "_awpColor.h"
+#include "_awpio.h"
+#include "_awpdraw.h"
+#include "_awpcolor.h"
+#include "_awpdetect.h"
 
 
 #define AWP_SHRT_MIN      (-32767-1)        /* minimum signed  AWPSHORT value */

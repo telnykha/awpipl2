@@ -4,7 +4,7 @@
 //    Purpose: AWPIPL header file
 //    Author : Alex A.Telnykh
 //    CoAutors: Eugeny Eremin, Andrey Kovalchuck, Youry Yakhno, Olga Shemagina
-//    Copyright (c) 2004-2019 NN-Videolab.net
+//    Copyright (c) 2004-2020 NN-Videolab.net
 //
 //M*/
 
@@ -217,6 +217,7 @@ typedef long              AWPLONG;
 typedef unsigned long     AWPDWORD;
 typedef float			  AWPFLOAT;
 typedef double            AWPDOUBLE;
+typedef void*			  AWPHANDLE;
 
 
 	/** \addtogroup datastructures
@@ -477,7 +478,7 @@ typedef double            AWPDOUBLE;
 		awpScannerType scannerType;
 		/** pointer to awpCamera structure*/
 		awpCamera*     camera;
-		/**base width. eidth of minimal rectangular object*/
+		/**base width. width of minimal rectangular object*/
 		AWPSHORT       baseWidth;
 		/**base height. height of minimal rectangular object*/
 		AWPSHORT       baseHeight;
@@ -514,63 +515,6 @@ typedef double            AWPDOUBLE;
 		/**step  in mm between minimum  and maximum height.  for CameraScanner only*/
 		AWPFLOAT         stepHeight;
 	}awpScanner;
-	/**
-	\struct awpWeak
-	\brief weak classifier
-	*/
-	typedef struct
-	{
-		/**x shift of the weak*/
-		AWPSHORT x;
-		/**y shift of the weak*/
-		AWPSHORT y;
-		/**width of the weak*/
-		AWPSHORT w;
-		/**height of the weak*/
-		AWPSHORT h;
-		/**number of beans in the classifier*/
-		AWPSHORT numBins;
-		/**weaks weight*/
-		AWPDOUBLE alfa;
-		/**pointer to classifiers data*/
-		AWPDOUBLE* bins;
-	}awpWeak;
-	/**
-	\struct awpStrong
-	\brief strong classifier
-	*/
-	typedef struct
-	{
-		/**threshold of strong classifier*/
-		AWPDOUBLE alfa;
-		/** number of weaks*/
-		AWPSHORT  nWeaks;
-		/** pointer to the weaks array*/
-		awpWeak*  pWeaks;
-	}awpStrong;
-	/**
-	\struct awpDetector
-	\brief cascade detector data 
-	*/
-	typedef struct
-	{
-		AWPSHORT type;
-		AWPSHORT width;
-		AWPSHORT height;
-		AWPSHORT nStages;
-		awpStrong* pStrongs;
-	}awpDetector;
-	/**
-	\
-	*/
-	typedef AWPBOOL(*awpDetectFunc)(awpImage* pImage, awpImage* pImage1, awpRect* pRect, awpDetector* pDetector);
-
-	typedef struct
-	{
-		awpDetector     detectorCascade;
-		awpDetectFunc   detectFunc;
-	}awpCascade;
-
 	/** @} */ /*  end of datastructures group */
 
 
@@ -2145,17 +2089,45 @@ AWPRESULT awpImageToScenePoint(awpCamera* pCamera, awpImage* pImage, AWPDOUBLE H
 /** @defgroup detectorgroup Object detection related functions
 *   @{
 */
+
 AWPRESULT awpScanImage(awpImage* pImage, awpRect* pRoi, awpScanner* pScanner, AWPINT* num, awpDetectItem** ppItems);
 AWPRESULT awpExteractFound(AWPINT num, awpDetectItem* pItems, AWPINT* numFound, awpDetectItem** ppFound);
 AWPRESULT awpClusterFound(AWPINT numFound, awpDetectItem* pFound, AWPINT* numClusters, awpDetectItem** ppClusters);
-AWPRESULT awpCreateCascade(awpCascade** ppCascade);
-AWPRESULT awpFreeCascade(awpCascade** ppCascade);
-AWPRESULT awpInitCascade(awpCascade* pCascade, awpImage* img);
-AWPRESULT awpLoadCascade(awpCascade* pCascade, const char* lpFileName);
-AWPRESULT awpReleaseCascade(awpCascade* pCascade);
-AWPRESULT awpDetectInRect(awpImage* pImage, awpCascade* pCascade, awpRect* pRect, AWPBOOL* res);
-AWPRESULT awpDetectInRect2(awpImage* pImage, awpImage* pImage1, awpCascade* pCascade, awpRect* pRect, AWPBOOL* res);
-AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade, AWPINT* num, awpRect** ppResult);
+
+/**
+* @brief Load object detector from file
+* \param [in] lpFileName - name of the file where the detector model is located
+* \param [out] detector - pointer to the detector object 
+* \return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpLoadDetector(const char* lpFileName, AWPHANDLE* detector);
+/**
+*@brief Free object detector 
+*\param detector - pointer to the detector object
+*\return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpFreeDetector(AWPHANDLE* detector);
+/**
+*@brief Ggeneral object detection function. This function does not use a second integral image
+*		to estimate the variance of the input data
+* \param [in] awpImage - source integral image
+* \param [in] pRoi		- the area is interesting where the search for objects should be performed. NULL means that the search must be performed on the entire image
+* \param [in] detector  - object detector
+* \param [out] num      - number of objects found
+* \param [out] ppResult - pointer to an array of rectangles found
+* \return AWP_OK if success or else AWP_ERROR
+*/
+AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, AWPHANDLE detector, AWPINT* num, awpRect** ppResult);
+/**
+*@brief checking for an object in a given rectangle
+* \awpImage - source integral image
+* \pRect	- the area is interesting where the search for objects should be performed. NULL means that the search must be performed on the entire image
+* \detector - object detector
+* \res      - detection result. TRUE the object is present in the specified rectangle. FALSE the object is not in the given rectangle
+* \return AWP_OK if success or else AWP_ERROR
+*/
+
+AWPRESULT awpDetectInRect(awpImage* pImage, AWPHANDLE detector, awpRect* pRect, AWPBOOL* res);
 
 /** @} */ /* end of detectorgroup  */
 

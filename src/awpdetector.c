@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+
 #include "_awpipl.h"
 #include "stdlib.h"
 
@@ -8,9 +8,9 @@ typedef struct
 	AWPSHORT	c;
 }cawpRect;
 
-AWPFLOAT _awpRectsOverlap(awpRect r1, awpRect r2)
+static AWPFLOAT _awpRectsOverlap(awpRect r1, awpRect r2)
 {
-	AWPFLOAT colInt, rowInt, intersection, area1, area2;
+ AWPFLOAT colInt, rowInt, intersection, area1, area2;
  AWPINT width = r1.right - r1.left;
  AWPINT height = r1.bottom - r1.top;
  AWPINT _width = r2.right - r2.left;
@@ -34,7 +34,7 @@ AWPFLOAT _awpRectsOverlap(awpRect r1, awpRect r2)
  return intersection / (area1+area2-intersection);
 }
 
-void _awpClusterRects(int numSrc, awpRect* pSrc, int* numDst, awpRect** ppDst)
+static void _awpClusterRects(int numSrc, awpRect* pSrc, int* numDst, awpRect** ppDst)
 {
 	AWPINT i,j, NumClusters, idx, eCount, cidx;
 	AWPBOOL found;
@@ -114,14 +114,17 @@ void _awpClusterRects(int numSrc, awpRect* pSrc, int* numDst, awpRect** ppDst)
 
 	free(crects);
 }
- AWPDOUBLE CalcSum(double* pix, int x, int y, int w, int h, int ww )
+ AWPDOUBLE __inline CalcSum(double* pix, int x, int y, int w, int h, int ww )
 {
     AWPDOUBLE* p = pix + x - 1 + (y - 1)*ww;
     h = h*ww;
     return (p[0] + p[w + h] - p[h] - p[w]);
 }
+/**
+* @brief Global Modified Census Transform Detector (GMCT).
 
-AWPBOOL GMCTDetector(awpImage* pImage, awpImage* pImage1, awpRect* pRect, awpDetector* pDetector)
+*/
+static AWPBOOL GMCTDetector(awpImage* pImage, awpImage* pImage1, awpRect* pRect, awpDetector* pDetector)
 {
    AWPINT i,j,sx,sy, sw, sh, idx, x, y, width, height,ww;
    AWPDOUBLE tarea, area, total, alfa, sum, invarea,s2,m,disp2;
@@ -207,17 +210,17 @@ AWPBOOL GMCTDetector(awpImage* pImage, awpImage* pImage1, awpRect* pRect, awpDet
 
 		if ((sum - pDetector->pStrongs[i].alfa) < -0.00001)
 		return FALSE;
-
-
-		/*if (sum < pDetector->pStrongs[i].alfa)
-			return FALSE;*/
 	}
 
 	return TRUE;
 }
 
 
-//---------------------------------------------------------------------------------------
+/**
+*	@brief Initialize Global Modified Census Transform (GMCT) 
+*	sourse: cascade in the awpImage img 
+*	result: cascade in the awpCascade sructure 
+*/
 AWPRESULT _awpInitGMCTCascade(awpImage* img, awpCascade* pCascade)
 {
 	AWPINT ns,i,j,k;
@@ -281,17 +284,17 @@ err:
 }
 AWPRESULT _awpInitLMCTCascade(awpImage* img, awpCascade* pCascade)
 {
-	
+	// todo:
 	return AWP_OK;
 }
 AWPRESULT _awpInitGLBPCascade(awpImage* img, awpCascade* pCascade)
 {
-	
+	// todo:
 	return AWP_OK;
 }
 AWPRESULT _awpInitLLBPCascade(awpImage* img, awpCascade* pCascade)
 {
-	
+	//todo: 
 	return AWP_OK;
 }
 //---------------------------------------------------------------------------------------
@@ -356,40 +359,11 @@ AWPRESULT awpLoadCascade(awpCascade* pCascade, const char* lpFileName)
 	AWPRESULT res = AWP_OK;
 	awpImage* tmp = NULL;
 
-	AWPDOUBLE* pix;
-	AWPINT     type;
 	if (pCascade == NULL)
 		return AWP_BADARG;
 	if (awpLoadImage(lpFileName, &tmp) != AWP_OK)
 		return AWP_BADARG;
-/*
-   pix = (double*)tmp->pPixels;
-   type = (int)pix[0];
 
-	if (tmp->dwType != AWP_DOUBLE || tmp->bChannels != 1)
-	{
-		res =  AWP_BADARG;
-		goto cleanup;
-	}
-
-	switch (type)
-	{
-	case AWP_GMCT_DETECTOR: 
-		res = _awpInitGMCTCascade(tmp, pCascade);
-		break;
-	case AWP_LMCT_DETECTOR:
-		res = _awpInitLMCTCascade(tmp, pCascade);
-		break;
-	case AWP_GLBP_DETECTOR:
-		res = _awpInitGLBPCascade(tmp, pCascade);
-		break;
-	case AWP_LLBP_DETECTOR:
-		res = _awpInitLLBPCascade(tmp, pCascade);
-		break;
-	default:
-		res = AWP_BADARG; 
-	}
-*/
 	res =  awpInitCascade(pCascade,tmp);
 
 cleanup:
@@ -431,9 +405,18 @@ AWPRESULT awpReleaseCascade(awpCascade* pCascade)
 	return AWP_OK;
 }
 
-AWPRESULT awpDetectInRect2(awpImage* pImage, awpImage* pImage1, awpCascade* pCascade, awpRect* pRect, AWPBOOL* res)
+
+/**
+*@brief checking for an object in a given rectangle
+* \awpImage - source integral image
+* \pRect	- the area is interesting where the search for objects should be performed. NULL means that the search must be performed on the entire image
+* \detector - object detector
+* \res      - detection result. TRUE the object is present in the specified rectangle. FALSE the object is not in the given rectangle
+*/
+AWPRESULT awpDetectInRect(awpImage* pImage, AWPHANDLE detector, awpRect* pRect, AWPBOOL* res)
 {
 	*res = FALSE;
+	awpCascade* pCascade = (awpCascade*)detector;
 	if (pCascade == NULL)
 		return AWP_BADARG;
 	if (pCascade->detectFunc == NULL)
@@ -442,27 +425,20 @@ AWPRESULT awpDetectInRect2(awpImage* pImage, awpImage* pImage1, awpCascade* pCas
 		return AWP_BADARG;
 	if (awpRectInImage(pImage, pRect) != AWP_OK)
 		return AWP_BADARG;
-	*res = pCascade->detectFunc(pImage, pImage1, pRect, &pCascade->detectorCascade); 
+	*res = pCascade->detectFunc(pImage, NULL, pRect, &pCascade->detectorCascade);
 	return AWP_OK;
 }
 
-
-AWPRESULT awpDetectInPoint(awpImage* pImage, awpImage* pImage1, awpCascade* pCascade, awpPoint* pPoint, AWPDOUBLE scale, AWPBOOL* res)
-{
-	awpRect rect;
-	if (pPoint == NULL)
-		return AWP_BADARG;
-	if (scale <= 0)
-		return AWP_BADARG;
-
-	rect.left  = (AWPSHORT)(pPoint->X*scale);
-	rect.right = rect.left + (AWPSHORT)(pCascade->detectorCascade.width*scale);
-	rect.top   = (AWPSHORT)(pPoint->Y*scale);
-	rect.bottom = rect.top + (AWPSHORT)(pCascade->detectorCascade.height*scale);
-
-	return awpDetectInRect2(pImage, pImage1, pCascade, &rect, res);
-}
-AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade, AWPINT* num, awpRect** ppResult)
+/**
+*@brief Ggeneral object detection function. This function does not use a second integral image
+*		to estimate the variance of the input data
+* \awpImage - source integral image
+* \pRoi		- the area is interesting where the search for objects should be performed. NULL means that the search must be performed on the entire image
+* \pCascade - cascade object detector
+* \num      - number of objects found
+* \ppResult - pointer to an array of rectangles found
+*/
+AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, AWPHANDLE detector, AWPINT* num, awpRect** ppResult)
 {
 	AWPDOUBLE st, grow,_height, _width, ar;
 	AWPINT width, height, w,h,count, _num;
@@ -470,6 +446,7 @@ AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade,
 	awpRect r;
 	awpRect* _rects = NULL;
 	awpRect fragment;
+	awpCascade* pCascade = (awpCascade*)detector;
 
 	if (pImage == NULL)
 		return AWP_BADARG;
@@ -488,7 +465,8 @@ AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade,
 	 ar = 1;
 	                                     
 	*num = 0;
-	
+	*ppResult = NULL;
+
     if (w > h)
     {
         _width  = width-2;
@@ -558,27 +536,46 @@ AWPRESULT awpObjectDetect(awpImage* pImage, awpRect* pRoi, awpCascade* pCascade,
 		stepy = st*_height / 100;
 		stepy = stepy < AWP_DETECT_MIN_STEP ? AWP_DETECT_MIN_STEP:stepy;
     }
-/*
-	if (cluster)
-	{
-		_awpClusterRects(_num, _rects, num, ppResult);
-		if (_num > 0)
-			free(_rects);
-	}
-	else
-	{
-		*num = _num;
-		if (_num > 0)
-		{
-			*ppResult = (awpRect*)malloc(_num*sizeof(awpRect));
-			for ( i = 0; i < _num; i++)
-			{
-				(*ppResult)[i] = _rects[i];
-			}
-			free(_rects);
-		}
-	}
-*/    
-	printf("fragments  %d .\n", count);
+	*num = _num;
+	*ppResult = _rects;
+#ifdef _DEBUG
+	printf("awpObjectDetect:  %d .\n", _num);
+#endif 
 	return AWP_OK;
+}
+
+AWPRESULT awpLoadDetector(const char* lpFileName, AWPHANDLE* detector)
+{
+	AWPRESULT res = AWP_OK;
+	awpCascade* cascade = NULL;
+
+	if (lpFileName == NULL || detector == NULL)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+
+	_CHECK_RESULT_(res = awpCreateCascade(&cascade))
+	_CHECK_RESULT_(res = awpLoadCascade(cascade, lpFileName))
+
+	*detector = cascade;
+    
+CLEANUP:
+	if (res != AWP_OK)
+	{
+		*detector = NULL;
+		if (cascade != NULL)
+			awpFreeCascade(&cascade);
+	}
+		*detector = NULL;
+	return res; 
+}
+
+AWPRESULT awpFreeDetector(AWPHANDLE* detector)
+{
+	AWPRESULT res = AWP_OK;
+	awpCascade* cascade = NULL;
+	if (detector == NULL)
+		_ERROR_EXIT_RES_(AWP_BADARG)
+	cascade = (awpCascade*)(*detector);
+	_CHECK_RESULT_(res = awpFreeCascade(&cascade))
+CLEANUP:
+	return res;
 }

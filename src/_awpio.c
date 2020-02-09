@@ -1,3 +1,12 @@
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: _awpio.c
+//		Purpose: load and save images 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2019 (c) NN-Videolab.net
+//M*/
+
 #ifdef HAVE_CONFIG_H
 #   include <config.h>
 #endif

@@ -1,3 +1,11 @@
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpcontour.c
+//		Purpose: contour related routines
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2019 (c) NN-Videolab.net
+//M*/
 #ifdef HAVE_CONFIG_H
         #include <config.h>
 #endif

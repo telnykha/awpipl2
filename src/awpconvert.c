@@ -1,4 +1,11 @@
-
+/*M
+//
+//      awpipl2 image processing and image analysis library
+//		File: awpconvert.c
+//		Purpose: data type convert functions 
+//		Autors: Alex A.Telnykh (tlnykha@yahoo.com)
+//      CopyRight 2004-2020 (c) NN-Videolab.net
+//M*/
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
