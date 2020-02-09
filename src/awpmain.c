@@ -98,10 +98,70 @@ void Help(int argc, char **argv)
 	printf("--stat -i namefile\n");
 	printf("--convert -i filename -o outfile\n");
 	printf("--draw -i file name -o outfile -f mode [mode = line,rect,point,cross,ellipse,ellipse2] -p x1:x2:y1:y2:r:g:b:rd \n");
-	printf("--blobs \n");
+	printf("--blob -p draw_cp:draw_contour:draw_rect:draw_axis:draw_ellipce -i filename -o outfile\n");
 	printf("--detect \n");
 	printf("--bacrproject \n");
 	printf("--camera \n");
+}
+void Blob(int argc, char** argv)
+{
+	awpImage* img = NULL;
+	AWPBYTE threshold;
+	int draw_cp, draw_contour, draw_rect, draw_axis, draw_ellipce;
+	int k;
+	awpImage* res = NULL;
+
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i:%i:%i:%i:%i", &draw_cp, &draw_contour, &draw_rect, &draw_axis, &draw_ellipce);
+	if (k != 5)
+	{
+		printf("invalid blob params = %s\n", argv[idx2]);
+		exit(-1);
+	}
+	awpImage* dst = NULL;
+	img = __LoadImage(argv[idx0]);
+	awpCopyImage(img, &dst);
+	AWPINT num = 0;
+	awpStrokeObj* strokes = NULL;
+	awpGetStrokes(dst, &num, &strokes, 128, NULL);
+	AWPINT square;
+	awpContour* c = NULL;
+	awpRect r;
+	awpPoint p;
+	AWPDOUBLE perim = 0;
+	FILE * pFile;
+	pFile = fopen("D:/file.txt", "w");
+	for (int i = 0; i < num; i++)
+	{
+		awpStrObjSquare(&strokes[i], &square);
+		memset(&p, 0, sizeof(awpPoint));
+		awpGetObjCentroid(dst, &strokes[i], &p);
+		awpCalcObjRect(&strokes[i], &r);
+		awpCreateContour(&c, strokes[i].Num * 2, TRUE);
+		awpGetObjCountour(&strokes[i], c);
+		awpGetContPerim(c, &perim);
+		fprintf(pFile,
+			"a. %i\nb. X = %i; Y = %i\nc. bottom = %hi; left = %hi; right = %hi; top = %hi\nd. -\ne. direction = %i; num = %i\nf. %f\n",
+			square, p.X, p.Y,
+			r.bottom, r.left, r.right, r.top,
+			c->Direction, c->NumPoints, perim);
+		for (int k = 0; k < c->NumPoints - 1; k++)
+		{
+			awpPoint p1, p2;
+			p1.X = c->Points[k].X;
+			p2.X = c->Points[k + 1].X;
+			p1.Y = c->Points[k].Y;
+			p2.Y = c->Points[k + 1].Y;
+			awpDrawCLine(dst, p1, p2, 0, 255, 0, 1);
+		}
+		awpDrawCRect(dst, &r, 255, 0, 0, 1);
+	}
+	fclose(pFile);
+	__SaveImage(argv[idx1], dst);
+	_AWP_SAFE_RELEASE_(img);
+	_AWP_SAFE_RELEASE_(dst);
+	awpFreeContour(&c);
+	awpFreeStrokes(num, &strokes);
 }
 void Convert(int argc, char** argv) {
 	awpImage* img = NULL;
@@ -570,7 +630,6 @@ void Filter(int argc, char **argv)
 
 		img = __LoadImage(argv[idx0]);
 	awpCopyImage(img, &dst);
-	//awpConvert(img, AWP_CONVERT_3TO1_BYTE);
 	if (strcmp(argv[idx2], "b") == 0)
 	{
 		res=awpFilter(img, dst, AWP_BLUR);
@@ -739,8 +798,9 @@ int main (int argc, char **argv)
    {
 	   Draw(argc, argv);
    }
-   else if (strcmp(arg1, "--blobs") == 0)
+   else if (strcmp(arg1, "--blob") == 0)
    {
+	   Blob(argc, argv);
 	   // Binary objects analysis 
    }
    else if (strcmp(arg1, "--detect") == 0)
