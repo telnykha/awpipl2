@@ -120,22 +120,32 @@ void Blob(int argc, char** argv)
 	}
 	awpImage* dst = NULL;
 	img = __LoadImage(argv[idx0]);
-	awpCopyImage(img, &dst);
+	//awpCopyImage(img, &dst);
+	awpConvert(img, AWP_CONVERT_3TO1_BYTE);
+
 	AWPINT num = 0;
 	awpStrokeObj* strokes = NULL;
-	awpGetStrokes(dst, &num, &strokes, 128, NULL);
+	awpCreateImage(&dst, img->sSizeX, img->sSizeY, 3, AWP_BYTE);
+	awpGetStrokes(img, &num, &strokes, 128, NULL);
+#ifdef _DEBUG 
+	printf("Number of binary objects: %i\n", num);
+#endif 
 	AWPINT square;
 	awpContour* c = NULL;
 	awpRect r;
+	awpRect cross;
 	awpPoint p;
 	AWPDOUBLE perim = 0;
 	FILE * pFile;
-	pFile = fopen("D:/file.txt", "w");
+	pFile = fopen("c:\\_alt\\_proj\\awpipl2\\file.txt", "w+t");
 	for (int i = 0; i < num; i++)
 	{
 		awpStrObjSquare(&strokes[i], &square);
 		memset(&p, 0, sizeof(awpPoint));
-		awpGetObjCentroid(dst, &strokes[i], &p);
+		AWPRESULT res = awpGetObjCentroid(img, &strokes[i], &p);
+#ifdef _DEBUG
+		printf("awpGetObjCentroid result = %i\n", res);
+#endif 
 		awpCalcObjRect(&strokes[i], &r);
 		awpCreateContour(&c, strokes[i].Num * 2, TRUE);
 		awpGetObjCountour(&strokes[i], c);
@@ -145,16 +155,34 @@ void Blob(int argc, char** argv)
 			square, p.X, p.Y,
 			r.bottom, r.left, r.right, r.top,
 			c->Direction, c->NumPoints, perim);
-		for (int k = 0; k < c->NumPoints - 1; k++)
+
+		if (draw_cp)
 		{
-			awpPoint p1, p2;
-			p1.X = c->Points[k].X;
-			p2.X = c->Points[k + 1].X;
-			p1.Y = c->Points[k].Y;
-			p2.Y = c->Points[k + 1].Y;
-			awpDrawCLine(dst, p1, p2, 0, 255, 0, 1);
+			cross.left = p.X - 4;
+			cross.right = p.X + 4;
+			cross.bottom = p.Y - 4;
+			cross.top = p.Y + 4;
+
+			awpDrawCCross(dst, &cross, 0, 0, 255, 1);
 		}
-		awpDrawCRect(dst, &r, 255, 0, 0, 1);
+		if (draw_contour)
+			awpDrawPolygon(dst, c, 1, 255, 1);
+		if (draw_rect)
+			awpDrawCRect(dst, &r, 255, 0, 0, 1);
+		if (draw_axis)
+		{
+			AWPDOUBLE theta = 0;
+			AWPDOUBLE mi = 0;
+			AWPDOUBLE ma = 0;
+
+			awpGetObjOrientation(img, &strokes[i], &theta, &mi, &ma);
+			theta += 90;
+#ifdef _DEBUG
+			printf("theta = %lf\n", theta);
+#endif 
+			awpDrawCEllipse2(dst, p, ma, mi, theta, 255, 0, 0, 1);
+			awpDrawCEllipseCross(dst, p, ma, mi, theta, 255, 0, 0, 1);
+		}
 	}
 	fclose(pFile);
 	__SaveImage(argv[idx1], dst);

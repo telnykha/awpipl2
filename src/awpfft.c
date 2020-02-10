@@ -19,7 +19,7 @@
 #include <fftw3.h>
 
 
-AWPRESULT awpFFT(awpImage** pImage,awpImage** pImageRe,awpImage** pImageIm,AWPINT iFftDir)
+AWPRESULT awpFFT(awpImage** pImage,awpImage** pImageRe,awpImage** pImageIm, AWPINT iFftDir)
 {
     AWPRESULT res;
     fftw_plan p;

@@ -1155,7 +1155,7 @@ AWPRESULT awpDrawEllipse2(awpImage* pImage, awpPoint center, AWPWORD major, AWPW
 		_ERROR_EXIT_RES_(AWP_BADARG)
 
 	freq = AWP_PI / major;
-
+	angle = AWP_PI*angle / 180;
 	W_S = major * sin(angle);
 	W_C = major * cos(angle);
 

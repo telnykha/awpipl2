@@ -943,7 +943,6 @@ AWPRESULT awpGetObjOrientation(const awpImage* pImg, const awpStrokeObj* pObj, A
 
 	/*find the moment*/
 	intes = 0;
-    s = 0;
 	pixels = (AWPBYTE*)pImg->pPixels;
 	for (i = 0; i < pObj->Num; i++)
 	{
@@ -952,39 +951,37 @@ AWPRESULT awpGetObjOrientation(const awpImage* pImg, const awpStrokeObj* pObj, A
 			x = j;
 			y = pObj->strokes[i].y;
 			intes ++;//= pixels[y*pImg->sSizeX + x];
-            s++;
 			mxx += (x - center.X)*(x - center.X);
 			myy += (y - center.Y)*(y - center.Y);
 			mxy += (x - center.X)*(y - center.Y);
 		}
 	}
-	//intes /=s;
 	mxx /= intes;
 	myy /= intes;
 	mxy /= intes; 
 
-	if (mxy == 0 && myy <= mxx)
+	if (mxy == 0 && myy > mxx)
 	{
 		*teta = -AWP_PI / 2;
 		*ma = 4 * sqrt(mxx);
 		*mi = 4 * sqrt(myy);
 	}
-	else if (mxy == 0 && myy > mxx)
+	else if (mxy == 0 && myy <= mxx) 
 	{
 		*teta = 0;
 		*ma = 4 * sqrt(myy);
 		*mi = 4 * sqrt(mxx);
 	}
-	else if (myy <= mxx)
+	else if (mxy != 0 && myy <= mxx)
 	{
-		*teta = atan(-2 * mxy*myy - mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy));
+		*teta = atan(-2 * mxy/(sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
 		*ma = sqrt(8 * (myy + mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
 		*mi = sqrt(8 * (myy + mxx - sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
 
 	}
-	else if (myy > mxx)
+	else if (mxy != 0 && myy > mxx)
 	{
-		*teta = atan(sqrt(mxx + myy + sqrt((mxx - myy)*(mxx - myy) + 4 * mxy*mxy)) / (-2 * mxy + 0.000001));
+		*teta = atan(sqrt(mxx + myy + sqrt((mxx - myy)*(mxx - myy) + 4 * mxy*mxy)) / (-2 * mxy));
 		*ma = sqrt(8 * (myy + mxx + sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
 		*mi = sqrt(8 * (myy + mxx - sqrt((myy - mxx)*(myy - mxx) + 4 * mxy*mxy)));
 	}
