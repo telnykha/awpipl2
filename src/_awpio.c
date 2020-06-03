@@ -713,7 +713,7 @@ jpeg_buffer_dest (j_compress_ptr cinfo,char* buffer, AWPINT len )
     dest->next_output_byte = (JOCTET *)buffer;
     dest->free_in_buffer = 0;
 }
-//#if 0
+#ifndef __GNUC__
 
  static AWPRESULT _awpLoadFormatImage(const char* lpFileName, awpImage** ppImage, int format)
  {
@@ -855,6 +855,6 @@ AWPRESULT _awpLoadTGAImage(const char* lpFileName, awpImage** ppImage)
 {
        return  _awpLoadFormatImage(lpFileName, ppImage, 2);
 }
-//#endif
+#endif
 
 #endif /* HAVE_JPEG */
