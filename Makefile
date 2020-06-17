@@ -20,10 +20,10 @@ INC= -Iinclude/_include/ -Iinclude
 # source files: awpipl2 library proper
 LIBSOURCES= awpcommon.c awpBaseAnalysis.c awpBlur.c awpCamera.c\
 	awpchannels.c awpColor.c _awpColor.c awpcontour.c awpcontrast.c\
-        awpconvert.c awpcopypaste.c awpDetectorUnit.c awpDistance.c awpdraw.c\
+        awpconvert.c awpcopypaste.c awpdetector.c awpDistance.c awpdraw.c\
         awpEdge.c awpfft.c awpframeprocess.c awpgeometry.c\
-	awpIntegralFeaturesUnit.c awpInterpolation.c awpio.c _awpio.c\
-	awpLBPUnit.c awpNorm.c awpopencv.c awpPointUtils.c awpScannersUnit.c\
+	awpintegralfeatures.c awpInterpolation.c awpio.c _awpio.c\
+	awplbp.c awpNorm.c awpopencv.c awppoints.c awpscanners.c\
 	awpstroke.c awpthreshold.c awpmaskconvolution.c
 
 # source files: awptest application 
@@ -32,11 +32,11 @@ APPSOURCE = awpmain.c
 # awpipl2 object files	
 LIBOBJECTS=    awpcommon.o awpEdge.o awpBaseAnalysis.o awpBlur.o awpCamera.o\
 	awpchannels.o awpColor.o _awpColor.o awpcontour.o awpcontrast.o\
-	awpconvert.o awpcopypaste.o awpDetectorUnit.o awpDistance.o\
+	awpconvert.o awpcopypaste.o awpdetector.o awpDistance.o\
 	awpdraw.o  awpfft.o awpframeprocess.o awpgeometry.o\
-	awpIntegralFeaturesUnit.o awpInterpolation.o\
-	awpio.o _awpio.o awpLBPUnit.o awpNorm.o awpopencv.o awpPointUtils.o\
-	awpstroke.o awpthreshold.o awpmaskconvolution.o awpScannersUnit.o
+	awpintegralfeatures.o awpInterpolation.o\
+	awpio.o _awpio.o awplbp.o awpNorm.o awpopencv.o awppoints.o\
+	awpstroke.o awpthreshold.o awpmaskconvolution.o awpscanners.o
 
 all: awpipl2.a awpmain awptest clean
 

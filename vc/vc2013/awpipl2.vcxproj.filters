@@ -104,6 +104,9 @@
     <ClCompile Include="..\..\src\awpscanners.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\awpEdge.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\_include\_awpipl.h">
