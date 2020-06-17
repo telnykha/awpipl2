@@ -12,30 +12,6 @@
 #include "_awpipl.h"
 #include <limits.h>
 
-/*
-	converting the original pSrc image to the pDst image
-	
-*/
-AWPRESULT awpConvert2(awpImage* pSrc, awpImage* pDst, long lOptions)
-{
-	AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
-
-/*
-converting the original image into another type of image.
-if the types match, the image is copied.
-The function creates a converted image using awpCreateImage
-*/
-AWPRESULT awpConvert1(awpImage* pImage, awpImage** ppImage, long lOptions)
-{
-	AWPRESULT res = AWP_OK;
-	_ERROR_EXIT_RES_(res)
-CLEANUP:
-	return res;
-}
 
 AWPRESULT _awpConvertByteToAWPAWPDOUBLE(awpImage* Image)
 {
@@ -161,6 +137,48 @@ CLEANUP:
 }
 
 
+AWPRESULT _awpConvertFloatToDouble(awpImage* Image)
+{
+	AWPRESULT res;
+	AWPDOUBLE* pD;
+	AWPINT i;
+	AWPFLOAT* pB;
+	long lSize;
+
+	res = AWP_OK;/*initialize result */
+
+	lSize=Image->sSizeX*Image->sSizeY*Image->bChannels;
+
+	/* allocate memory for AWPDOUBLE data */
+	pD = (AWPDOUBLE*)malloc(sizeof(AWPDOUBLE)*lSize);
+
+	if(pD==NULL){
+		res = AWP_BADMEMORY;
+		_ERR_EXIT_
+	}
+
+	pB=(AWPFLOAT*)Image->pPixels;
+
+
+	if(res!=AWP_OK){
+		free((void*)pD);
+		_ERR_EXIT_
+	}
+
+	for(i=0;i<lSize;i++){
+		pD[i]=(AWPDOUBLE)pB[i];
+	}
+
+	free((void*)pB);
+	Image->dwType=AWP_DOUBLE;
+	Image->pPixels=(void*)pD;
+
+CLEANUP:
+
+	return res;
+}
+
+
 AWPRESULT _awpConvertByte3To1(awpImage* Image)
 {
     AWPRESULT res;
@@ -179,7 +197,7 @@ AWPRESULT _awpConvertByte3To1(awpImage* Image)
 
     lSize=Image->sSizeX*Image->sSizeY;
 
-    pBSrc=(AWPBYTE*)Image->pPixels;
+	pBSrc=(AWPBYTE*)Image->pPixels;
 
     /* allocate memory for AWPDOUBLE data */
     pB = (AWPBYTE*)malloc(sizeof(AWPBYTE)*lSize);
@@ -218,7 +236,7 @@ AWPRESULT _awpConvertAWPAWPDOUBLEToByte(awpImage* Image)
     lSize=Image->sSizeX*Image->sSizeY*Image->bChannels;
 
     /* allocate memory for byte data */
-    pB = (AWPBYTE*)malloc(sizeof(AWPBYTE)*lSize);
+	pB = (AWPBYTE*)malloc(sizeof(AWPBYTE)*lSize);
 
     if(pB==NULL){
         res = AWP_BADMEMORY;
@@ -257,7 +275,7 @@ AWPRESULT _awpConvertFloatToByte(awpImage* Image)
     if(pB==NULL){
         res = AWP_BADMEMORY;
         _ERR_EXIT_
-    }
+	}
 
     pD=(AWPFLOAT*)Image->pPixels;
 
@@ -296,7 +314,7 @@ AWPRESULT _awpConvertAWPAWPDOUBLEToByteWithNorm(awpImage* Image)
     if(pB == NULL){
         res = AWP_BADMEMORY;
         _ERR_EXIT_
-    }
+	}
 
     /* allocate memory for min and max  data */
     pMax = (AWPDOUBLE*)malloc(sizeof(AWPDOUBLE)*Image->bChannels);
@@ -335,7 +353,7 @@ AWPRESULT _awpConvertAWPAWPDOUBLEToByteWithNorm(awpImage* Image)
     for(i=0;i<lSize;i+=Image->bChannels){
         for(ch=0;ch<Image->bChannels;ch++){
             pB[i+ch]=(AWPBYTE)(255.0*(pD[i+ch]-pMin[ch])/(pMax[ch]-pMin[ch]+0.0001));
-        }
+		}
     }
 
     free((void*)pD);
@@ -413,7 +431,7 @@ AWPRESULT _awpConvertFloatToByteWithNorm(awpImage* Image)
 
     /* normalize data */
     for(i=0;i<lSize;i+=Image->bChannels){
-        for(ch=0;ch<Image->bChannels;ch++){
+		for(ch=0;ch<Image->bChannels;ch++){
             pB[i+ch]=(AWPBYTE)(255.0*(pD[i+ch]-pMin[ch])/(pMax[ch]-pMin[ch]+0.0000000000001));
         }
     }
@@ -441,14 +459,14 @@ AWPRESULT awpConvert(awpImage* Image, long lOptions)
     res = AWP_OK;/*initialize result */
 
     /* check image */
-    _CHECK_RESULT_((res = awpCheckImage(Image)))
+	_CHECK_RESULT_((res = awpCheckImage(Image)))
 
     /* select type image */
     switch(Image->dwType){
     case AWP_BYTE:
         switch(lOptions)
 		{
-        case AWP_CONVERT_TO_DOUBLE:
+		case AWP_CONVERT_TO_DOUBLE:
             _CHECK_RESULT_((res=_awpConvertByteToAWPAWPDOUBLE(Image)))
             break;
 		case AWP_CONVERT_3TO1_BYTE:
@@ -484,13 +502,16 @@ AWPRESULT awpConvert(awpImage* Image, long lOptions)
         switch(lOptions)
         {
             case AWP_CONVERT_TO_BYTE:
-                _CHECK_RESULT_((res=_awpConvertFloatToByte(Image)))
-            break;
-            case AWP_CONVERT_TO_BYTE_WITH_NORM:
-                _CHECK_RESULT_((res=_awpConvertFloatToByteWithNorm(Image)))
-            break;
-        default:
-            res = AWP_NOTSUPPORT;
+				_CHECK_RESULT_((res=_awpConvertFloatToByte(Image)))
+			break;
+			case AWP_CONVERT_TO_BYTE_WITH_NORM:
+				_CHECK_RESULT_((res=_awpConvertFloatToByteWithNorm(Image)))
+			break;
+			case AWP_CONVERT_TO_DOUBLE:
+				_CHECK_RESULT_((res=_awpConvertFloatToDouble(Image)))
+			break;
+		default:
+			res = AWP_NOTSUPPORT;
             _ERR_EXIT_
         }
     break;
