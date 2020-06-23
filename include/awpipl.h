@@ -2294,6 +2294,15 @@ AWPRESULT awpGetLineData(awpImage* src, awpPoint p1, awpPoint p2, AWPDOUBLE* dat
 /** @} */ /* end of get  */
 
 
+//---------------------------------------------------------------------------
+AWPRESULT awpGaussLinear(awpImage* matrix, awpImage* y, awpImage* result);
+AWPRESULT awpMatrixTranspose (awpImage* matrix, awpImage* result);
+AWPRESULT awpMulMatrix(awpImage* matrix1, awpImage* matrix2, awpImage** ppDst);
+AWPRESULT awpMatrixInvert(awpImage* matrix, awpImage* invert);
+AWPRESULT awpLinearRegress(awpImage* matrix, awpImage* y, awpImage* b);
+
+
+
 #ifdef __cplusplus
 };
 #endif

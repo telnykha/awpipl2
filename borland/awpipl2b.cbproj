@@ -175,6 +175,9 @@
             <BuildOrder>44</BuildOrder>
             <BuildOrder>4</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\src\awpGauss.c">
+            <BuildOrder>30</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\src\awpgeometry.c">
             <BuildOrder>5</BuildOrder>
             <BuildOrder>47</BuildOrder>
@@ -520,21 +523,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\src\awpgeometry.c" Configuration="Release" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\src\awpcontrast.c" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\lib\awpipl2b.lib" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="..\src\awpgeometry.c" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
-                        <RemoteName>awpipl2b.lib</RemoteName>
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -567,6 +564,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\src\_awpColor.c" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\src\awpGauss.c" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
