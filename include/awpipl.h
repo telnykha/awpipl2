@@ -214,7 +214,7 @@ typedef unsigned short    AWPWORD;
 typedef short             AWPSHORT;
 typedef int				  AWPINT;
 typedef long              AWPLONG;
-typedef unsigned long     AWPDWORD;
+typedef unsigned int      AWPDWORD;
 typedef float			  AWPFLOAT;
 typedef double            AWPDOUBLE;
 typedef void*			  AWPHANDLE;
@@ -431,7 +431,7 @@ typedef void*			  AWPHANDLE;
     }awpCamera;
 
 
-	/** /*
+	/**
 //struct awpDetectItem
 //brief description of the detected object
 */
