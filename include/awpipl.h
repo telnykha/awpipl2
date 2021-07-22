@@ -1303,6 +1303,7 @@ typedef void*			  AWPHANDLE;
 	*	\remarks
 	*	\return AWP_OK if success or else AWP_ERROR
 	*/
+	
 	AWPRESULT awpRGBtoHSL(AWPBYTE r, AWPBYTE g, AWPBYTE b, AWPDOUBLE* h, AWPDOUBLE* s, AWPDOUBLE* l);
 	/**
 	*	\brief Convert RGB triple to XYZ color space
