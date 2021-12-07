@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpipl2", "awpipl2.vcxproj", "{EEC6D9A5-396E-4388-BD84-193BEF1657BA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,6 +15,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awplflib", "..\..\..\awplflib\vc\vc2013\awplflib.vcxproj", "{E762D9A5-EFC5-4D8B-9ED6-61831D615883}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyxml", "..\..\..\TinyXML\tinyxml_lib.vcxproj", "{C406DAEC-0886-4771-8DEA-9D7329B46CC1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "awpcvvideo", "..\..\..\cvvideo\module\awpcvvideo\awpcvvideo.vcxproj", "{8B0D0586-46EA-4F01-B391-150F2B2D9E48}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Video2image", "..\..\..\Video2image\Video2image.vcxproj", "{813411AC-2327-4CED-A969-F23E110DC01B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +90,28 @@ Global
 		{C406DAEC-0886-4771-8DEA-9D7329B46CC1}.Release|Win32.Build.0 = Release|Win32
 		{C406DAEC-0886-4771-8DEA-9D7329B46CC1}.Release|x64.ActiveCfg = Release|x64
 		{C406DAEC-0886-4771-8DEA-9D7329B46CC1}.Release|x64.Build.0 = Release|x64
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|Win32.Build.0 = Debug|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|x64.ActiveCfg = Debug|x64
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Debug|x64.Build.0 = Debug|x64
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|Win32.ActiveCfg = Release|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|Win32.Build.0 = Release|Win32
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|x64.ActiveCfg = Release|x64
+		{8B0D0586-46EA-4F01-B391-150F2B2D9E48}.Release|x64.Build.0 = Release|x64
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Debug|Win32.Build.0 = Debug|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Debug|x64.ActiveCfg = Debug|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Release|Win32.ActiveCfg = Release|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Release|Win32.Build.0 = Release|Win32
+		{813411AC-2327-4CED-A969-F23E110DC01B}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

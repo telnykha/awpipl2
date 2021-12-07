@@ -74,3 +74,5 @@ src/__history/
 include/__history/
 borland/release_build/
 borland/debug_build/
+vc/vc2013/Debug/
+vc/vc2013/ipch/

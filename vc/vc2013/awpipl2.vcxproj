@@ -293,13 +293,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\awpipl.h" />
     <ClInclude Include="..\..\include\_include\_awpcolor.h" />
     <ClInclude Include="..\..\include\_include\_awpdetect.h" />
     <ClInclude Include="..\..\include\_include\_awpdraw.h" />
     <ClInclude Include="..\..\include\_include\_awpio.h" />
     <ClInclude Include="..\..\include\_include\_awpipl.h" />
     <ClInclude Include="..\..\include\awperror.h" />
-    <ClInclude Include="..\..\include\awpipl.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\jpeg-6b\vc\vc2015\JPEGLIB.vcxproj">

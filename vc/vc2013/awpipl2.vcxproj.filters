@@ -115,9 +115,6 @@
     <ClInclude Include="..\..\include\awperror.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\awpipl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\_include\_awpdraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -128,6 +125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\_include\_awpdetect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\awpipl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
