@@ -86,7 +86,7 @@ AWPRESULT _awpLoadAWPImageV1(const char* lpFileName, awpImage** ppImage)
    /*awp image creation variables*/
    AWPBYTE  bNumChannels; /*number of channels*/
    AWPDWORD dwTypeImage;  /*type of image*/
-
+   pbBuffer = NULL; /*init variable*/
    f = fopen(lpFileName, "r+b");
    if (f == NULL)
         return AWP_OPEN_FILE_ERROR;
