@@ -911,7 +911,7 @@ AWPRESULT awpGetObjOrientation(const awpImage* pImg, const awpStrokeObj* pObj, A
     /*local variables*/
     AWPRESULT res;
 	AWPINT  x, y, j;
-    AWPDOUBLE mxx, myy, mxy, intes,s; /*cental moments*/
+    AWPDOUBLE mxx, myy, mxy, intes; /*cental moments*/
 	AWPBYTE* pixels;
 	awpPoint center;
 	AWPDWORD i;

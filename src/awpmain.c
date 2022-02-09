@@ -2,12 +2,18 @@
     awpmain.c
 */
 #define _CRT_SECURE_NO_WARNINGS
-#include "../include/awpipl.h"
+#include "awpipl.h"
 #include "stdlib.h"
 
 #define CHECK_RESULT  \
 	if(res!=AWP_OK){ \
 		printf("ERROR CODE:%i", res);\
+		exit(-1); \
+	}\
+
+#define CHECK_RESULT_DRAW  \
+	if(res0!=AWP_OK || res1!=AWP_OK || res2!=AWP_OK){ \
+		printf("ERROR CODE:%i", res0);\
 		exit(-1); \
 	}\
 
@@ -86,22 +92,27 @@ void Help(int argc, char **argv)
 {
 	printf("--help \n");
 	printf("--info -i filename\n");
+	printf("--getchannel -i filename -o outfile -p channels\n");
 	printf("--flip -i filename -o outfile -p mode [mode = r - right, l - left, v - vertical, h - horizontal]\n");
 	printf("--resize -i filename -o outfile -p width:height:mode [mode = r - fast, b - bilinear, n - not in place]\n");
-	printf("--rescale -i filename -o outfile -p width:height\n");
+	printf("--rescale -i filename -o outfile -p Rescale_width:Rescale_height\n");
 	printf("--rotate -i filename -o outfile -p angle:mode [mode = r - fast, b - bilinear]\n");
 	printf("--rotatecenter -i filename -o outfile -p angle:x:y\n");
 	printf("--calc -i filename -i1 - filename2 -p mode [mode = and,or,xor,add,sub,mlt,div,min,max,avg] -o outfile \n");
 	printf("--crop -i filename -o outfile -p left:top:right:bottom\n");
 	printf("--filter -p mode [mode = b,bm,s,sm,se,fe,fe1,en,eno,eo,eso,es,esw,ew,enw,pv,ph,sv,sh] -i filename -o outfile\n");
-	printf("--contrast -i filename -o outfile -p mode [mode = a - autolevels, h - histogramm equalize]\n");
+	printf("--sobel -i filename -i1 filename -o outfile\n");
+	printf("--integral -i filename -o outfile -f mode [mode = integral, integral2] -p option [option = linear, square, rlinear, rsquare]\n");
+	printf("--makebinary -i filename -o outfile -f mode [binary, inv_binary] -p threshold:min:max:left:top:right:bottom\n");
+	printf("--median -i filename -o outfile -p radius\n");
+	printf("--gauss -i filename -o outfile -p sigma\n");
+	printf("--contrast -i filename -i1 filename -o outfile -p mode [mode = a - autolevels, h - histogramm equalize]\n");
 	printf("--stat -i namefile\n");
-	printf("--convert -i filename -o outfile\n");
-	printf("--draw -i file name -o outfile -f mode [mode = line,rect,point,cross,ellipse,ellipse2] -p x1:x2:y1:y2:r:g:b:rd \n");
+	printf("--convert -i filename -o outfile -p mode [mode = to_b, to_bwn, to_s, to_f, to_d, 3to1_b]\n");
+	printf("--draw -i filename -o outfile -f mode [mode = line,rect,point,cross,ellipse] -p x1:x2:y1:y2:r:g:b:rd \n");
 	printf("--blob -p draw_cp:draw_contour:draw_rect:draw_axis:draw_ellipce -i filename -o outfile\n");
-	printf("--detect \n");
-	printf("--bacrproject \n");
-	printf("--camera \n");
+	printf("--histogramm -i filename -o outfile -p low:up\n");
+	printf("--backproject -i filename -i1 filename2 -o outfile -p min:max\n");
 }
 void Blob(int argc, char** argv)
 {
@@ -137,7 +148,7 @@ void Blob(int argc, char** argv)
 	awpPoint p;
 	AWPDOUBLE perim = 0;
 	FILE * pFile;
-	pFile = fopen("c:\\_alt\\_proj\\awpipl2\\file.txt", "w+t");
+	pFile = fopen("file.txt", "w+t");
 	for (int i = 0; i < num; i++)
 	{
 		awpStrObjSquare(&strokes[i], &square);
@@ -191,17 +202,288 @@ void Blob(int argc, char** argv)
 	awpFreeContour(&c);
 	awpFreeStrokes(num, &strokes);
 }
+void Histogramm(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	awpImage* hsv = NULL;
+	int k, res, low, up;
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i:%i", &low, &up);
+		if (k != 2)
+		{
+			printf("invalid histogramm params = %s\n", argv[idx2]);
+			exit(-1);
+		}
+	img = __LoadImage(argv[idx0]);
+	awpCopyImage(img, &imgo);
+	awpResize(imgo, 256, 256);
+	awpConvert(imgo, AWP_CONVERT_3TO1_BYTE);
+	if (awpCreateImage(&hsv, img->sSizeX, img->sSizeY, 3, AWP_BYTE) != AWP_OK)
+	{
+		_AWP_SAFE_RELEASE_(img)
+			printf("cannot create image.\n");
+			exit(-1);
+	}
+	awpRGBtoHSVImage(img, &hsv);
+	res = awpGet2DHistogramm(hsv, imgo, low, up, TRUE);
+	CHECK_RESULT
+
+		img = imgo;
+	__SaveImage(argv[idx1], img);
+	_AWP_SAFE_RELEASE_(img);
+	_AWP_SAFE_RELEASE_(hsv);
+
+		
+}
+void Backproject(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* pPreset = NULL;
+	awpImage* ppProb = NULL;
+	awpImage* hsv0 = NULL;
+	int k, res, min, max;
+	int idx3 = InputKey(argc, argv, "-i1");
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i:%i", &min, &max);
+		if (k != 2)
+		{
+			printf("invalid backproject params = %s\n", argv[idx2]);
+			exit(-1);
+		}
+	
+	img = __LoadImage(argv[idx0]);
+	pPreset = __LoadImage(argv[idx3]);
+	awpCopyImage(img, &ppProb);
+	if (pPreset->dwType != AWP_DOUBLE || pPreset->bChannels != 1
+		&& pPreset->sSizeX != 256 || pPreset->sSizeY != 256)
+	{
+		awpConvert(pPreset, AWP_CONVERT_3TO1_BYTE);
+		awpResize(pPreset, 256, 256);
+		awpConvert(pPreset, AWP_CONVERT_TO_DOUBLE);
+	}
+
+	awpRGBtoHSVImage(img, &hsv0);
+	res = awpBackProjection2D(hsv0, &ppProb, pPreset, min, max);
+	CHECK_RESULT
+
+	__SaveImage(argv[idx1], ppProb);
+	_AWP_SAFE_RELEASE_(ppProb);
+	_AWP_SAFE_RELEASE_(img);
+	_AWP_SAFE_RELEASE_(pPreset);
+	_AWP_SAFE_RELEASE_(hsv0);
+}
+void Sobel(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* pGradAmpl = NULL;
+	awpImage* pGradDir = NULL;
+	int idx0 = InputKey(argc, argv, "-i");
+	int idx1 = InputKey(argc, argv, "-o");
+	int idx2 = InputKey(argc, argv, "-i1");
+
+	img = __LoadImage(argv[idx0]);
+	pGradDir = __LoadImage(argv[idx2]);
+	awpCopyImage(img, &pGradAmpl);
+		/*if (strcmp(argv[idx2], "notNULL") == 0) {
+			awpCopyImage(img, &pGradAmpl);
+		}
+		else if (strcmp(argv[idx2], "NULL") == 0) {
+			pGradAmpl = NULL;
+		}*/
+
+	awpEdgeSobel(img, pGradAmpl, pGradDir);
+
+	__SaveImage(argv[idx1], pGradAmpl);
+	_AWP_SAFE_RELEASE_(img)
+	_AWP_SAFE_RELEASE_(pGradDir)
+
+}
 void Convert(int argc, char** argv) {
 	awpImage* img = NULL;
 	__GET_IDX__
 	
-		
 		img = __LoadImage(argv[idx0]);
-	if (strcmp(argv[idx2], "c") == 0) {
-		awpConvert(img, AWP_CONVERT_TO_BYTE_WITH_NORM);
-
+	if (strcmp(argv[idx2], "to_b") == 0) {
+		awpConvert(img, AWP_CONVERT_TO_BYTE);
 	}
 
+	else if (strcmp(argv[idx2], "to_bwn") == 0) {
+		awpConvert(img, AWP_CONVERT_TO_BYTE_WITH_NORM);
+	}
+
+	else if (strcmp(argv[idx2], "to_s") == 0) {
+		awpConvert(img, AWP_CONVERT_TO_SHORT);
+	}
+
+	else if (strcmp(argv[idx2], "to_f") == 0) {
+		awpConvert(img, AWP_CONVERT_TO_FLOAT);
+	}
+
+	else if (strcmp(argv[idx2], "to_d") == 0) {
+		awpConvert(img, AWP_CONVERT_TO_DOUBLE);
+	}
+
+	else if (strcmp(argv[idx2], "3to1_b") == 0) {
+		awpConvert(img, AWP_CONVERT_3TO1_BYTE);
+	}
+
+	else {
+		printf("unknown convert option %s\n", argv[idx2]);
+		exit(-1);
+	}
+
+	__SaveImage(argv[idx1], img);
+	_AWP_SAFE_RELEASE_(img);
+}
+void Integral(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	int idx3 = InputKey(argc, argv, "-f");
+	int res;
+	__GET_IDX__
+		img = __LoadImage(argv[idx0]);
+		//awpCopyImage(img, &imgo);
+	if (strcmp(argv[idx3], "integral") == 0) {
+		if (strcmp(argv[idx2], "linear") == 0) {
+			res = awpIntegral(img, &imgo, AWP_LINEAR);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "square") == 0) {
+			res = awpIntegral(img, &imgo, AWP_SQUARE);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "rlinear") == 0) {
+			res = awpIntegral(img, &imgo, AWP_RLINEAR);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "rsquare") == 0) {
+			res = awpIntegral(img, &imgo, AWP_RSQUARE);
+			CHECK_RESULT
+		}
+
+		else {
+			printf("unknown integral option %s\n", argv[idx2]);
+			exit(-1);
+		}
+	}
+
+	else if (strcmp(argv[idx3], "integral2") == 0) {
+		if (strcmp(argv[idx2], "linear") == 0) {
+			res = awpIntegral2(img, &imgo, AWP_LINEAR);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "square") == 0) {
+			res = awpIntegral2(img, &imgo, AWP_SQUARE);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "rlinear") == 0) {
+			res = awpIntegral2(img, &imgo, AWP_RLINEAR);
+			CHECK_RESULT
+		}
+
+		else if (strcmp(argv[idx2], "rsquare") == 0) {
+			res = awpIntegral2(img, &imgo, AWP_RSQUARE);
+			CHECK_RESULT
+		}
+
+		else {
+			printf("unknown integral option %s\n", argv[idx2]);
+			exit(-1);
+		}
+	}
+
+	else {
+		printf("unknown integral mode %s\n", argv[idx3]);
+		exit(-1);
+	}
+	img = imgo;
+	__SaveImage(argv[idx1], img);
+	_AWP_SAFE_RELEASE_(img);
+}
+void makeBinary(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	int idx3 = InputKey(argc, argv, "-f");
+	int k, res, threshold, min, max;
+	awpRect* rect = NULL;
+	rect = (awpRect*)malloc(sizeof(awpRect));
+	int left = 0, top = 0, right = 0, bottom = 0;
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i:%i:%i:%i:%i:%i:%i", &threshold, 
+			&min, &max, &left, &top, &right, &bottom);
+		if (k != 7)
+		{
+			printf("invalid makeBinary params = %s\n", argv[idx2]);
+			exit(-1);
+		}
+	rect->left = left;
+	rect->top = top;
+	rect->right = right;
+	rect->bottom = bottom;
+	img = __LoadImage(argv[idx0]);
+	if (strcmp(argv[idx3], "binary") == 0) {
+		res = awpMakeBinary(img, &imgo, threshold, AWP_BINARY, min, max, rect);
+		CHECK_RESULT
+	}
+
+	else if (strcmp(argv[idx3], "inv_binary") == 0) {
+		res = awpMakeBinary(img, &imgo, threshold, AWP_INV_BINARY, min, max, rect);
+		CHECK_RESULT
+	}
+
+	else {
+		printf("unknown makeBinary option % s\n", argv[idx3]);
+		exit(-1);
+	}
+
+	img = imgo;
+	__SaveImage(argv[idx1], img);
+	_AWP_SAFE_RELEASE_(img);
+	
+}
+void Median(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	int res, k, radius;
+	__GET_IDX__
+
+		k = sscanf(argv[idx2], "%i", &radius);
+		if (k != 1)
+		{
+			printf("invalid median params = %s\n", argv[idx2]);
+			exit(-1);
+		}
+	img = __LoadImage(argv[idx0]);
+	awpCopyImage(img, &imgo);
+	res = awpMedian(img, imgo, radius);
+	CHECK_RESULT
+
+		img = imgo;
+		__SaveImage(argv[idx1], img);
+	_AWP_SAFE_RELEASE_(img);
+
+}
+void GaussianBlur(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	int res, k, sigma;
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i", &sigma);
+		if (k != 1)
+		{
+			printf("invalid gauss params = %s\n", argv[idx2]);
+			exit(-1);
+		}
+
+	img = __LoadImage(argv[idx0]);
+	awpCopyImage(img, &imgo);
+	res = awpGaussianBlur(img, imgo, sigma);
+	CHECK_RESULT
+
+		img = imgo;
 	__SaveImage(argv[idx1], img);
 	_AWP_SAFE_RELEASE_(img);
 }
@@ -211,7 +493,8 @@ void Draw(int argc, char** argv) {
 	AWPWORD w= 0, h= 0;
 	int rd =1;
 	awpRect a;
-	int k = 0 , left = 0, top = 0, right = 0, bottom = 0;;
+	int k = 0 , left = 0, top = 0, right = 0, bottom = 0;
+	int res0, res1, res2;
 	int idx3 = InputKey(argc, argv, "-f");
 	awpPoint p1;
 	awpPoint p2;
@@ -221,46 +504,84 @@ void Draw(int argc, char** argv) {
 	if (strcmp(argv[idx3], "line") == 0){
 		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &p2.X, &p2.Y, &r, &g, &b, &rd);
 			_CHECK
-			awpDrawCLine(img, p1, p2, r, g, b, rd);}
+		res0 = awpDrawLine(img, p1, p2, 0, r, rd);
+		res1 = awpDrawLine(img, p1, p2, 1, g, rd);
+		res2 = awpDrawLine(img, p1, p2, 2, b, rd);
 
-	else if (strcmp(argv[idx3], "rect") == 0){
-		k = sscanf(argv[idx2], "%i:%i:%i:%i:%lf:%lf:%lf:%i", &left,&top,&bottom,&right,&r, &g, &b, &rd);
-			_CHECK
-		a.left = left;
-		a.bottom = bottom;
-		a.right = right;
-		a.top = top;
-			awpDrawCRect(img, &a, r, g, b, rd);}
+			CHECK_RESULT_DRAW
+			awpDrawCLine(img, p1, p2, r, g, b, rd)
+		__SaveImage(argv[idx1], img);
+	}
 
-	else if (strcmp(argv[idx3], "point") == 0){
-		k = sscanf(argv[idx2], "%hi:%hi:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &r, &g, &b, &rd);
-			_CHECK2
-			awpDrawCPoint(img, p1, r, g, b, rd);}
-
-	else if (strcmp(argv[idx3], "cross") == 0){
+	else if (strcmp(argv[idx3], "rect") == 0) {
 		k = sscanf(argv[idx2], "%i:%i:%i:%i:%lf:%lf:%lf:%i", &left, &top, &bottom, &right, &r, &g, &b, &rd);
 			_CHECK
 		a.left = left;
 		a.bottom = bottom;
 		a.right = right;
 		a.top = top;
-			awpDrawCCross(img, &a, r, g, b, rd);}
+
+		res0 = awpDrawRect(img, &a, 0, r, rd);
+		res1 = awpDrawRect(img, &a, 1, g, rd);
+		res2 = awpDrawRect(img, &a, 2, b, rd);
+
+			CHECK_RESULT_DRAW
+			awpDrawCRect(img, &a, r, g, b, rd);
+		__SaveImage(argv[idx1], img);
+	}
+
+	else if (strcmp(argv[idx3], "point") == 0){
+		k = sscanf(argv[idx2], "%hi:%hi:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &r, &g, &b, &rd);
+			_CHECK2
+
+		res0 = awpDrawPoint(img, p1, 0, r, rd); 
+		res1 = awpDrawPoint(img, p1, 1, g, rd); 
+		res2 = awpDrawPoint(img, p1, 2, b, rd); 
+
+			CHECK_RESULT_DRAW
+			awpDrawCPoint(img, p1, r, g, b, rd);
+		__SaveImage(argv[idx1], img);
+	}
+
+	else if (strcmp(argv[idx3], "cross") == 0) {
+		k = sscanf(argv[idx2], "%i:%i:%i:%i:%lf:%lf:%lf:%i", &left, &top, &bottom, &right, &r, &g, &b, &rd);
+		_CHECK
+		a.left = left;
+		a.bottom = bottom;
+		a.right = right;
+		a.top = top;
+
+		res0 = awpDrawCross(img, &a, 0, r, rd);
+		res1 = awpDrawCross(img, &a, 1, g, rd);
+		res2 = awpDrawCross(img, &a, 2, b, rd);
+
+			CHECK_RESULT_DRAW
+			awpDrawCCross(img, &a, r, g, b, rd);
+		__SaveImage(argv[idx1], img);
+	}
 
 	else if (strcmp(argv[idx3], "ellipse") == 0) {
 		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &w, &h, &angle, &r, &g, &b, &rd);
 			_CHECK3
-			awpDrawCEllipse(img, p1, w, h, angle, r, g, b, rd);}
 
-	else if (strcmp(argv[idx3], "ellipse2") == 0) {
-		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &w, &h, &angle, &r, &g, &b, &rd);
-			_CHECK3
+		res0 = awpDrawEllipse(img, p1, w, h, angle, 0, r, rd); 
+		res1 = awpDrawEllipse(img, p1, w, h, angle, 1, g, rd); 
+		res2 = awpDrawEllipse(img, p1, w, h, angle, 2, b, rd); 
+			CHECK_RESULT_DRAW
+			awpDrawCEllipse(img, p1, w, h, angle, r, g, b, rd);
+		__SaveImage(argv[idx1], img);
 	}
 
-	else{
-			printf("unknown draw option %s\n", argv[idx2]);
+	/*else if (strcmp(argv[idx3], "ellipse2") == 0) {
+		k = sscanf(argv[idx2], "%hi:%hi:%hi:%hi:%lf:%lf:%lf:%lf:%i", &p1.X, &p1.Y, &w, &h, &angle, &r, &g, &b, &rd);
+			_CHECK3
+	}*/
+
+	else {
+			printf("unknown draw option %s\n", argv[idx3]);
 			exit(-1);}
 
-			__SaveImage(argv[idx1], img);
+			
 			_AWP_SAFE_RELEASE_(img);
 }
 void Calc(int argc,char** argv) {
@@ -346,10 +667,22 @@ void Info(int argc, char **argv)
 	}
 	_AWP_SAFE_RELEASE_(img);
 }
+void getChannel(int argc, char** argv) {
+	awpImage* img = NULL;
+	awpImage* imgo = NULL;
+	int res, channels, k;
+	__GET_IDX__
+		k = sscanf(argv[idx2], "%i", &channels);
+		img = __LoadImage(argv[idx0]);
+		//imgo = __LoadImage(argv[idx1]);
+	res = awpGetChannel(img, &imgo, channels);
+	__SaveImage(argv[idx1], imgo);
+	_AWP_SAFE_RELEASE_(img);
+
+}
 void Stat(int argc, char** argv) {
 	int idx = InputKey(argc, argv, "-i");
 	FILE * stat = fopen("result.txt", "w");
-	FILE * ht = fopen("hst.txt", "w");
 	awpImage* img = NULL; 
 	awpImage* hst = NULL; 
 	awpImage* mean = NULL;
@@ -767,6 +1100,7 @@ int main (int argc, char **argv)
   int i = 0;
   if (argc < 2)
   {
+	  Help(0, NULL);
 	  return -1;
   }
    char* arg1 = argv[1];
@@ -777,6 +1111,10 @@ int main (int argc, char **argv)
    else if (strcmp(arg1, "--info") == 0)
    {
 	   Info(argc, argv);
+   }
+   else if (strcmp(arg1, "--getchannel") == 0)
+   {
+	   getChannel(argc, argv);
    }
    else if (strcmp(arg1, "--flip") == 0)
    {
@@ -822,6 +1160,26 @@ int main (int argc, char **argv)
    {
 	   Convert(argc, argv);
    }
+   else if (strcmp(arg1, "--integral") == 0)
+   {
+	   Integral(argc, argv);
+   }
+   else if (strcmp(arg1, "--sobel") == 0)
+   {
+	   Sobel(argc, argv);
+   }
+   else if (strcmp(arg1, "--makebinary") == 0)
+   {
+	   makeBinary(argc, argv);
+   }
+   else if (strcmp(arg1, "--median") == 0)
+   {
+	   Median(argc, argv);
+   }
+   else if (strcmp(arg1, "--gauss") == 0)
+   {
+	   GaussianBlur(argc, argv);
+   }
    else if (strcmp(arg1, "--draw") == 0)
    {
 	   Draw(argc, argv);
@@ -835,9 +1193,13 @@ int main (int argc, char **argv)
    {
 	   // object detection 
    }
+   else if (strcmp(arg1, "--histogramm") == 0)
+   {
+	   Histogramm(argc, argv);
+   }
    else if (strcmp(arg1, "--backproject") == 0)
    {
-	   // 
+	   Backproject(argc, argv);
    }
    else if (strcmp(arg1, "--camera") == 0)
    {

@@ -72,7 +72,7 @@ AWPRESULT awpLoadImage(const char* lpFileName, awpImage** ppImage)
 AWPRESULT awpSaveImage(const char* lpFileName, awpImage* pImage)
 {
     AWPRESULT res;
-    char	  lpExt[4];
+    char	  lpExt[32];
     if (lpFileName == NULL && pImage == NULL)
         return AWP_BADARG;
 

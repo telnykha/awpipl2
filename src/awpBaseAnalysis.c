@@ -491,6 +491,7 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
     AWPBYTE        h,s, v;
     AWPRESULT res = AWP_OK;
     awpImage* pDblHst = NULL;
+	awpImage* p2DHisto = NULL;
 	// checking arguments
     if (pImage == NULL || p2DHist == NULL)
         return AWP_BADARG;
@@ -524,6 +525,7 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
             }
         }
     }
+	awpCopyImage(p2DHist, &p2DHisto);
 	// convert a temporary image of type AWPDOUBLE to AWPBYTE
     if ( needToConvert == TRUE )
     {
@@ -534,7 +536,7 @@ AWPRESULT awpGet2DHistogramm(awpImage* pImage, awpImage* p2DHist, AWPBYTE low, A
         return res;
     if ((res = awpReleaseImage(&pDblHst)) != AWP_OK)
         return res;
-    if ((res = awpFilter(p2DHist, AWP_BLUR, AWP_FILTER_METHOD_ORDINARY)) != AWP_OK)
+    if ((res = awpFilter(p2DHist, p2DHisto, AWP_BLUR)) != AWP_OK)
         return res;
     return AWP_OK;
 }

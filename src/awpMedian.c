@@ -79,7 +79,6 @@ AWPRESULT __awpMedian_double(awpImage* src, awpImage* dst, AWPBYTE radius)
             }
         }
     }
-CLEANUP:
 	_SAFE_FREE_(_buffer)
 	return res;
 }
